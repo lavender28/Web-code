@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .area {
+      background-color: red;
+      width: 200px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- <h2>{{ counter }}</h2> -->
+    <!-- 1、v-on 的基本使用 -->
+    <!-- 内联事件处理器 -->
+    <!-- <button v-on:click="counter++">加 1</button> -->
+    <!-- 简写：@ -->
+    <!-- <button @click="counter++">加 1</button> -->
+    <!-- 方法事件处理器 -->
+    <!-- <button @click="inc()">加 1</button> -->
+    <!-- <div class="area" @mousemove="mouseMove"></div> -->
+    <!-- v-on 直接绑定一个对象 -->
+    <!-- <div class="area" v-on="{click: divClick, mousemove: mouseMove}"></div> -->
+    <!-- <div class="area" @="{click: divClick, mousemove: mouseMove}"></div> -->
+    <!-- 2、v-on 的参数传递 -->
+    <!-- 直接调用方法 默认接收原生 DOM 事件-->
+    <!-- <button @click="greet">Greet</button> -->
+    <!-- 传递自定义参数 -->
+    <!-- <button @click="say('hello')">say</button> -->
+    <!-- <button @click="say('bye')">say</button> -->
+    <!-- 传入自定义参数 同时 访问原生 DOM 事件 -->
+    <!-- <button @click="warn('Form cannot be submitted yet.', $event)">Submit</button> -->
+    <!-- 3、事件修饰符 -->
+    <!-- <div @click="divClick"> -->
+      <!-- .stop 阻止事件冒泡 -->
+      <!-- <button @click="btnClick">button</button> -->
+      <!-- <button @click.stop="btnClick">button</button> -->
+    <!-- </div> -->
+    <!-- 按键修饰符 .enter -->
+    <!-- <input type="text" @keyup="submit"> -->
+    <input type="text" @keyup.enter="submit">
+    
+
+  </div>
+  <script src="../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          counter: 0,
+          name: 'Vue.js'
+        }
+      },
+      methods: {
+        inc() {
+          this.counter++
+        },
+        mouseMove() {
+          console.log('mouseMove被执行');
+        },
+        divClick() {
+          console.log('divClick被执行')
+        },
+        btnClick() {
+          console.log('btnClick被执行')
+        },
+        submit() {
+          console.log('submit被执行')
+        },
+        greet(event) {
+          console.log(event);
+          alert(`Hello ${this.name}!`)
+          if (event) {
+            alert(event.target.tagName)
+          }
+        },
+        say(message) {
+          alert(message)
+        },
+        warn(message, event) {
+          console.log(message, event)
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <!-- 1、v-if v-else的基本使用 -->
+    <h1 v-if="awesome">Vue is awesome！</h1>
+    <h1 v-else>Oh no!😅</h1>
+
+    <button @click="awesome=!awesome">Toggle</button>
+    <!-- 2、v-else-if的基本使用 -->
+    <div v-if="score >= 90">优秀</div>
+    <div v-else-if="score >= 80">良好</div>
+    <div v-else-if="score >= 70">中等</div>
+    <div v-else-if="score >= 60">及格</div>
+    <div v-else>不及格</div>
+    <!-- 3、template上的v-if -->
+    <template v-if="awesome">
+      <h2>哈哈哈哈</h2>
+      <h2>哈哈哈哈</h2>
+      <h2>哈哈哈哈</h2>
+    </template>
+    <!-- 4、条件渲染小案例 -->
+    <span v-if="isShow">
+      <label>
+        用户名 
+        <input type="text" placeholder="请输入用户名">
+      </label>
+    </span>
+    <span v-else>
+      <label>
+        邮箱
+        <input type="text" placeholder="请输入邮箱">
+      </label>
+    </span>
+    <button @click="isShow = !isShow">切换类型</button>
+    <!-- v-show -->
+    <h2 v-if="isShow">哈哈哈哈</h2>
+    <h2 v-show="isShow">哈哈哈哈</h2>
+  </div>  
+  <script src="../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          awesome: true,
+          score: 89,
+          isShow: true
+        }
+      },
+    })
+    app.mount("#app")
+  </script>
+</body>
+</html>

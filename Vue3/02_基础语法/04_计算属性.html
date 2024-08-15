@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <!-- 1、计算属性 基本使用-->
+    <!-- <h2>{{ firstName + lastName }}</h2> -->
+    <!-- 2、计算属性缓存 vs 方法 -->
+    <!-- <h2>{{ getFullName() }}</h2> -->
+    <!-- <h2>{{ getFullName() }}</h2> -->
+    <!-- <h2>{{ getFullName() }}</h2> -->
+    <!-- <h2>{{ fullName }}</h2> -->
+    <!-- <h2>{{ fullName }}</h2> -->
+    <!-- <h2>{{ fullName }}</h2> -->
+    <!-- 3、计算属性 setter 和 getter -->
+    <h2>{{ fullName }}</h2>
+    <button @click="changeFullName()">改变名字</button>
+  </div>
+  <script src="../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          firstName: 'zhang',
+          lastName: 'san'
+        }
+      },
+      methods: {
+        getFullName() {
+          console.log("methods被执行");
+          return this.firstName + this.lastName
+        },
+        changeFullName() {
+          this.fullName = "li si"
+        }
+      },
+      computed: {
+        // fullName() {
+        //   console.log("computed别执行");
+        //   return this.firstName + this.lastName
+        // }
+        fullName: {
+          get() {
+            return this.firstName + this.lastName
+          },
+          set(newValue) {
+            [this.firstName, this.lastName] = newValue.split(' ')
+          }
+        }
+      }
+    })
+    app.mount("#app")
+  </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .abc {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- 1、v-bind 的基本使用 -->
+    <!-- <a v-bind:href="link">百度一下</a> -->
+    <!-- <img v-bind:src="imgSrc"> -->
+    <!-- v-bind的简写-->
+    <!-- <a :href="link">百度一下</a> -->
+    <!-- <img :src="imgSrc" alt=""> -->
+    <!-- <h1 :[key]="key">啊 对对对</h1> -->
+    <!-- 2、v-bind 动态绑定class：对象语法 -->
+    <!-- <h2 class="static" :class="{abc:isActive, cba:isTrue}">哈哈哈哈</h2> -->
+    <!-- <button @click="toggle">变变变</button> -->
+    <!-- <h2 :class="classObj">呵呵呵</h2> -->
+    <!-- 方法和计算属性返回对象 -->
+    <!-- <h2 :class="getClassObj()">你好啊！</h2> -->
+    <!-- <h2 :class="classObject">你好啊！</h2> -->
+    <!-- 3、v-bind 动态绑定class:数组语法 -->
+    <!-- <h2 :class="[activeClass, errorClass]">哈哈哈哈</h2> -->
+    <!-- <h2 :class="[isActive ? activeClass : '' , errorClass]">哈哈哈哈</h2> -->
+    <!-- <h2 :class="[{abc: isActive}, errorClass]">哈哈哈哈</h2> -->
+    <!-- 4、v-bind 动态绑定style: 对象语法-->
+    <!-- <div style="color: red; font-size: 20px;">哈哈哈哈哈</div> -->
+    <!-- <div :style="{color: activeColor, fontSize: fontSize + 'px'}">哈哈哈哈哈</div> -->
+    <!-- <div :style="styleObj">哈哈哈哈哈</div> -->
+    <!-- 5、v-bind 动态绑定style：数组语法 -->
+    <!-- <div :style="[baseStyles, overridingStyles]">呵呵呵呵</div> -->
+    <!-- 6、v-bind 直接绑定一个对象 -->
+    <div v-bind="info">今天天气真美丽！</div>
+  </div>
+
+  <script src="../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          key: 'abc',
+          link: "https://wwww.baidu.com",
+          imgSrc: "https://positivethinking.tech/wp-content/uploads/2021/01/Logo-Vuejs.png",
+          isActive: true,
+          isTrue: true,
+          hasError: "error",
+          activeClass: "abc",
+          errorClass: "cba",
+          classObj: {
+            abc: false,
+            cba: true,
+          },
+          activeColor: "red",
+          fontSize: 30,
+          styleObj: {
+            color: "blue",
+            fontSize: "40px"
+          },
+          baseStyles: {
+            color: "green",
+            fontSize: "50px"
+          },
+          overridingStyles: {
+            backgroundColor: 'black'
+          },
+          info: {
+            class: 'abc',
+            'other-attr': 'cba'
+          }
+        }
+      },
+      methods: {
+        toggle() {
+          this.isActive = !this.isActive
+        },
+        getClassObj() {
+          return {
+            abc: this.isActive,
+            cba: this.isTrue
+          }
+        }
+      },
+      computed: {
+          classObject() {
+            return {
+              abc: false,
+              cba: this.isTrue
+            }
+          }
+        }
+    })
+    app.mount("#app")
+  </script>
+</body>
+</html>

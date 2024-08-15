@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app"></div>
+  <template id="my-app">
+    <div>
+      <h2>{{ message }}</h2>
+      <button @click="message='今天天气真好诶'">change</button>
+    </div>
+  </template>
+  <script src="../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      template: '#my-app',
+      data() {
+        return {
+          message: '你好啊！',
+          isShow: true
+        }
+      },
+      beforeCreate() {
+        // 实例初始化完成之后立即调用
+        console.log('beforeCreate');
+        console.log(this.message);
+        console.log(this.$el);
+      },
+      created() {
+        // 实例处理完所有与状态相关的选项后调用
+        // 已经设置完成：响应式数据、计算属性、方法和侦听器
+        // $el 属性仍不可用
+        console.log('created');
+        console.log(this.message);
+        console.log(this.$el);
+      },
+      beforeMount() {
+        console.log(this.$el);
+        console.log(this.message);
+        console.log('beforeMount');
+      },
+      mounted() {
+        console.log(this.$el);
+        console.log('mounted');
+      },
+      beforeUpdate() {
+        console.log('beforeUpdate');
+        console.log(this.message);
+        console.log(this.$el);
+      },
+      updated() {
+        console.log('updated');
+        console.log(this.message);
+        console.log(this.$el);
+      },
+      beforeUnmount() {
+        console.log('beforeUnmount');
+      },
+      unmounted() {
+        console.log('unmounted');
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

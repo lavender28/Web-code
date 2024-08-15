@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- v-text -->
+    <span v-text="msg"></span>
+    <h2>{{ number }}</h2>
+    <!-- v-once -->
+    <div v-once>
+      <h2>{{ number }}</h2>
+    </div>
+    <button @click="inc">点我加1</button>
+    <!-- v-cloak -->
+    <div v-cloak>
+      {{ message }}
+    </div>
+  </div>
+  <script src="../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          msg: "你好啊！",
+          message: "啊！对对对",
+          number: 0
+        }
+      },
+      methods: {
+        inc() {
+          this.number++
+        }
+      }
+    })
+    app.mount("#app")
+  </script>
+</body>
+</html>

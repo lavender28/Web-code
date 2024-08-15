@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <!-- <h2>{{ name }}</h2> -->
+    <h2>{{ info.name }}</h2>
+    <button @click="change()">change</button>
+    <button @click="changeInfo()">changeInfo</button>
+    <button @click="changeInfoName()">changeInfoName</button>
+  </div>
+  <script src="../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          name: '张三',
+          info: {name: '张三', age: 18}
+        }
+      },
+      watch: {
+        // 1、侦听器的基本使用
+        // name(newValue, oldValue) {
+        //   console.log('新值：' + newValue, '旧值：' + oldValue);
+        // },
+        // 也支持把键设置成用 . 分隔的路径
+        // 'info.name'(newValue, oldValue) {
+        //   console.log('新值：' + newValue, '旧值：' + oldValue);
+        // }
+        // 2、深层侦听器 侦听所有嵌套的变更
+        // 无法侦听到嵌套内的数据变更
+        // info(newValue, oldValue) {
+        //   console.log('新值：' + newValue.name, '旧值：' + oldValue.name);
+        // }
+        info: {
+          handler(newValue, oldValue) {
+            console.log('新值：' + newValue.name, '旧值：' + oldValue.name);
+          },
+          deep: true
+        }
+
+      },
+      methods: {
+        change() {
+          this.name = '李四'
+        },
+        changeInfo() {
+          this.info = {name: '李四'}
+        },
+        changeInfoName() {
+          this.info.name = '李四'
+        }
+      },
+    })
+    app.mount("#app")
+  </script>
+</body>
+</html>
