@@ -11,7 +11,8 @@ import { createApp } from 'vue'
 // import App from './09_作用域插槽/App.vue'
 // import App from './10_动态组件/App.vue'
 // import App from './11_异步组件/App.vue'
-import App from './12_模板引用/App.vue'
+// import App from './12_模板引用/App.vue'
+import App from './13_组件v-model/App.vue'
 
 createApp(App)
   // 全局组件注册
