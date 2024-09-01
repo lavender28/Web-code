@@ -1,15 +1,18 @@
 <template>
   <div>
-    <Button></Button>
+    <Header />
+    <Main />
   </div>
 </template>
 
 <script>
-import Button from './Button.vue';
+import Header from './Header.vue';
+import Main from './Main.vue';
 
 export default {
   components: {
-    Button
+    Header,
+    Main
   }
 }
 </script>
