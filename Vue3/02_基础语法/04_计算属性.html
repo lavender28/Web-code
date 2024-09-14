@@ -7,17 +7,19 @@
 </head>
 <body>
   <div id="app">
-    <!-- 1、计算属性 基本使用-->
-    <!-- <h2>{{ firstName + lastName }}</h2> -->
-    <!-- 2、计算属性缓存 vs 方法 -->
-    <!-- <h2>{{ getFullName() }}</h2> -->
-    <!-- <h2>{{ getFullName() }}</h2> -->
-    <!-- <h2>{{ getFullName() }}</h2> -->
-    <!-- <h2>{{ fullName }}</h2> -->
-    <!-- <h2>{{ fullName }}</h2> -->
-    <!-- <h2>{{ fullName }}</h2> -->
-    <!-- 3、计算属性 setter 和 getter -->
-    <h2>{{ fullName }}</h2>
+    <!-- 1.计算属性的基本使用-->
+    <!-- <p>Full Name: {{ fullName }}</p> -->
+
+    <!-- 2.计算属性缓存 vs 方法 -->
+    <!-- <p>{{ getFullName() }}</p> -->
+    <!-- <p>{{ getFullName() }}</p> -->
+    <!-- <p>{{ getFullName() }}</p> -->
+    <!-- <p>{{ fullName }}</p> -->
+    <!-- <p>{{ fullName }}</p> -->
+    <!-- <p>{{ fullName }}</p> -->
+  
+    <!-- 3.计算属性 setter 和 getter -->
+    <p>{{ fullName }}</p>
     <button @click="changeFullName()">改变名字</button>
   </div>
   <script src="../js/vue.js"></script>
@@ -40,9 +42,9 @@
       },
       computed: {
         // fullName() {
-        //   console.log("computed别执行");
-        //   return this.firstName + this.lastName
-        // }
+        //   console.log('Computed fullName called');
+        //   return this.firstName + ' ' + this.lastName
+        // },
         fullName: {
           get() {
             return this.firstName + this.lastName

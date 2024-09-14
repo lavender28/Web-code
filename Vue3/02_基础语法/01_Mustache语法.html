@@ -7,15 +7,17 @@
 </head>
 <body>
   <div id="app">
-    <!-- Mustache 语法 -->
-    <h2>{{ msg }}</h2>
-    <h2>{{ number + 1 }}</h2>
-    <h2>{{ ok ? 'YES' : 'NO' }}</h2>
-    <button @click="toggle">toggle</button>
-    <h2>{{ msg.split('！').reverse().join(' ')}}</h2>
-    <!-- v-html -->
-    <p>{{ rawHTML }}</p>
-    <p><span v-html="rawHTML"></span></p>
+    <!-- Mustache 语法基本使用 -->
+    <h2>{{ message }}</h2>
+    <!-- 使用 JavaScript 表达式 -->
+    <p>{{ number + 1 }}</p>
+    <p>{{ isTrue ? 'Yes' : 'No'}}</p>
+    <p>{{ message.split(',').reverse().join('-') }}</p>
+    <!-- 下面例子无效 -->
+    <!-- 这是一个语句，不是表达式 -->
+    <!-- <p>{{ var a = 1 }}</p> -->
+    <!-- 条件判断语句，可使用三元表达式 -->
+    <!-- <p>{{ if (isTrue) { return message } }}</p> -->
   </div>
 
   <script src="../js/vue.js"></script>
@@ -23,10 +25,9 @@
     const app = Vue.createApp({
       data() {
         return {
-          msg: "你好啊！我不好",
-          number: 0,
-          ok: null,
-          rawHTML: '<span style="color: red">This should be red.</span>'
+          message: 'Hello, Vue.js!',
+          number: 10,
+          isTrue: false
         }
       },
       methods: {

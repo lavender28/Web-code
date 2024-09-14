@@ -4,40 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <style>
-    [v-cloak] {
-      display: none;
-    }
-  </style>
 </head>
 <body>
   <div id="app">
+    <!-- v-html -->
+    <p>{{ htmlContent }}</p>
+    <p v-html="htmlContent"></p>
     <!-- v-text -->
-    <span v-text="msg"></span>
-    <h2>{{ number }}</h2>
+    <h1 v-text="title"></h1>
     <!-- v-once -->
-    <div v-once>
-      <h2>{{ number }}</h2>
-    </div>
-    <button @click="inc">点我加1</button>
-    <!-- v-cloak -->
-    <div v-cloak>
-      {{ message }}
-    </div>
+    <h1 v-once>{{ description }}</h1>
+    <button @click="changeDes">更改描述</button>
   </div>
   <script src="../js/vue.js"></script>
   <script>
     const app = Vue.createApp({
       data() {
         return {
-          msg: "你好啊！",
-          message: "啊！对对对",
-          number: 0
+          htmlContent: '<span style="color: red">This is red!</span>',
+          title: '这是一个 v-text 指令',
+          description: '这是一个 v-once 示例'
         }
       },
       methods: {
-        inc() {
-          this.number++
+        changeDes() {
+          this.description = '描述已更改！'
         }
       }
     })

@@ -14,35 +14,43 @@
 </head>
 <body>
   <div id="app">
-    <!-- <h2>{{ counter }}</h2> -->
-    <!-- 1、v-on 的基本使用 -->
-    <!-- 内联事件处理器 -->
-    <!-- <button v-on:click="counter++">加 1</button> -->
-    <!-- 简写：@ -->
-    <!-- <button @click="counter++">加 1</button> -->
-    <!-- 方法事件处理器 -->
-    <!-- <button @click="inc()">加 1</button> -->
+    <h2>{{ counter }}</h2>
+    <!-- 1.内联事件处理器 -->
+    <!-- 完整写法 -->
+    <!-- <button v-on:click="counter++">click me</button> -->
+    <!-- 简写形式 -->
+    <!-- <button @click="counter++">click me</button> -->
+  
+    <!-- 2.方法事件处理器 -->
+    <!-- <button @click="inc">click me</button> -->
+
     <!-- <div class="area" @mousemove="mouseMove"></div> -->
+    
     <!-- v-on 直接绑定一个对象 -->
     <!-- <div class="area" v-on="{click: divClick, mousemove: mouseMove}"></div> -->
     <!-- <div class="area" @="{click: divClick, mousemove: mouseMove}"></div> -->
-    <!-- 2、v-on 的参数传递 -->
+    
+    <!-- 3.参数传递 -->
     <!-- 直接调用方法 默认接收原生 DOM 事件-->
     <!-- <button @click="greet">Greet</button> -->
+
     <!-- 传递自定义参数 -->
     <!-- <button @click="say('hello')">say</button> -->
     <!-- <button @click="say('bye')">say</button> -->
+
     <!-- 传入自定义参数 同时 访问原生 DOM 事件 -->
     <!-- <button @click="warn('Form cannot be submitted yet.', $event)">Submit</button> -->
-    <!-- 3、事件修饰符 -->
+
+    <!-- 4.事件修饰符 -->
     <!-- <div @click="divClick"> -->
-      <!-- .stop 阻止事件冒泡 -->
       <!-- <button @click="btnClick">button</button> -->
+      <!-- .stop 阻止事件冒泡 -->
       <!-- <button @click.stop="btnClick">button</button> -->
     <!-- </div> -->
-    <!-- 按键修饰符 .enter -->
+
+    <!-- 5.按键修饰符 .enter -->
     <!-- <input type="text" @keyup="submit"> -->
-    <input type="text" @keyup.enter="submit">
+    <!-- <input type="text" @keyup.enter="submit"> -->
     
 
   </div>
@@ -57,7 +65,8 @@
       },
       methods: {
         inc() {
-          this.counter++
+          this.counter++;
+          alert('加1操作被执行')
         },
         mouseMove() {
           console.log('mouseMove被执行');
@@ -83,6 +92,7 @@
         },
         warn(message, event) {
           console.log(message, event)
+          console.log(event.target)
         }
       },
     })
