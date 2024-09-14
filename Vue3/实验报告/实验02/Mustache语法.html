@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <!-- 练习 1: 基本变量插值 -->
+    <h2>欢迎, {{ userName }}!</h2>
+
+    <!-- 练习 2: 简单数学运算 -->
+    <h2>{{ baseNumber }} 的平方是 {{ baseNumber * baseNumber }}</h2>
+
+    <!-- 练习 3: 条件渲染 -->
+    <h2>{{ isLoggedIn ? '用户已登录' : '用户未登录' }}</h2>
+
+    <!-- 练习 4: 字符串操作 -->
+    <h2>句子单词数量: {{ sentence.split(' ').length }}</h2>
+
+    <!-- 练习 5: 对象属性访问 -->
+    <h2>汽车品牌: {{ car.make }}, 型号: {{ car.model }}</h2>
+
+    <!-- 练习 6: 日期格式化 -->
+    <h2>当前日期: {{ currentDate.getFullYear() }}年{{ currentDate.getMonth() + 1 }}月{{ currentDate.getDate() }}日</h2>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          userName: '张三',
+          baseNumber: 5,
+          isLoggedIn: true,
+          sentence: '这是一个测试句子',
+          car: { make: '吉利', model: '银河' },
+          currentDate: new Date(),
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

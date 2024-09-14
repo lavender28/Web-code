@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <!-- <button @click="counter++">计数</button> -->
+    <!-- <p>按钮被点击{{ counter }}次</p> -->
+
+    <!-- <button @click="showInfo">显示</button> -->
+
+    <button @click="sayHello">Click to say Hello</button>
+    <button @click="showMessage('Custom Message')">Click to show message</button>
+    <p>{{ message }}</p>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          counter: 0,
+          phone: {
+            name: '华为',
+            price: 5699
+          },
+          message: ''
+        }
+      },
+      methods: {
+        showInfo() {
+          alert('手机名称：' + this.phone.name + ' ' + '单价：' + this.phone.price)
+        },
+        sayHello() {
+          this.message = 'Hello World';
+        },
+        showMessage(customMessage) {
+          this.message = customMessage;
+        }
+      }
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

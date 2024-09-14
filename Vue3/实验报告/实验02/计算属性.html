@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <span>{{ newStr }}</span>
+    <h2>购物车</h2>
+    <ul>
+      <li>{{ items[0].name }}：￥{{ items[0].price }}（数量：{{ items[0].quantity }}）</li>
+      <li>{{ items[1].name }}：￥{{ items[1].price }}（数量：{{ items[1].quantity }}）</li>
+      <li>{{ items[2].name }}：￥{{ items[2].price }}（数量：{{ items[2].quantity }}）</li>
+    </ul>
+    <h3>总价: ￥{{ totalPrice }}</h3>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          str: 'HTML*CSS*JavaScript*Vue.js',
+          items: [
+            { id: 1, name: '商品 A', price: 10, quantity: 2 },
+            { id: 2, name: '商品 B', price: 20, quantity: 1 },
+            { id: 3, name: '商品 C', price: 15, quantity: 3 }
+          ]
+        }
+      },
+      computed: {
+        newStr() {
+          return this.str.split('*').join('+')
+        },
+        totalPrice() {
+          return this.items.reduce((total, item) => total + item.price * item.quantity, 0);
+        }
+      }
+    });
+    app.mount('#app');
+  </script>
+</body>
+</html>
