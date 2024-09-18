@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>产品展示</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      color: #333;
+    }
+    .color-option {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      margin: 10px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: border 0.3s;
+    }
+    .selected {
+      /* 选中状态的样式 */
+      border: 2px solid black;
+    }
+    .size-option {
+      margin: 10px;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .highlight {
+      /* 高亮状态的样式 */
+      background-color: #007bff;
+      color: white;
+    }
+    .product-display {
+      width: 150px;
+      height: 150px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: background-color 0.3s;
+    }
+    .info {
+      margin-top: 15px;
+      font-size: 18px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>选择产品颜色</h2>
+    <div>
+      <div 
+        class="color-option" 
+        :class="{ selected: selectedColor === 'red' }" 
+        style="background-color: red;" 
+        @click="selectColor('red')"></div>
+      <div 
+        class="color-option" 
+        :class="{ selected: selectedColor === 'green' }" 
+        style="background-color: green;" 
+        @click="selectColor('green')"></div>
+      <div 
+        class="color-option" 
+        :class="{ selected: selectedColor === 'blue' }" 
+        style="background-color: blue;" 
+        @click="selectColor('blue')"></div>
+    </div>
+
+    <h2>选择产品尺寸</h2>
+    <div>
+      <span
+        class="size-option" 
+        :class="{ highlight: selectedSize === 'S' }" 
+        @click="selectSize('S')">S</span>
+      <span
+        class="size-option" 
+        :class="{ highlight: selectedSize === 'M' }" 
+        @click="selectSize('M')">M</span>
+      <span
+        class="size-option" 
+        :class="{ highlight: selectedSize === 'L' }" 
+        @click="selectSize('L')">L</span>
+    </div>
+
+    <h3>当前选择</h3>
+    <p class="info">颜色: {{ selectedColor }}</p>
+    <p class="info">尺寸: {{ selectedSize }}</p>
+
+    <div
+      class="product-display" 
+      :style="{ 
+        backgroundColor: selectedColor,
+        fontSize: selectedSize === 'S' ? '16px' : selectedSize === 'M' ? '20px' : '24px' 
+      }">
+      产品展示
+    </div>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          selectedColor: '',   // 存储选中的颜色
+          selectedSize: ''   // 存储选中的尺寸
+        }
+      },
+      methods: {
+        selectColor(color) {
+          this.selectedColor = color;   // 更新选中的颜色
+        },
+        selectSize(size) {
+          this.selectedSize = size;   // 更新选中的尺寸
+        }
+      },
+    })
+    app.mount("#app")
+  </script>
+</body>
+</html>

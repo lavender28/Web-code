@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .app {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input {
+      margin-bottom: 10px;
+      display: block;
+      padding: 5px;
+      width: 300px;
+    }
+    img {
+      border: 1px solid #ddd;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>使用 v-bind 实现动态属性绑定</h2>
+    <!-- 用户输入 URL -->
+    <div>
+      <label for="url">请输入链接地址：</label>
+      <input
+        id="url"
+        ref="urlInput"
+        placeholder="https://example.com"
+        @input="url = $event.target.value"
+      >
+    </div>
+    <!-- 绑定链接 -->
+    <div>
+      <p>动态生成的链接：{{ url }}</p>
+      <a :href="url" target="_blank">点击这里跳转到绑定的 URL</a>
+    </div>
+    <br>
+    <!-- 用户输入图片地址 -->
+    <div>
+      <label for="imgSrc">请输入图片地址：</label>
+      <input
+        id="imgSrc"
+        ref="imgInput"
+        placeholder="https://example.com/image.png"
+        @input="imageSrc = $event.target.value"
+      >
+    </div>
+    <!-- 绑定图片 -->
+    <div>
+      <p>动态生成的图片：</p>
+      <img :src="imageSrc" alt="动态绑定的图片" width="300">
+    </div>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          url: '',
+          imageSrc: '',
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>
