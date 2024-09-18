@@ -7,27 +7,14 @@
 </head>
 <body>
   <div id="app">
-    <!-- 1、v-if v-else的基本使用 -->
-    <h1 v-if="awesome">Vue is awesome！</h1>
-    <h1 v-else>Oh no!😅</h1>
+    <!-- 1.v-if、v-else的基本使用 -->
+    <!-- <div v-if="isLoggedIn">Welcome user!</div> -->
+    <!-- <div v-else>Please log in.</div> -->
 
-    <button @click="awesome=!awesome">Toggle</button>
-    <!-- 2、v-else-if的基本使用 -->
-    <div v-if="score >= 90">优秀</div>
-    <div v-else-if="score >= 80">良好</div>
-    <div v-else-if="score >= 70">中等</div>
-    <div v-else-if="score >= 60">及格</div>
-    <div v-else>不及格</div>
-    <!-- 3、template上的v-if -->
-    <template v-if="awesome">
-      <h2>哈哈哈哈</h2>
-      <h2>哈哈哈哈</h2>
-      <h2>哈哈哈哈</h2>
-    </template>
-    <!-- 4、条件渲染小案例 -->
+    <!-- 条件渲染小案例 -->
     <span v-if="isShow">
       <label>
-        用户名 
+        用户名
         <input type="text" placeholder="请输入用户名">
       </label>
     </span>
@@ -38,17 +25,34 @@
       </label>
     </span>
     <button @click="isShow = !isShow">切换类型</button>
-    <!-- v-show -->
-    <h2 v-if="isShow">哈哈哈哈</h2>
-    <h2 v-show="isShow">哈哈哈哈</h2>
-  </div>  
+
+    <!-- 2.v-else-if的基本使用 -->
+    <!-- <div v-if="score >= 90">优秀</div> -->
+    <!-- <div v-else-if="score >= 80">良好</div> -->
+    <!-- <div v-else-if="score >= 70">中等</div> -->
+    <!-- <div v-else-if="score >= 60">及格</div> -->
+    <!-- <div v-else>不及格</div> -->
+
+    <!-- 3.v-show -->
+    <!-- <div v-show="isLoggedIn">Welcome user!</div> -->
+
+    <!-- 4.template上的v-if -->
+    <template v-if="isLoggedIn">
+      <h2>Welcome back!</h2>
+      <p>You have 3 new messages.</p>
+    </template>
+    <template v-else>
+      <h2>Please log in.</h2>
+    </template>
+
+  </div>
   <script src="../js/vue.js"></script>
   <script>
     const app = Vue.createApp({
       data() {
         return {
-          awesome: true,
-          score: 89,
+          isLoggedIn: true,
+          score: 75,
           isShow: true
         }
       },
