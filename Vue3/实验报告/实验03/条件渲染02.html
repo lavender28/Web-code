@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <div v-if="isLoggedIn">
+      <h1>Welcome, User!</h1>
+      <button @click="toggleDetails">Toggle Details</button>
+      <!-- 用户详细信息显示控制 -->
+      <div v-show="showDetails">
+        <p>User details: You have 5 new messages.</p>
+      </div>
+    </div>
+    <div v-else>
+      <h1>Please log in.</h1>
+    </div>
+
+    <button @click="toggleLogin">{{ isLoggedIn ? 'Log out' : 'Log in' }}</button>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          isLoggedIn: false,
+          showDetails: false
+        }
+      },
+      methods: {
+        toggleLogin() {
+          this.isLoggedIn = !this.isLoggedIn;
+        },
+        toggleDetails() {
+          this.showDetails = !this.showDetails;
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>
