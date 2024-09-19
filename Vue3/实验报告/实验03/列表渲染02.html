@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+  }
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  li {
+    display: inline;
+    margin: 0 10px;
+  }
+  .active {
+    font-weight: bold;
+    color: red;
+  }
+</style>
+<body>
+  <div id="app">
+    <ul>
+      <li v-for="n in totalPages" :class="{ active: n === currentPage }">
+        <a href="#" @click.prevent="goToPage(n)">Page {{ n }}</a>
+      </li>
+    </ul>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          totalPages: 10, // 总页数
+          currentPage: 1  // 当前页码
+        }  
+      },
+      methods: {
+        goToPage(page) {
+          this.currentPage = page
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      font-family: 微软雅黑
+    }
+    .title {
+      background: #f6f6f6;
+      font-size: 18px;
+    }
+    .title, .content {
+      width: 510px;
+      height: 36px;
+      line-height: 36px;
+      border: 1px solid #dddddd;
+    }
+    .title div {
+      text-align: center;
+      float: left
+    }
+    .title .col-1, .content .col-1 {
+      width: 80px;
+    }
+    .title .col-2, .content .col-2 {
+      width: 270px;
+    }
+    .content {
+      clear: both
+    }
+    .content div {
+      text-align: center;
+      float: left
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="title">
+      <div class="col-1">序号</div>
+      <div class="col-1">省份</div>
+      <div class="col-1">城市</div>
+      <div class="col-2">旅游景点</div>
+    </div>
+    <!-- 通过使用 v-for 指令把定义的数据呈现出来 -->
+    <div class="content" v-for="(tourist, index) in touristList">
+      <div class="col-1">{{ index + 1 }}</div>
+      <div class="col-1">{{ tourist.province }}</div>
+      <div class="col-1">{{ tourist.city }}</div>
+      <div class="col-2">{{ tourist.spot }}</div>
+    </div>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          touristList : [
+            { province : '浙江省', city : '温州市', spot : '雁荡山 永嘉书院 江心屿' },
+            { province : '江苏省', city : '南京市', spot : '夫子庙 中山陵 总统府' },
+            { province : '福建省', city : '厦门市', spot : '厦门大学 鼓浪屿 曾厝垵' }]
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>
