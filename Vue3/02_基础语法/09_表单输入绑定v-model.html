@@ -7,72 +7,93 @@
 </head>
 <body>
   <div id="app">
-    <!-- 1、v-model 的基本使用 -->
-    <!-- <input :value="message" @input="inputChange"> -->
+    <!-- 1.v-model的基本使用 -->
     <!-- <h2>{{ message }}</h2> -->
+    <!-- <input :value="message" @input="event => message = event.target.value"> -->
+    <!-- <input :value="message" @input="inputChange"> -->
     <!-- <input v-model="message"> -->
-    <!-- 2、多行文本 -->
-    <!-- <label for="story">Tell us your story:</label> -->
-    <!-- <p>{{ story }}</p> -->
-    <!-- <textarea id="story" name="story" rows="5" cols="33" v-model="story"></textarea> -->
-    <!-- 3、复选框 -->
-    <!-- <input type="checkbox" id="checkbox" v-model="checked"> -->
-    <!-- <label for="checkbox">{{ checked }}</label> -->
-    <!-- 多选 -->
-    <!-- <fieldset>
-      <legend>选择你的兴趣:{{ interests }}</legend>
-      <div>
-        <input type="checkbox" id="coding" value="coding" v-model="interests">
-        <label for="coding">编码</label>
-      </div>
-      <div>
-        <input type="checkbox" id="music" value="music" v-model="interests">
-        <label for="music">音乐</label>
-      </div>
-      <div>
-        <input type="checkbox" id="movie" value="movie" v-model="interests">
-        <label for="movie">电影</label>
-      </div>
-    </fieldset> -->
-    <!-- 4、单选按钮 -->
-    <!-- <fieldset>
-      <legend>请选择首选的联系方式：{{ contact }}</legend>
-      <input type="radio" id="choice1" value="email" v-model="contact">
-      <label for="choice1">电子邮件</label>
 
-      <input type="radio" id="choice2" value="phone" v-model="contact">
-      <label for="choice2">电话</label>
+    <!-- 2.多行文本 -->
+    <!-- <label for="feedback">请留下您的反馈:</label> -->
+    <!-- <textarea id="feedback" rows="5" cols="33" v-model="feedback"></textarea> -->
+    <!-- <p>您的反馈：{{ feedback }}</p>
 
-      <input type="radio" id="choice3" value="wechat" v-model="contact">
-      <label for="choice3">微信</label>
+    <!-- 3.复选框 -->
+    <!-- 单选框 -->
+    <!-- <label>
+      <input type="checkbox" v-model="isSubscribed">
+      订阅新闻通讯
+    </label>
+    <p>您{{isSubscribed ? "已" : "未"}}订阅新闻通讯。</p> -->
+
+    <!-- 多选框 -->
+    <!-- <fieldset>
+      <legend>选择您的技能：</legend>
+      <div>
+        <input type="checkbox" id="html" value="HTML" v-model="skills">
+        <label for="html">HTML</label>
+      </div>
+      <div>
+        <input type="checkbox" id="css" value="CSS" v-model="skills">
+        <label for="css">CSS</label>
+      </div>
+      <div>
+        <input type="checkbox" id="javascript" value="JavaScript" v-model="skills">
+        <label for="javascript">JavaScript</label>
+      </div>
+      <div>
+        <input type="checkbox" id="vue" value="Vue" v-model="skills">
+        <label for="vue">Vue</label>
+      </div>
+    </fieldset>
+    <p>您选择的技能：{{ skills.join(', ') }}</p> -->
+
+    <!-- 4.单选按钮 -->
+    <!-- <fieldset>
+      <legend>请选择首选的练习方式：{{ contact }}</legend>
+      <input type="radio" id="email" value="Email" v-model="contact">
+      <label for="email">电子邮箱</label>
+
+      <input type="radio" id="phone" value="Telephone" v-model="contact">
+      <label for="phone">电话</label>
+
+      <input type="radio" id="wechat" value="WeChat" v-model="contact">
+      <label for="wechat">微信</label>
     </fieldset> -->
-    <!-- 5、选择器 -->
-    <!-- <div>Selected: {{ selected }}</div>
-    <select v-model="selected">
-      <option disabled value="">Please select one</option>
-      <option value="a">A</option>
-      <option value="b">B</option>
-      <option value="c">C</option>
+
+    <!-- 5.选择器 -->
+    <!-- <div>选择的国家：{{ country }}</div>
+    <select v-model="country">
+      <option disabled value="">请选择国家</option>
+      <option value="china">中国</option>
+      <option value="usa">美国</option>
+      <option value="uk">英国</option>
+      <option value="germany">德国</option>
     </select> -->
+
     <!-- v-for 动态渲染 -->
-    <!-- <div>Selected: {{ selected }}</div>
-    <select v-model="selected">
-      <option disabled value="">Please select one</option>
+    <div>选择的国家: {{ country }}</div>
+    <select v-model="country">
+      <option disabled value="">请选择国家</option>
       <option v-for="option in options" :value="option.value">
         {{ option.text }}
       </option>
-    </select> -->
-    <!-- 6、修饰符 -->
-    <!-- <h2>{{ message }}</h2> -->
-    <!-- <input v-model.lazy="message"> -->
+    </select>
+  
+    <!-- 6.修饰符 -->
+    <!-- 使用 .lazy 修饰符 -->
+    <!-- <h2>惰性输入：{{ message }}</h2> -->
+    <!-- <input v-model.lazy="message" placeholder="请输入后点击其他地方"> -->
 
+    <!-- 使用 .number 修饰符 -->
     <!-- <h2>{{ age }}</h2> -->
-    <!-- <input v-model.number="age"> -->
+    <!-- <input v-model.number="age" placeholder="请输入您的年龄"> -->
     <!-- <button @click="showType">查看类型</button> -->
     
-    <h2>{{ message }}</h2>
-    <input v-model.trim="message">
-    <button @click="showResult">查看结果</button>
+    <!-- 使用 .trim 修饰符 -->
+    <!-- <h2>修剪后的消息：{{ message }}</h2> -->
+    <!-- <input v-model.trim="message" placeholder="请输入消息"> -->
+    <!-- <button @click="showResult">查看结果</button> -->
   </div>
   <script src="../js/vue.js"></script>
   <script>
@@ -80,15 +101,16 @@
       data() {
         return {
           message: '',
-          story: 'It was a dark and stormy night...',
-          checked: false,
-          interests: [],
+          feedback: '',
+          isSubscribed: false,
+          skills: [],
           contact: '',
-          selected: '',
+          country: '',
           options: [
-            {text: 'A', value: 'a'},
-            {text: 'B', value: 'b'},
-            {text: 'C', value: 'c'},
+            {text: '中国', value: 'china'},
+            {text: '美国', value: 'usa'},
+            {text: '英国', value: 'uk'},
+            {text: '德国', value: 'germany'}
           ],
           age: 18
         }
