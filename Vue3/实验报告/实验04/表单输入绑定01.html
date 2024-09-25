@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    div {
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <fieldset>
+      <legend>用户信息管理</legend>
+      <!-- 姓名输入 -->
+      <div>
+        <label for="name">姓名：</label>
+        <input id="name" v-model="user.name" type="text" placeholder="请输入姓名">
+        <span v-if="!isNameValid">姓名不能为空</span>
+      </div>
+
+      <!-- 简介输入 -->
+      <div>
+        <label for="intro">简介：</label>
+        <textarea id="intro" v-model="user.intro" placeholder="请输入个人简介"></textarea>
+      </div>
+
+      <!-- 性别选择 -->
+      <div>
+        <span>性别:</span>
+        <label>
+          <input type="radio" value="男" v-model="user.gender"> 男
+        </label>
+        <label>
+          <input type="radio" value="女" v-model="user.gender"> 女
+        </label>
+      </div>
+
+      <!-- 兴趣爱好选择 -->
+      <div>
+        <span>兴趣爱好:</span>
+        <label>
+          <input type="checkbox" value="编程" v-model="user.hobbies"> 编程
+        </label>
+        <label>
+          <input type="checkbox" value="运动" v-model="user.hobbies"> 运动
+        </label>
+        <label>
+          <input type="checkbox" value="音乐" v-model="user.hobbies"> 音乐
+        </label>
+        <p>
+          <button @click="allChecked">全选</button>
+          <button @click="noChecked">全不选</button>
+        </p>
+      </div>
+
+      <!-- 部门选择 -->
+      <div>
+        <span>选择部门:</span>
+        <select v-model="user.department">
+          <option value="" disabled>请选择部门</option>
+          <option value="开发部">开发部</option>
+          <option value="市场部">市场部</option>
+          <option value="人事部">人事部</option>
+        </select>
+      </div>
+
+      <!-- 年龄输入 -->
+      <div>
+        <label for="age">年龄:</label>
+        <input v-model.number="user.age" type="number" min="18" placeholder="请输入年龄">
+        <span v-if="!isAgeValid">请输入有效的年龄（18岁及以上）</span>
+      </div>
+
+      <!-- 提交按钮 -->
+      <button @click="submitForm" :disabled="!isFormValid">提交信息</button>
+    </fieldset>
+    
+    <!-- 实时显示的用户信息摘要 -->
+    <fieldset>
+      <legend>用户信息摘要</legend>
+      <p><strong>姓名:</strong>{{ user.name }}</p>
+      <p><strong>简介:</strong>{{ user.intro }}</p>
+      <p><strong>性别:</strong>{{ user.gender }}</p>
+      <p><strong>兴趣爱好:</strong>{{ user.hobbies.join(', ') }}</p>
+      <p><strong>部门:</strong>{{ user.department }}</p>
+      <p><strong>年龄:</strong>{{ user.age }}</p>
+    </fieldset>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          user: {
+            name: '',
+            intro: '',
+            gender: '',
+            hobbies: [],
+            department: '',
+            age: null
+          }
+        }
+      },
+      computed: {
+        isNameValid() {
+          return this.user.name.length > 0;
+        },
+        isAgeValid() {
+          return this.user.age >= 18;
+        },
+        isFormValid() {
+          return this.isNameValid && this.isAgeValid && this.user.department && this.user.gender;
+        }
+      },
+      methods: {
+        allChecked() {
+          this.user.hobbies = ['编程', '运动', '音乐']
+        },
+        noChecked() {
+          this.user.hobbies = []
+        },
+        submitForm() {
+          alert('表单已提交');
+          console.log('用户信息:', this.user)
+        }
+      },
+    })
+    app.mount("#app")
+  </script>
+</body>
+</html>

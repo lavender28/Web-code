@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <h2>文章列表</h2>
+    <ul>
+      <li v-for="article in articles" :key="article.id">{{ article.title }}</li>
+    </ul>
+    <!-- 分页按钮 -->
+    <button @click="currentPage--" :disabled="currentPage === 1">上一页</button>
+    <button @click="currentPage++" :disabled="currentPage === totalPages">下一页</button>
+    <p>当前页: {{ currentPage }} / {{ totalPages }}</p>
+    <!-- 加载状态 -->
+    <p v-show="loading">正在加载文章...</p>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          articles: [],
+          currentPage: 1,   // 当前页码
+          totalPages: 0,   // 总页数
+          loading: false
+        }
+      },
+      watch: {
+        currentPage: {
+          handler(newPage) {
+            this.fetchArticles(newPage)
+          },
+          immediate: true
+        },
+      },
+      methods: {
+        // 模拟获取文章数据
+        async fetchArticles(page) {
+          this.loading = true; // 开启加载状态
+          console.log(`请求地址: https://api.example.com/articles?page=${page}`); // 打印请求地址
+          
+          // 模拟延迟和生成假数据
+          await new Promise(resolve => setTimeout(resolve, 1000)); // 模拟网络延迟
+
+          // 生成假数据
+          const totalArticles = 25; // 假设总共有25篇文章
+          const articlesPerPage = 5; // 每页显示5篇文章
+          this.totalPages = Math.ceil(totalArticles / articlesPerPage); // 计算总页数
+          // 生成当前页的文章数据
+          this.articles = Array.from({ length: articlesPerPage }, (_, index) => ({
+            id: (page - 1) * articlesPerPage + index + 1,
+            title: `文章标题 ${(page - 1) * articlesPerPage + index + 1}`
+          }));
+
+          this.loading = false; // 关闭加载状态
+        }
+      }
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

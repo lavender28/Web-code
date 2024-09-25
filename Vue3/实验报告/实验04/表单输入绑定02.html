@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <h2>外卖点餐</h2>
+    <div v-for="dish in menu" :key="dish.id">
+      <label>
+        <input type="checkbox" v-model="dish.selected"> {{ dish.name }} - ¥{{ dish.price }}
+      </label>
+      <input v-if="dish.selected" type="number" v-model.number="dish.quantity" min="1">
+    </div>
+    <h3>总价: ¥{{ total }}</h3>
+    <button @click="submitOrder">提交订单</button>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          menu: [
+            { id: 1, name: '鸡肉饭', price: 15, selected: false, quantity: 1 },
+            { id: 2, name: '牛肉面', price: 20, selected: false, quantity: 1 },
+            { id: 3, name: '蔬菜沙拉', price: 12, selected: false, quantity: 1 }
+          ]
+        }
+      },
+      computed: {
+        // 计算总结
+        total() {
+          return this.menu.reduce((sum, dish) => {
+            return sum + (dish.selected ? dish.price * dish.quantity : 0);
+          }, 0);
+        }
+      },
+      methods: {
+        // 提交订单
+        submitOrder() {
+          const order = this.menu.filter(dish => dish.selected).map(dish => ({
+            name: dish.name,
+            quantity: dish.quantity
+          }));
+          // 输出订单详情和总价
+          console.log('提交订单:', order, '总价:', this.total);
+          alert('订单已提交！');
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>
