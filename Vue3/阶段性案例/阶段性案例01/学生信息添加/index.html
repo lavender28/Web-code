@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>学生信息添加</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <div id="app">
+    <div class="infoAdd">
+      <h2>学生信息添加</h2>
+      <label for="number">
+        学号:
+        <input type="text" id="number" v-model.tirm="sId">
+      </label>
+      <label for="username">
+        姓名:
+        <input type="text" id="username" v-model.trim="sName">
+      </label>
+      <label for="major">
+        专业：
+        <select id="major" v-model="sClass">
+          <option disabled value="">请选择专业</option>
+          <option v-for="item in sClasses" :value="item">{{ item }}</option>
+        </select>
+      </label>
+      <button @click="add()">添加</button>
+      <label for="search">
+        搜索姓名关键字:
+        <input type="text" id="search" v-model.lazy="sKeyWord">
+      </label>
+    </div>
+    <div class="infoDes">
+      <table>
+        <thead>
+          <tr>
+            <th>学号</th>
+            <th>姓名</th>
+            <th>专业</th>
+            <th>入学时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item, index in result" :key="item.id">
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.class }}</td>
+            <td>{{ formatDate(item.sTime) }}</td>
+            <td>
+              <button @click="remove(index)">移除</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="../../../js/vue.js"></script>
+  <script src="./main.js"></script>
+</body>
+
+</html>
