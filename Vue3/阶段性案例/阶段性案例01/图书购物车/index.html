@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图书购物车</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <div id="app">
+    <!-- v-if 判断购物车时候为空 -->
+    <template v-if="books.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>书籍名称</th>
+            <th>出版日期</th>
+            <th>价格</th>
+            <th>购买数量</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- v-for 遍历书籍信息 -->
+          <tr v-for="(book, index) in books">
+            <td>{{ index + 1 }}</td>
+            <td>{{ book.name }}</td>
+            <td>{{ book.pubDate }}</td>
+            <td>{{ formattedPrice(book.price) }}</td>
+            <td>
+              <button :disabled="book.count<=1" @click="decrement(index)">-</button>
+              {{ book.count }}
+              <button @click="increment(index)">+</button>
+            </td>
+            <td><button @click="removeBook(index)">移除</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>总价格： {{ formattedPrice(totalPrice) }}</h2>
+    </template>
+    <template v-else>
+      <h2>购物车为空</h2>
+    </template>
+  </div>
+
+  <!-- 根据自己 vue 文件位置引入 -->
+  <script src="../../../js/vue.js"></script>
+  <!-- 在 main.js 文件中实现数据定义和逻辑代码 -->
+  <script src="./main.js"></script>
+</body>
+
+</html>

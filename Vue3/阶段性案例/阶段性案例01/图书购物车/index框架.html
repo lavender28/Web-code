@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图书购物车</title>
+  <!-- 引入CSS文件 通过 link 标签-->
+  
+</head>
+
+<body>
+  <div id="app">
+    <!-- v-if 判断购物车是否为空 -->
+    <template>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- v-for 遍历书籍信息 -->
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              <!-- 定义减少方法，当数量为1时间灰显 -->
+              <button >-</button>
+              
+              <!-- 定义增加方法 -->
+              <button>+</button>
+            </td>
+  
+            <!-- 定义移除方法 -->
+            <td><button>移除</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- 定义计算属性，计算总价格 -->
+      <h2></h2>
+    </template>
+    <template v-else>
+      <h2>购物车为空</h2>
+    </template>
+  </div>
+
+  <!-- 根据自己 vue 文件位置引入 -->
+  <script src="../../../js/vue.js"></script>
+  <!-- 在 main.js 文件中实现数据定义和逻辑代码，并引入，也可以直接编写 -->
+  <script src="./main.js"></script>
+</body>
+
+</html>
