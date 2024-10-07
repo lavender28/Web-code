@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>评分系统</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+    <h1>评分系统</h1>
+    <div>
+      <span 
+        v-for="star in 5"
+        class="star"
+        :class="{ filled: star <= currentRating }" 
+        @click="rate(star)">
+        ★
+      </span>
+    </div>
+    <p>您的评分: {{ currentRating }} 星</p>
+
+    <div class="comment-box">
+      <textarea v-model="comment" placeholder="请输入您的评语..."></textarea>
+      <button @click="submitRating">提交评分</button>
+      <button class="reset-button" @click="resetRating" v-if="submitted">重新评分</button>
+    </div>
+
+    <div v-if="submitted" class="feedback">
+      <h2>感谢您的评分!</h2>
+      <p>您的评语: {{ submittedComment }}</p>
+      <p>您的评分: {{ totalRating }} 星</p>
+    </div>
+
+    <div class="history" v-if="ratings.length > 0">
+      <h3>评分历史</h3>
+      <div v-for="rating in ratings" class="history-item">
+        <p>评分: {{ rating.stars }} 星</p>
+        <p>评语: {{ rating.comment }}</p>
+      </div>
+    </div>
+  </div>
+
+ <script src="../../../js/vue.js"></script>
+ <script src="./main.js"></script>
+</body>
+</html>
