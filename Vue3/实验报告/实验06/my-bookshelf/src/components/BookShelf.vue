@@ -17,15 +17,20 @@ const newBook = reactive({
 
 const addBook = () => {
   if (newBook.title && newBook.author && newBook.pages) {
+    // 计算下一个唯一id
+    // 使用 Math.max() 函数来找到当前书籍中最大的 id，
+    // 然后加 1 生成下一个唯一的 id。如果书籍数组为空，则将 id 设置为 1
+    const nextId = books.value.length ? Math.max(...books.value.map(book => book.id)) + 1 : 1;
     books.value.push({
-      id: books.value.length + 1,
+      id: nextId,
       ...newBook
     });
     newBook.title = '';
     newBook.author = '';
     newBook.pages = null;
-  }
-}
+  };
+  console.log(books)
+};
 // 新增：用于存储选中的书籍
 const selectedBook = ref(null)
 
