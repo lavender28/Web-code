@@ -1,13 +1,16 @@
 <template>
   <div>
-    About组件
+    <Button></Button>
   </div>
 </template>
 
 <script>
+import Button from './Button.vue';
 
 export default {
-  name: "About"
+  components: {
+    Button
+  }
 }
 </script>
 
