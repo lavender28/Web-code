@@ -1,0 +1,6 @@
+[
+  { "id": 1, "goods_id": 10,  "picture": "/src/assets/images/goods/album/apple1.jpg" },
+  { "id": 2, "goods_id": 10, "picture": "/src/assets/images/goods/album/apple2.jpg" },
+  { "id": 3, "goods_id": 5, "picture": "/src/assets/images/goods/spinach.png" },
+  { "id": 4, "goods_id": 5, "picture": "/src/assets/images/goods/spinach.png" }
+]
