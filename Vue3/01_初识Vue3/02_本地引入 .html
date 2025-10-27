@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Vue 3 本地导入示例</title>
 </head>
 <body>
-  <div id="app"></div>
-  <template id="my-app">
-    <h2>Hello World!</h2>
-  </template>
-  <!-- 本地引入 vue -->
+  <div id="app">{{message}}</div>
   <script src="../js/vue.js"></script>
   <script>
-    Vue.createApp({
-      template: '#my-app'
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          message: 'Helle Vue 3 本地导入!'
+        }
+      }
     }).mount('#app')
   </script>
 </body>

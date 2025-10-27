@@ -3,32 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>简单计数器 - Vue3 实现</title>
 </head>
 <body>
   <div id="app">
-    <h2>当前计数：{{ counter }}</h2>
+    <h1>计数器</h1>
+    <h2>{{ count }}</h2>
     <button @click="inc">+1</button>
     <button @click="dec">-1</button>
   </div>
+
   <script src="../js/vue.js"></script>
   <script>
-    const app = Vue.createApp({
+    const { createApp } = Vue;
+
+    createApp({
       data() {
         return {
-          counter: 0
+          count: 0
         }
       },
       methods: {
         inc() {
-          this.counter++
+          this.count++
         },
         dec() {
-          this.counter--
+          this.count--
         }
-      }
-    })
-    app.mount('#app')
+      },
+    }).mount('#app')
   </script>
 </body>
 </html>

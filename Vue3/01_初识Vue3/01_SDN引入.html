@@ -3,22 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Vue 3 CDN 示例</title>
 </head>
 <body>
-  <div id="app"></div>
-  <!-- cdn方式引入vue -->
+  <div id="app">{{message}}</div>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script>
+    // 创建Vue应用实例
     const app = Vue.createApp({
-      template: `<h2>{{msg}}</h2>`,
       data() {
         return {
-          msg: 'Hello World'
+          message: 'Hello Vue3!'
         }
-      },
+      }
     })
-    // 将app挂载到id为app的div上
+    // 挂载Vue应用实例到DOM元素
     app.mount('#app')
   </script>
 </body>
