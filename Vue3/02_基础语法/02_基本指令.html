@@ -7,32 +7,30 @@
 </head>
 <body>
   <div id="app">
-    <!-- v-html -->
-    <p>{{ htmlContent }}</p>
     <p v-html="htmlContent"></p>
-    <!-- v-text -->
-    <h1 v-text="title"></h1>
-    <!-- v-once -->
-    <h1 v-once>{{ description }}</h1>
-    <button @click="changeDes">更改描述</button>
+    <p v-text="welcomeMessage"></p>
+
+    <p v-once>首次渲染时间：{{ time }}</p>
+    <button @click="updateTime">更新时间</button>
+    <p>当前时间：{{ time }}</p>
   </div>
-  <script src="../js/vue.js"></script>
+  <script src="../../js/vue.js"></script>
   <script>
     const app = Vue.createApp({
       data() {
         return {
-          htmlContent: '<span style="color: red">This is red!</span>',
-          title: '这是一个 v-text 指令',
-          description: '这是一个 v-once 示例'
+          htmlContent: '<strong style="color:blue">Vue3 实现富文本展示！</strong>',
+          welcomeMessage: '欢迎学习 Vue 3 基础指令！',
+          time: new Date().toLocaleString()
         }
       },
       methods: {
-        changeDes() {
-          this.description = '描述已更改！'
+        updateTime() {
+          this.time = new Date().toLocaleString()
         }
       }
     })
-    app.mount("#app")
+    app.mount('#app')
   </script>
 </body>
 </html>

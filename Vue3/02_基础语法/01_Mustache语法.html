@@ -3,17 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Mustache 语法</title>
 </head>
 <body>
   <div id="app">
-    <!-- Mustache 语法基本使用 -->
-    <h2>{{ message }}</h2>
-    <!-- 使用 JavaScript 表达式 -->
-    <p>{{ number + 1 }}</p>
-    <p>{{ isTrue ? 'Yes' : 'No'}}</p>
-    <p>{{ message.split(',').reverse().join('-') }}</p>
-    <!-- 下面例子无效 -->
+    <h2>欢迎学习 {{ courseName }}</h2>
+    <p>当前时间：{{ currentTime }}</p>
+    <p>{{ greeying }}</p>
+    <p>学分：{{ credits + 1 }}</p>
+    <p>难度等级：{{ level > 3 ? '进阶课程' : '基础课程' }}</p>
+
     <!-- 这是一个语句，不是表达式 -->
     <!-- <p>{{ var a = 1 }}</p> -->
     <!-- 条件判断语句，可使用三元表达式 -->
@@ -25,18 +24,15 @@
     const app = Vue.createApp({
       data() {
         return {
-          message: 'Hello, Vue.js!',
-          number: 10,
-          isTrue: false
+          courseName: 'Web前端框架应用',
+          currentTime: new Date().toLocaleString(),
+          greeying: '祝你们学习愉快！',
+          credits: 3,
+          level: 4
         }
-      },
-      methods: {
-        toggle() {
-          this.ok = !this.ok
-        }
-      },
+      }
     })
-    app.mount("#app")
+    app.mount('#app')
   </script>
 </body>
 </html>

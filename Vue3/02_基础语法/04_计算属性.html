@@ -8,7 +8,7 @@
 <body>
   <div id="app">
     <!-- 1.计算属性的基本使用-->
-    <!-- <p>Full Name: {{ fullName }}</p> -->
+    <!-- <p>全名: {{ fullName }}</p> -->
 
     <!-- 2.计算属性缓存 vs 方法 -->
     <!-- <p>{{ getFullName() }}</p> -->
@@ -19,16 +19,16 @@
     <!-- <p>{{ fullName }}</p> -->
   
     <!-- 3.计算属性 setter 和 getter -->
-    <p>{{ fullName }}</p>
-    <button @click="changeFullName()">改变名字</button>
+    <!-- <p>{{ fullName }}</p> -->
+    <!-- <button @click="changeFullName()">改变名字</button> -->
   </div>
   <script src="../js/vue.js"></script>
   <script>
     const app = Vue.createApp({
       data() {
         return {
-          firstName: 'zhang',
-          lastName: 'san'
+          firstName: '张',
+          lastName: '三'
         }
       },
       methods: {
@@ -41,18 +41,18 @@
         }
       },
       computed: {
-        // fullName() {
-        //   console.log('Computed fullName called');
-        //   return this.firstName + ' ' + this.lastName
-        // },
-        fullName: {
-          get() {
-            return this.firstName + this.lastName
-          },
-          set(newValue) {
-            [this.firstName, this.lastName] = newValue.split(' ')
-          }
-        }
+        fullName() {
+          console.log('computed被执行');
+          return this.firstName + this.lastName
+        },
+        // fullName: {
+        //   get() {
+        //     return this.firstName + this.lastName
+        //   },
+        //   set(newValue) {
+        //     [this.firstName, this.lastName] = newValue.split(' ')
+        //   }
+        // }
       }
     })
     app.mount("#app")

@@ -14,7 +14,7 @@
 </head>
 <body>
   <div id="app">
-    <h2>{{ counter }}</h2>
+    <!-- <h2>{{ counter }}</h2> -->
     <!-- 1.内联事件处理器 -->
     <!-- 完整写法 -->
     <!-- <button v-on:click="counter++">click me</button> -->
@@ -40,19 +40,26 @@
 
     <!-- 传入自定义参数 同时 访问原生 DOM 事件 -->
     <!-- <button @click="warn('Form cannot be submitted yet.', $event)">Submit</button> -->
+    <!-- 使用内联箭头函数 -->
+    <!-- <button @click="(event)=>warn('Form cannot be submitted yet.', event)">Submit</button> -->
 
     <!-- 4.事件修饰符 -->
-    <!-- <div @click="divClick"> -->
-      <!-- <button @click="btnClick">button</button> -->
-      <!-- .stop 阻止事件冒泡 -->
-      <!-- <button @click.stop="btnClick">button</button> -->
+    <!-- .stop 阻止事件冒泡 -->
+    <!-- <div @click="outerClick" style="padding:10px; border:2px solid gray; width:500px;"> -->
+      <!-- 外层区域（点击此区域会触发 outerClick） -->
+      <!-- <button @click.stop="innerClick">内层按钮（.stop 阻止冒泡）</button> -->
     <!-- </div> -->
+    <!-- <p>{{ message }}</p> -->
+
+    <!-- .prevent 阻止默认行为  -->
+    <!-- <a href="https://cn.vuejs.org/" @click.prevent="showMore">跳转链接</a> -->
+
+    <!-- .once 事件只触发一次 -->
+    <!-- <button @click.once="inc">点我加1（只能点一次）</button> -->
 
     <!-- 5.按键修饰符 .enter -->
-    <!-- <input type="text" @keyup="submit"> -->
-    <!-- <input type="text" @keyup.enter="submit"> -->
-    
-
+    <!-- <input type="text" @keyup="input"> -->
+    <!-- <input type="text" @keyup.enter="input"> -->
   </div>
   <script src="../js/vue.js"></script>
   <script>
@@ -60,7 +67,8 @@
       data() {
         return {
           counter: 0,
-          name: 'Vue.js'
+          name: 'Vue.js',
+          message: ''
         }
       },
       methods: {
@@ -70,15 +78,6 @@
         },
         mouseMove() {
           console.log('mouseMove被执行');
-        },
-        divClick() {
-          console.log('divClick被执行')
-        },
-        btnClick() {
-          console.log('btnClick被执行')
-        },
-        submit() {
-          console.log('submit被执行')
         },
         greet(event) {
           console.log(event);
@@ -93,6 +92,20 @@
         warn(message, event) {
           console.log(message, event)
           console.log(event.target)
+        },
+        outerClick() {
+          this.message = '外层区域被点击！'
+          console.log('outerClick 被执行');
+        },
+        innerClick() {
+          this.message = '内层按钮被点击！'
+          console.log('innerClick 被执行');
+        },
+        showMore() {
+          alert('跳转被阻止，更多内容敬请期待！')
+        },
+        input() {
+          console.log('输入框内容变化了！');
         }
       },
     })
