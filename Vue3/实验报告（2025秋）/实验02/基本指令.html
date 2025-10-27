@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <h2 v-once>页面初始化时间：{{ time }}</h2>
+    <p v-text="welcome"></p>
+    <p v-html="htmlContent"></p>
+    <button @click="updateTime">更新时间</button>
+    <p>当前时间：{{ time }}</p>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          welcome: '欢迎来到 Vue3 指令学习课堂！',
+          htmlContent: '<span style="color:blue;font-weight:bold;">v-html 实现富文本渲染</span>',
+          time: new Date().toLocaleString(),
+        }
+      },
+      methods: {
+        updateTime() {
+          this.time = new Date().toLocaleString()
+        }
+      }
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

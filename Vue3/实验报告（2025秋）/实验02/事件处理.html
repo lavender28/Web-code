@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <!-- <button @click="showAlert">点击我</button> -->
+    
+    <!-- <p>课程名称：{{ courseName }}</p> -->
+    <!-- <button @click="showCourse">显示课程</button> -->
+    <!-- <p>课程性质：{{ courseType }}</p> -->
+
+    <!-- <h3>当前计数：{{ counter }}</h3> -->
+    <!-- <button @click="add(1)"> +1 </button> -->
+    <!-- <button @click="add(5)"> +5 </button> -->
+    <!-- <button @click="add(10)"> +10 </button> -->
+
+    <!-- <h3>按钮点击反馈</h3> -->
+    <!-- <button @click="showClickInfo($event)">按钮 A</button> -->
+    <!-- <button @click="showClickInfo($event)">按钮 B</button> -->
+    <!-- <button @click="showClickInfo($event)">按钮 C</button> -->
+    <!-- <p>{{ message }}</p> -->
+
+    <!-- .once：只触发一次 -->
+    <!-- <button @click.once="getReward">领取奖励</button> -->
+    <!-- <br> -->
+    <!-- <br> -->
+    <!-- .prevent：阻止默认跳转 -->
+    <a href="https://vuejs.org" @click.prevent="showMore">查看更多</a>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          counter: 0,
+          courseName: 'Web前端框架应用',
+          courseType: '',
+          message: '请点击任意一个按钮'
+        }
+      },
+      methods: {
+        showAlert() {
+          alert('欢迎学习 Vue3！')
+        },
+        showCourse() {
+          this.courseType = '专业选修课'
+        },
+        add(num) {
+          this.counter += num
+        },
+        showClickInfo(event) {
+          // 通过事件对象获取被点击按钮的文字内容
+          const btnText = event.target.innerText
+          this.message = `你点击了 "${btnText}"`
+        },
+        getReward() {
+          alert('奖励领取成功！')
+        },
+        showMore() {
+          alert('跳转被阻止，更多内容敬请期待！')
+        }
+      }
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

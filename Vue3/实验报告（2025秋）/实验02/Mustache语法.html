@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <h2>{{ '你好，' + name + '！欢迎来到 ' + school + '。' }}</h2>
+    <p>专业：{{ major }}</p>
+    <p>出生年份：{{ birthYear }}</p>
+    <p>年龄：{{ currentYear - birthYear }}</p>
+    <p>课程类型：{{ credits >= 3 ? '核心课程' : '选修课程' }}</p>
+  </div>
+  <script src="../../js/vue.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          name: '金小明',
+          school: '温州商学院',
+          major: '计算机科学与技术',
+          birthYear: 2002,
+          currentYear: new Date().getFullYear(),
+          credits: 3
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>
