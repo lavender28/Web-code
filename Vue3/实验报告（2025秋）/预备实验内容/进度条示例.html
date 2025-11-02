@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>进度条示例：可拖动进度条（简化版，界面动态显示进度宽度）
+         目的：用内联样式动态控制进度条宽度（width）和颜色（backgroundColor）
+  </title>
+
+  <style>
+    .progress-bar-inner { height: 20px; transition: width 0.3s ease, background-color 0.3s ease; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <h3>进度条示例（动态内联样式）</h3>
+
+  <label>完成百分比：<input type="number" v-model.number="percent" min="0" max="100"></label>
+  <p>当前进度：{{ percent }}%</p>
+
+  <div class="progress-bar-outer" style="width: 300px; border: 1px solid #ddd; padding:2px;">
+    <!-- 使用对象语法：width 与 backgroundColor 动态绑定 -->
+    <div class="progress-bar-inner"
+         :style="progressStyle">
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script>
+const app = Vue.createApp({
+  data() {
+    return { percent: 30 } // 控制进度（0 - 100）
+  },
+  computed: {
+    // 把样式逻辑放在 computed，模板更简洁
+    progressStyle() {
+      // 宽度必须带单位 px 或 %
+      const width = Math.max(0, Math.min(100, this.percent)) + '%' // 限定 0-100
+      // 根据百分比选择颜色（简单规则）
+      let bg = '#60a5fa' // 默认蓝
+      if (this.percent >= 80) bg = '#10b981' // 绿色
+      else if (this.percent >= 50) bg = '#f59e0b' // 橙色
+      else if (this.percent < 25) bg = '#ef4444' // 红色
+      return {
+        width: width,
+        backgroundColor: bg
+      }
+    }
+  }
+})
+app.mount('#app')
+</script>
+</body>
+</html>
+
+
