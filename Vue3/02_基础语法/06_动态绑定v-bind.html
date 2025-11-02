@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>动态绑定</title>
   <style>
     .active {
       color: red;
@@ -13,56 +13,55 @@
 <body>
   <div id="app">
     <!-- 1.v-bind的基本用法-->
-    <!-- <a v-bind:href="url">Visit Vue.js</a> -->
+    <!-- <a v-bind:href="url">访问 Vue 官网</a> -->
     <!-- 简写 ： -->
-    <!-- <a :href="url">Visit Vue.js</a> -->
+    <!-- <a :href="url">访问 Vue 官网</a> -->
 
     <!-- 动态绑定多个属性 -->
-    <!-- <img :src="imageSrc" :alt="imageAlt"> -->
-    <!-- <img v-bind="{src: imageSrc, alt: imageAlt}"> -->
+    <!-- <h2>{{ title }}</h2> -->
+    <!-- <img :src="imageUrl" :alt="title"> -->
+    <!-- 也可以写成一下形式 -->
+    <!-- <img v-bind="{src: imageUrl, alt: title}"> -->
+    <!-- <button @click="changeImage">切换图片</button> -->
 
-    <!-- 动态参数[] -->
+    <!-- 动态参数 -->
     <!-- <a v-bind:[attributename]="url"> ... </a> -->
     <!-- 简写 -->
     <!-- <a :[attributename]="url"> ... </a> -->
 
     <!-- 2.绑定 HTML Class -->
     <!-- 2.1 对象语法 -->
-    <!-- <div :class="{active: isActive}">你好啊</div> -->
+    <!-- <div :class="{ active: isActive }">这是文本</div> -->
 
     <!-- 多个字段，与普通class共存 -->
     <!-- <div
       class="static"
       :class="{active: isActive, 'text-danger': hasError}"
-    >你好啊</div> -->
+    >这是文本</div> -->
 
     <!-- 直接绑定对象形式 -->
-    <!-- <div class="static" :class="classObject">你好啊</div> -->
+    <!-- <div class="static" :class="classObject">这是文本</div> -->
 
     <!-- 计算属性的方式返回 -->
-    <!-- <div class="static" :class="classObj">你好啊</div> -->
+    <!-- <div class="static" :class="classObj">这是文本</div> -->
 
     <!-- 2.2 数组语法 -->
-    <!-- <div :class="['classA', 'classB']">你好啊</div> -->
-
-    <!-- 动态数组 -->
-    <!-- <div :class="[activeClass, errorClass]">你好啊</div> -->
+    <!-- <div :class="['active', errorClass]">这是文本</div> -->
 
     <!-- 条件类名绑定（三元表达式） -->
-    <!-- <div :class="[isActive ? 'active' : '', 'text-danger']">你好啊</div> -->
+    <!-- <div :class="[isActive ? 'active' : '', 'text-danger']">这是文本</div> -->
     
     <!-- 数组语法中使用对象语法 -->
-    <!-- <div :class="['static-class', {active: isActive, 'text-danger': hasError}]">你好啊</div> -->
+    <!-- <div :class="['static-class', {active: isActive, 'text-danger': hasError}]">这是文本</div> -->
 
     <!-- 3. 绑定内联样式 -->
     <!-- 3.1 对象语法 -->
-    <!-- <div :style="{color: textColor, fontSize: fontSize + 'px'}">你好啊</div> -->
+    <!-- <div :style="{color: textColor, fontSize: fontSize + 'px'}">这是文本</div> -->
 
     <!-- 3.2 数组语法 -->
-    <div :style="[baseStyles, additionalStyles]">你好啊</div>
-
-
-
+    <h2>数组语法示例：组合多个样式对象</h2>
+    <button @click="taggle">切换高亮</button>
+    <p :style="[ baseStyle, highlight ? highlightStyle : {} ]">这是文本</p>
   </div>
 
   <script src="../js/vue.js"></script>
@@ -71,28 +70,31 @@
       data() {
         return {
           url: 'https://cn.vuejs.org/',
-          imageSrc: 'https://www.wzbc.edu.cn/Template/Default/images/logo.png',
-          imageAlt: '这是WZBC的logo',
+          title: '动态图片示例',
+          imageUrl: 'https://picsum.photos/200/300?random=1',
           attributename: 'href',
           isActive: true,
           hasError: false,
           classObject: {
             active: true,
-            'text-danger': false
+            'text-danger': true
           },
-          activeClass: 'active',
           errorClass: 'text-danger',
           textColor: 'red',
           fontSize: 20,
-          baseStyles: {
-            color: 'blue',
+          baseStyle: {
+            color: '#333',
             fontSize: '20px'
           },
-          additionalStyles: {
-            backgroundColor: 'yellow',
-            padding: '10px'
-          }
-
+          highlight: false
+        }
+      },
+      methods: {
+        changeImage() {
+          this.imageUrl = 'https://picsum.photos/200/300?random=' + Math.floor(Math.random() * 10)
+        },
+        taggle() {
+          this.highlight = !this.highlight
         }
       },
       computed: {
@@ -100,6 +102,13 @@
           return {
             active: this.isActive,
             'text-danger': this.hasError
+          }
+        },
+        highlightStyle() {
+          return {
+            backgroundColor: 'yellow',
+            color: 'red',
+            fontSize: '30px'
           }
         }
       }
