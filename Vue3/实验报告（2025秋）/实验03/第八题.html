@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任务列表动态管理</title>
+</head>
+<style>
+  .card { border: 1px solid #ccc; padding: 15px; width: 300px; border-radius: 8px; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 5px; }
+  button { margin-left: 5px; }
+</style>
+<body>
+  <div id="app" class="card">
+    <h3>任务清单</h3>
+    <ul>
+      <li v-for="(task, index) in tasks" :key="task.id">
+        {{ task.title + task.id }}
+        <button @click="removeTask(index)">删除</button>
+      </li>
+    </ul>
+
+    <input v-model="newTask" placeholder="输入新任务">
+    <button @click="addTask">添加任务</button>
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          newTask: '',
+          nextId: 3,
+          tasks: [
+            { id: 1, title: '阅读 Vue 文档' },
+            { id: 2, title: '编写今日笔记' }
+          ]
+        }  
+      },
+      methods: {
+        addTask() {
+          if (this.newTask.trim() === '') return
+          this.tasks.push({ id: this.nextId++, title: this.newTask })
+          this.newTask = ''
+        },
+        removeTask(index) {
+          this.tasks.splice(index, 1)
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

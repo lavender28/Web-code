@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>动态链接和图片绑定</title>
+  <style>
+    .card { 
+      border: 1px solid #ddd; 
+      border-radius: 8px; 
+      padding: 10px; 
+      width: 240px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="card">
+    <h3>推荐网站</h3>
+    <img :src="currentSite.image" width="200" alt="站点封面">
+    <p>{{ currentSite.name }}</p>
+    <a :href="currentSite.url" target="_blank">访问网站</a>
+
+    <div style="margin-top: 10px;">
+      <button @click="changeSite">切换推荐</button>
+    </div>
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          sites: [
+            { name: "Vue.js 官网", url: "https://vuejs.org", image: "https://picsum.photos/id/1000/200/100" },
+            { name: "MDN Web Docs", url: "https://developer.mozilla.org", image: "https://picsum.photos/id/1001/200/100" }
+          ],
+          currentIndex: 0
+        }
+      },
+      computed: {
+        currentSite() {
+          return this.sites[this.currentIndex];
+        }
+      },
+      methods: {
+        changeSite() {
+          this.currentIndex = (this.currentIndex + 1) % this.sites.length;
+        }
+      }
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

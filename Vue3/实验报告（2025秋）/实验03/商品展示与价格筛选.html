@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品展示与价格筛选</title>
+  <style>
+    .card {
+      border: 1px solid #ccc;
+      padding: 15px;
+      width: 260px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+<div id="app" class="card">
+  <h3>商品展示</h3>
+  <label>最低价格：</label>
+  <input type="number" v-model.number="minPrice" style="width:80px;">
+
+  <ul>
+    <li v-for="product in filteredProducts" :key="product.id">
+      {{ product.name }} - ￥{{ product.price }}
+    </li>
+  </ul>
+
+  <p v-if="filteredProducts.length === 0">暂无符合条件的商品</p>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script>
+const app = Vue.createApp({
+  data() {
+    return {
+      minPrice: 100,
+      products: [
+        { id: 1, name: 'Vue 周边T恤', price: 128 },
+        { id: 2, name: '徽章', price: 30 },
+        { id: 3, name: '贴纸包', price: 60 },
+        { id: 4, name: '定制马克杯', price: 158 }
+      ]
+    }
+  },
+  computed: {
+    filteredProducts() {
+      return this.products.filter(p => p.price >= this.minPrice)
+    }
+  }
+})
+app.mount('#app')
+</script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>动态卡片主题切换</title>
+</head>
+<body>
+  <div id="app">
+    <h3>主题切换卡片</h3>
+    <div :style="[ baseStyle, isDark ? darkTheme : lightTheme ]">
+      <h4>{{ user.name }}</h4>
+      <p>{{ user.description }}</p>
+    </div>
+    <button @click="isDark = !isDark" style="margin-top: 10px">
+      {{ isDark ? "切换为浅色" : "切换为深色" }}
+    </button>
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          isDark: false,
+          user: { name: '前端开发者', description: '热爱 Vue.js' },
+          baseStyle: { padding: '12px', borderRadius: '8px', fontSize: '16px', width: '220px' },
+          lightTheme: { backgroundColor: '#f9fafb', color: '#111827', border: '1px solid #ddd' },
+          darkTheme: { backgroundColor: '#1f2937', color: '#f9fafb', border: '1px solid #4b5563' }
+        }
+      }
+    })
+    app.mount("#app")
+  </script>
+</body>
+</html>

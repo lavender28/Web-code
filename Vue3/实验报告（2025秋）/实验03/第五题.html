@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会员等级信息展示</title>
+</head>
+<body>
+  <div id="app">
+    <h3>会员等级显示</h3>
+    <p>当前会员等级：{{ level }}</p>
+
+    <div v-if="level === 'vip'">
+      <p>尊贵的VIP会员，享受专属折扣！</p>
+    </div>
+    <div v-else-if="level === 'gold'">
+      <p>黄金会员，享受9折优惠！</p>
+    </div>
+    <div v-else-if="level === 'silver'">
+      <p>白银会员，享受95折优惠！</p>
+    </div>
+    <div v-else>
+      <p>普通用户，快来升级会员吧！</p>
+    </div>
+
+    <button @click="nextLevel">切换等级</button>
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          levelIndex: 0,
+          levels: ['normal', 'silver', 'gold', 'vip'],
+        }
+      },
+      computed: {
+        level() {
+          return this.levels[this.levelIndex]
+        }
+      },
+      methods: {
+          nextLevel() {
+            this.levelIndex = (this.levelIndex + 1) % this.levels.length
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>

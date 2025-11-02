@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品卡片样式组合</title>
+  <style>
+    .container { width: 240px; }
+    .card { border: 1px solid #ccc; padding: 10px; border-radius: 6px; }
+    .promo { color: #dc2626; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div id="app" class="container">
+    <h3>商品卡片</h3>
+    <div :class="[ baseClass, { 'promo': isPromo } ]">
+      <h4>{{ productName }}</h4>
+      <p>价格：￥{{ price }}</p>
+    </div>
+    <button @click="isPromo = !isPromo" style="margin-top: 10px">
+      {{ isPromo ? "取消促销" : "设为促销" }}
+    </button>
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          baseClass: 'card',
+          isPromo: false,
+          productName: 'Vue 周边T恤',
+          price: 128
+        }
+      },
+    })
+    app.mount("#app")
+  </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>公告栏显示控制</title>
+</head>
+<body>
+  <div id="app">
+    <h3>公告提示栏</h3>
+
+    <div v-if="hasAnnouncement">
+      <h4>{{ announcement.title }}</h4>
+      <p v-show="isExpanded">{{ announcement.content }}</p>
+      <button @click="isExpanded = !isExpanded">{{ isExpanded ? "收起内容" : "展开内容" }}</button>
+    </div>
+
+    <button @click="toggleAnnouncement" style="margin-top: 10px;">
+      {{ hasAnnouncement ? "撤回公告" : "发布公告" }}
+    </button>
+
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          hasAnnouncement: true,
+          isExpanded: false,
+          announcement: {
+            title: '系统维护通知',
+            content: '系统将于今晚 22:00 进行维护，预计持续2小时，期间可能无法访问。'
+          }
+        }
+      },
+      methods: {
+        toggleAnnouncement() {
+          this.hasAnnouncement = !this.hasAnnouncement;
+          if (!this.hasAnnouncement) {
+            this.isExpanded = false;
+          }
+        }
+      },
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>
