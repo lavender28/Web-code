@@ -1,26 +1,24 @@
 <template>
   <div class="company-info">
     <h3>公司信息</h3>
-    <p>公司名称： {{ companyInfo.name }}</p>
-    <p>公司地址： {{ companyInfo.address }}</p>
-    <input 
-      v-model="newCompanyName" 
-      placeholder="输入新的公司名称"
-    >
-    <button @click="updateCompanyName">更新公司名称</button>
-    
+    <p>公司名称： {{ name }}</p>
+    <p>公司地址： {{ address }}</p>
+    <input v-model="newCompanyName" placeholder="输入新的公司名称">
+    <button @click="changeName">更新公司名称</button>
   </div>
 </template>
 
 <script setup>
-import { ref, inject } from 'vue' 
+import { ref, inject } from 'vue'
 const newCompanyName = ref('')
 // 注入依赖
-const companyInfo = inject('companyInfo')
+const { name, address, updateCompanyName } = inject('companyInfo')
 
-function updateCompanyName() {
+function changeName() {
   if (newCompanyName.value) {
-    companyInfo.updateCompanyName(newCompanyName.value)
+    // 注入的 name 是响应式的，可以直接更新
+    // name.value = newCompanyName.value.trim()
+    updateCompanyName(newCompanyName.value.trim())
     newCompanyName.value = ''   // 清空输入框
   }
 }

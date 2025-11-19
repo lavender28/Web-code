@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { provide, ref} from 'vue'
+import { provide, ref, readonly} from 'vue'
 import Person from './Person.vue'
 
 const companyName = ref('WZBC')
@@ -14,7 +14,7 @@ const companyAddress = ref('温州市瓯海区')
 
 // 提供依赖
 provide('companyInfo', {
-  name: companyName,
+  name: readonly(companyName),
   address: companyAddress,
   updateCompanyName: (newName) => {
     companyName.value = newName
