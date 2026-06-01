@@ -28,7 +28,3 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-
-shouban/*
-back-end/*
-Vue3/06_项目实战/*
