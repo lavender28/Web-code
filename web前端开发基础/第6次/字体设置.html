@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>字体设置</title>
+  <style>
+    @font-face {
+      font-family: "MyFont";
+      src: url("./fonts/FZJZJW.TTF");
+    }
+
+    p {
+      font-family: "MyFont";
+      font-size: 30px;
+      text-align: center;
+      /* text-shadow: 2px 2px 2px #888; */
+      font-size: 30px;
+      text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #0ff,
+        0 0 40px #0ff;
+    }
+
+    p.capi {
+      text-transform: capitalize;
+    }
+
+    p.card-title {
+      width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+
+<body>
+  <p>这是一个段落</p>
+  <p class="capi">hello world</p>
+  <p class="card-title">这是一个段落 这是一个段落 这是一个段落</p>
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>details标签和summary标签</title>
+</head>
+
+<body>
+  <details>
+    <summary>details标签和summary标签</summary>
+    details标签用于描述文档或文档某个部分的细节。
+    summary标签作为details的第一个子元素，用于定义details标题。
+    <u>标题是可见的，当用户单击标题时，会显示或隐藏details中的其他内容。</u>
+  </details>
+
+
+  <!-- 用法一：表示任务正在进行（不确定进度） -->
+  工作进行中：<progress></progress>
+
+  <!-- 用法二：表示已完成任务量 -->
+  已修满学分：<progress value="45" max="100"></progress>
+  <hr>
+  手机电量显示：<br>
+  充足模式：
+  <meter min="0" max="100" low="10" high="20" optimum="100" value="80" title="80%">80%</meter>
+  <br>
+  省电模式：
+  <meter min="0" max="100" low="10" high="20" optimum="100" value="15" title="15%">15%</meter>
+  <br>
+  低电模式：
+  <meter min="0" max="100" low="10" high="20" optimum="100" value="5" title="5%">5%</meter>
+</body>
+
+</html>

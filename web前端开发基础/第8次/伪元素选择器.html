@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>伪元素选择器</title>
+  <style>
+    h2::before {
+      content: '【热点】';
+      color: red;
+    }
+
+    .warning::before {
+      /* content: "⚠"; */
+      content: url('./11.png');
+      margin-right: 5px;
+    }
+
+    .title::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 20px;
+      background-color: #3498db;
+      margin-right: 8px;
+    }
+
+    a::after {
+      content: " ↗";
+      color: gray;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>新闻标题</h2>
+  <h3 class="title">标题一</h3>
+  <h3 class="warning">标题二</h3>
+
+  <a href="https://example.com">外部链接</a>
+</body>
+
+</html>

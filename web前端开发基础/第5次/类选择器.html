@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>类选择器的使用</title>
+  <style type="text/css">
+    /* 标记选择器：作用于所有h1 */
+    h1 {
+      font-size: 16px;
+      font-style: italic;
+    }
+
+    /* 标记选择器：作用于所有p */
+    p {
+      font-family: "黑体";
+    }
+
+    /* 类选择器：仅作用于 class="font1" 的元素 */
+    .font1 {
+      text-decoration: underline;
+    }
+
+    /* 类选择器：仅作用于 class="bluefont" 的元素 */
+    .bluefont {
+      color: #00F;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>更改 &lt;h1&gt; 标签的外观样式</h1>
+  <h1 class="bluefont">此处 &lt;h1&gt; 标签设置了类选择器</h1>
+  <p>更改所有 &lt;p&gt; 标签的外观样式</p>
+  <p class="bluefont font1">此处 &lt;p&gt; 标签设置了两个类选择器</p>
+</body>
+
+</html>

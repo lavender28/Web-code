@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <title>CSS3 结构化伪类选择器 · 交互式教学</title>
+  <style>
+    /* ============ 全局变量 ============ */
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-2: #1c2128;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-dim: #8b949e;
+      --accent: #ff7b72;
+      /* 选中高亮·珊瑚红 */
+      --accent-2: #79c0ff;
+      /* 代码标签·蓝 */
+      --accent-3: #d2a8ff;
+      /* 伪类·紫 */
+      --accent-4: #a5d6ff;
+      /* 字符串·浅蓝 */
+      --accent-5: #7ee787;
+      /* 命中绿 */
+      --accent-6: #ffa657;
+      /* 警示橙 */
+      --highlight-bg: rgba(255, 123, 114, 0.15);
+      --highlight-border: #ff7b72;
+      --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      --sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 20% 0%, rgba(210, 168, 255, 0.08), transparent 50%),
+        radial-gradient(circle at 80% 100%, rgba(121, 192, 255, 0.06), transparent 50%);
+    }
+
+    /* ============ 顶部标题区 ============ */
+    header {
+      padding: 60px 40px 40px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--accent-3) 0%, var(--accent-2) 50%, var(--accent-5) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    header p {
+      color: var(--text-dim);
+      font-size: 15px;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    /* ============ 选择器导航 ============ */
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 24px 40px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      background: rgba(22, 27, 34, 0.85);
+    }
+
+    .nav-btn {
+      padding: 8px 14px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 13px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--accent-3);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .nav-btn.active {
+      background: var(--accent-3);
+      border-color: var(--accent-3);
+      color: var(--bg);
+      font-weight: 600;
+    }
+
+    /* ============ 主体区 ============ */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    .section {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-header {
+      margin-bottom: 24px;
+    }
+
+    .section-header h2 {
+      font-family: var(--mono);
+      font-size: 26px;
+      color: var(--accent-3);
+      margin-bottom: 8px;
+    }
+
+    .section-header .desc {
+      color: var(--text-dim);
+      font-size: 15px;
+      max-width: 800px;
+    }
+
+    /* ============ 三栏布局：CSS · HTML · 渲染 ============ */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1100px) {
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 10px 16px;
+      background: var(--panel-2);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-header::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-6);
+    }
+
+    .panel-body {
+      padding: 18px;
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    /* ============ 代码区样式 ============ */
+    pre {
+      font-family: var(--mono);
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .tag {
+      color: var(--accent-2);
+    }
+
+    .attr {
+      color: var(--accent-6);
+    }
+
+    .str {
+      color: var(--accent-4);
+    }
+
+    .pseudo {
+      color: var(--accent-3);
+      font-weight: 600;
+    }
+
+    .prop {
+      color: var(--accent-2);
+    }
+
+    .val {
+      color: var(--accent-4);
+    }
+
+    .punct {
+      color: var(--text-dim);
+    }
+
+    .comment {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* 代码行高亮 */
+    .line-hl {
+      background: var(--highlight-bg);
+      display: block;
+      margin: 0 -18px;
+      padding: 0 18px;
+      border-left: 2px solid var(--highlight-border);
+    }
+
+    /* ============ 渲染区样式 ============ */
+    .render-area {
+      padding: 18px;
+      background: #fff;
+      color: #24292f;
+      border-radius: 0;
+      font-family: var(--sans);
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    .render-area * {
+      transition: all 0.4s ease;
+    }
+
+    /* 命中元素的高亮样式 */
+    .render-area .hit {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%) !important;
+      color: #c0392b !important;
+      font-weight: 700 !important;
+      box-shadow: 0 0 0 2px #ff7b72, 0 4px 12px rgba(255, 123, 114, 0.4);
+      position: relative;
+    }
+
+    .render-area .hit::after {
+      content: '✓ 命中';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-weight: 600;
+    }
+
+    .render-area ul,
+    .render-area ol {
+      list-style-position: inside;
+      padding-left: 4px;
+    }
+
+    .render-area li {
+      padding: 8px 12px;
+      margin: 6px 0;
+      background: #f6f8fa;
+      border-radius: 6px;
+      border: 1px solid #d0d7de;
+      font-size: 14px;
+    }
+
+    .render-area p {
+      padding: 8px 12px;
+      margin: 6px 0;
+      background: #ddf4ff;
+      border-radius: 6px;
+      border: 1px solid #54aeff;
+      font-size: 14px;
+    }
+
+    .render-area h3 {
+      padding: 8px 12px;
+      margin: 6px 0;
+      background: #fff8c5;
+      border-radius: 6px;
+      border: 1px solid #d4a72c;
+      font-size: 16px;
+    }
+
+    .render-area span.tag-label {
+      display: inline-block;
+      padding: 2px 6px;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 3px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #57606a;
+      margin-right: 8px;
+    }
+
+    /* ============ 解释卡片 ============ */
+    .explain {
+      background: linear-gradient(135deg, rgba(210, 168, 255, 0.06) 0%, rgba(121, 192, 255, 0.06) 100%);
+      border: 1px solid rgba(210, 168, 255, 0.25);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-top: 16px;
+    }
+
+    .explain h4 {
+      color: var(--accent-3);
+      font-family: var(--mono);
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .explain h4::before {
+      content: '💡';
+      font-size: 16px;
+    }
+
+    .explain p {
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .explain code {
+      font-family: var(--mono);
+      background: var(--panel-2);
+      padding: 2px 7px;
+      border-radius: 4px;
+      color: var(--accent-3);
+      font-size: 13px;
+      border: 1px solid var(--border);
+    }
+
+    /* ============ 对比组（child vs of-type） ============ */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .compare-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .compare-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .compare-card .panel-header {
+      background: var(--panel-2);
+    }
+
+    .compare-card.left .panel-header::before {
+      background: var(--accent-2);
+    }
+
+    .compare-card.right .panel-header::before {
+      background: var(--accent-3);
+    }
+
+    /* ============ 切换器 ============ */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .ctrl-btn {
+      padding: 8px 14px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .ctrl-btn:hover {
+      border-color: var(--accent-3);
+    }
+
+    .ctrl-btn.active {
+      background: rgba(210, 168, 255, 0.15);
+      border-color: var(--accent-3);
+      color: var(--accent-3);
+    }
+
+    footer {
+      padding: 40px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+      font-family: var(--mono);
+    }
+
+    footer .heart {
+      color: var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>CSS3 结构化伪类选择器</h1>
+    <p>通过左侧 CSS、中间 HTML 与右侧实时渲染的三栏对照，直观感受不同伪类的命中差异。被命中的元素会高亮显示。</p>
+  </header>
+
+  <nav class="nav" id="nav">
+    <button class="nav-btn active" data-target="root">:root</button>
+    <button class="nav-btn" data-target="not">:not()</button>
+    <button class="nav-btn" data-target="only">:only-child</button>
+    <button class="nav-btn" data-target="firstlast">:first-child / :last-child</button>
+    <button class="nav-btn" data-target="nth">:nth-child(n)</button>
+    <button class="nav-btn" data-target="oftype">:first-of-type 系列</button>
+    <button class="nav-btn" data-target="vs">⚔️ child vs of-type</button>
+    <button class="nav-btn" data-target="empty">:empty</button>
+    <button class="nav-btn" data-target="target">:target</button>
+  </nav>
+
+  <main>
+
+    <!-- ============ :root ============ -->
+    <section class="section active" id="root">
+      <div class="section-header">
+        <h2>:root 选择器</h2>
+        <p class="desc">匹配文档的根元素（在 HTML 中即 &lt;html&gt; 标签）。最常见的用法是定义全局 CSS 变量。</p>
+      </div>
+
+      <div class="demo-grid">
+        <div class="panel">
+          <div class="panel-header">style.css</div>
+          <div class="panel-body">
+            <pre><span class="line-hl"><span class="pseudo">:root</span> <span class="punct">{</span></span>
+<span class="line-hl">  <span class="prop">--main</span><span class="punct">:</span> <span class="val">#3498db</span><span class="punct">;</span></span>
+<span class="line-hl">  <span class="prop">--size</span><span class="punct">:</span> <span class="val">18px</span><span class="punct">;</span></span>
+<span class="line-hl"><span class="punct">}</span></span>
+
+<span class="tag">h3</span> <span class="punct">{</span>
+  <span class="prop">color</span><span class="punct">:</span> <span class="val">var(--main)</span><span class="punct">;</span>
+  <span class="prop">font-size</span><span class="punct">:</span> <span class="val">var(--size)</span><span class="punct">;</span>
+<span class="punct">}</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">index.html</div>
+          <div class="panel-body">
+            <pre><span class="punct">&lt;</span><span class="tag">html</span><span class="punct">&gt;</span>     <span class="comment">&lt;!-- :root 命中这里 --&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">body</span><span class="punct">&gt;</span>
+    <span class="punct">&lt;</span><span class="tag">h3</span><span class="punct">&gt;</span>使用了 CSS 变量<span class="punct">&lt;/</span><span class="tag">h3</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;/</span><span class="tag">body</span><span class="punct">&gt;</span>
+<span class="punct">&lt;/</span><span class="tag">html</span><span class="punct">&gt;</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">实时渲染</div>
+          <div class="render-area">
+            <h3 style="color: #3498db; background: #e7f3ff; border-color: #3498db;">使用了 CSS 变量定义的颜色</h3>
+            <p
+              style="font-size: 12px; color: #57606a; margin-top: 12px; background: transparent; border: none; padding: 4px 0;">
+              ↑ 颜色 #3498db 来自 :root 中定义的 --main 变量
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h4>核心要点</h4>
+        <p><code>:root</code> 等同于选中 <code>&lt;html&gt;</code> 标签，但优先级更高。在它内部定义的 CSS 变量（如
+          <code>--main</code>）整个页面任何地方都可以通过 <code>var(--main)</code> 引用，是定义全局主题色、字号等设计 token 的最佳位置。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ :not ============ -->
+    <section class="section" id="not">
+      <div class="section-header">
+        <h2>:not() 选择器</h2>
+        <p class="desc">排除符合括号内选择器的元素。下方演示了 <code
+            style="font-family:var(--mono);color:var(--accent-3)">h3:not(.one)</code> —— 选中所有不带 .one 类的 h3。</p>
+      </div>
+
+      <div class="demo-grid">
+        <div class="panel">
+          <div class="panel-header">style.css</div>
+          <div class="panel-body">
+            <pre><span class="line-hl"><span class="tag">h3</span><span class="pseudo">:not</span><span class="punct">(</span><span class="attr">.one</span><span class="punct">)</span> <span class="punct">{</span></span>
+<span class="line-hl">  <span class="prop">background</span><span class="punct">:</span> <span class="val">珊瑚红</span><span class="punct">;</span></span>
+<span class="line-hl"><span class="punct">}</span></span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">index.html</div>
+          <div class="panel-body">
+            <pre><span class="punct">&lt;</span><span class="tag">h3</span><span class="punct">&gt;</span>标题一<span class="punct">&lt;/</span><span class="tag">h3</span><span class="punct">&gt;</span>      <span class="comment">✓ 命中</span>
+<span class="punct">&lt;</span><span class="tag">h3</span> <span class="attr">class</span>=<span class="str">"one"</span><span class="punct">&gt;</span>标题二<span class="punct">&lt;/</span><span class="tag">h3</span><span class="punct">&gt;</span>  <span class="comment">✗ 排除</span>
+<span class="punct">&lt;</span><span class="tag">h3</span><span class="punct">&gt;</span>标题三<span class="punct">&lt;/</span><span class="tag">h3</span><span class="punct">&gt;</span>      <span class="comment">✓ 命中</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">实时渲染</div>
+          <div class="render-area">
+            <h3 class="hit"><span class="tag-label">h3</span>标题一</h3>
+            <h3><span class="tag-label">h3.one</span>标题二（被排除）</h3>
+            <h3 class="hit"><span class="tag-label">h3</span>标题三</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h4>常见陷阱</h4>
+        <p>切勿单独使用 <code>:not(p)</code> —— 它会匹配 <code>&lt;html&gt;</code>、<code>&lt;body&gt;</code> 在内的<strong>所有非 p
+            元素</strong>，再叠加 CSS 继承机制，最终连 <code>&lt;p&gt;</code> 自己都会受影响。<code>:not()</code> 应总与具体选择器组合使用，例如
+          <code>h3:not(.one)</code> 或 <code>.container :not(p)</code>，把作用范围限定在明确的子集里。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ :only-child ============ -->
+    <section class="section" id="only">
+      <div class="section-header">
+        <h2>:only-child 选择器</h2>
+        <p class="desc">选中作为父元素中<strong>唯一子元素</strong>的标签。如果父元素只有这一个孩子，就命中。</p>
+      </div>
+
+      <div class="demo-grid">
+        <div class="panel">
+          <div class="panel-header">style.css</div>
+          <div class="panel-body">
+            <pre><span class="line-hl"><span class="tag">p</span><span class="pseudo">:only-child</span> <span class="punct">{</span></span>
+<span class="line-hl">  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span></span>
+<span class="line-hl"><span class="punct">}</span></span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">index.html</div>
+          <div class="panel-body">
+            <pre><span class="punct">&lt;</span><span class="tag">div</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">p</span><span class="punct">&gt;</span>我是独生子<span class="punct">&lt;/</span><span class="tag">p</span><span class="punct">&gt;</span>  <span class="comment">✓ 命中</span>
+<span class="punct">&lt;/</span><span class="tag">div</span><span class="punct">&gt;</span>
+
+<span class="punct">&lt;</span><span class="tag">div</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">p</span><span class="punct">&gt;</span>段落 A<span class="punct">&lt;/</span><span class="tag">p</span><span class="punct">&gt;</span>     <span class="comment">✗ 有兄弟</span>
+  <span class="punct">&lt;</span><span class="tag">p</span><span class="punct">&gt;</span>段落 B<span class="punct">&lt;/</span><span class="tag">p</span><span class="punct">&gt;</span>     <span class="comment">✗ 有兄弟</span>
+<span class="punct">&lt;/</span><span class="tag">div</span><span class="punct">&gt;</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">实时渲染</div>
+          <div class="render-area">
+            <div style="border: 2px dashed #d0d7de; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+              <div style="font-size: 11px; color: #57606a; margin-bottom: 6px; font-family: var(--mono);">div #1</div>
+              <p class="hit">我是独生子</p>
+            </div>
+            <div style="border: 2px dashed #d0d7de; padding: 12px; border-radius: 8px;">
+              <div style="font-size: 11px; color: #57606a; margin-bottom: 6px; font-family: var(--mono);">div #2</div>
+              <p>段落 A</p>
+              <p>段落 B</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h4>判断逻辑</h4>
+        <p><code>:only-child</code> 是从<strong>父元素的角度</strong>判断的——只要父元素还有任何其他子元素（哪怕类型不同），就不再"唯一"。这与
+          <code>:only-of-type</code> 不同，后者只看同类型中是否唯一。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ :first-child / :last-child ============ -->
+    <section class="section" id="firstlast">
+      <div class="section-header">
+        <h2>:first-child 与 :last-child</h2>
+        <p class="desc">分别选中父元素的<strong>第一个</strong>和<strong>最后一个</strong>子元素。是制作导航分隔线、列表首尾特殊样式的经典选择器。</p>
+      </div>
+
+      <div class="demo-grid">
+        <div class="panel">
+          <div class="panel-header">style.css</div>
+          <div class="panel-body">
+            <pre><span class="line-hl"><span class="tag">li</span><span class="pseudo">:first-child</span> <span class="punct">{</span></span>
+<span class="line-hl">  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span></span>
+<span class="line-hl"><span class="punct">}</span></span>
+
+<span class="line-hl"><span class="tag">li</span><span class="pseudo">:last-child</span> <span class="punct">{</span></span>
+<span class="line-hl">  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span></span>
+<span class="line-hl"><span class="punct">}</span></span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">index.html</div>
+          <div class="panel-body">
+            <pre><span class="punct">&lt;</span><span class="tag">ul</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>苹果<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>  <span class="comment">✓ first</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>香蕉<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>橙子<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>葡萄<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>  <span class="comment">✓ last</span>
+<span class="punct">&lt;/</span><span class="tag">ul</span><span class="punct">&gt;</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">实时渲染</div>
+          <div class="render-area">
+            <ul>
+              <li class="hit">苹果</li>
+              <li>香蕉</li>
+              <li>橙子</li>
+              <li class="hit">葡萄</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h4>真实场景</h4>
+        <p>导航栏中常见的"除最后一项外都加分隔线"效果，组合 <code>:not()</code>
+          即可优雅实现：<code>nav a:not(:last-child) { border-right: 1px solid #ccc; }</code></p>
+      </div>
+    </section>
+
+    <!-- ============ :nth-child(n) ============ -->
+    <section class="section" id="nth">
+      <div class="section-header">
+        <h2>:nth-child(n) 选择器</h2>
+        <p class="desc">最强大的位置选择器，支持数字、关键字 <code>odd</code>/<code>even</code>、以及公式
+          <code>an+b</code>。试试切换下方按钮，看看不同写法的命中效果。
+        </p>
+      </div>
+
+      <div class="controls">
+        <button class="ctrl-btn active" data-nth="3">:nth-child(3)</button>
+        <button class="ctrl-btn" data-nth="odd">:nth-child(odd)</button>
+        <button class="ctrl-btn" data-nth="even">:nth-child(even)</button>
+        <button class="ctrl-btn" data-nth="3n">:nth-child(3n)</button>
+        <button class="ctrl-btn" data-nth="3n+1">:nth-child(3n+1)</button>
+        <button class="ctrl-btn" data-nth="-n+3">:nth-child(-n+3)</button>
+        <button class="ctrl-btn" data-nth="last2">:nth-last-child(2)</button>
+      </div>
+
+      <div class="demo-grid">
+        <div class="panel">
+          <div class="panel-header">style.css</div>
+          <div class="panel-body">
+            <pre id="nth-css"><span class="tag">li</span><span class="pseudo">:nth-child</span><span class="punct">(</span><span class="val">3</span><span class="punct">)</span> <span class="punct">{</span>
+  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span>
+<span class="punct">}</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">index.html</div>
+          <div class="panel-body">
+            <pre><span class="punct">&lt;</span><span class="tag">ul</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>项 1<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>项 2<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>项 3<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>项 4<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>项 5<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>项 6<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>项 7<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">li</span><span class="punct">&gt;</span>项 8<span class="punct">&lt;/</span><span class="tag">li</span><span class="punct">&gt;</span>
+<span class="punct">&lt;/</span><span class="tag">ul</span><span class="punct">&gt;</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">实时渲染</div>
+          <div class="render-area">
+            <ul id="nth-list">
+              <li>项 1</li>
+              <li>项 2</li>
+              <li>项 3</li>
+              <li>项 4</li>
+              <li>项 5</li>
+              <li>项 6</li>
+              <li>项 7</li>
+              <li>项 8</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h4>公式 an+b 的运作方式</h4>
+        <p>CSS 计算时让 <code>n</code> 从 <strong>0</strong> 开始依次代入（n=0,1,2,3...），所有得到的<strong>正整数</strong>即为命中位置。例如
+          <code>3n+1</code>：n=0→1, n=1→4, n=2→7，所以命中第 1、4、7 个。注意位置编号本身从 <strong>1</strong> 开始计数。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ :first-of-type 系列 ============ -->
+    <section class="section" id="oftype">
+      <div class="section-header">
+        <h2>:first-of-type / :nth-of-type(n)</h2>
+        <p class="desc">"of-type" 系列只关心<strong>同类型</strong>的兄弟元素，跳过其他类型的标签独立计数。</p>
+      </div>
+
+      <div class="demo-grid">
+        <div class="panel">
+          <div class="panel-header">style.css</div>
+          <div class="panel-body">
+            <pre><span class="line-hl"><span class="tag">p</span><span class="pseudo">:first-of-type</span> <span class="punct">{</span></span>
+<span class="line-hl">  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span></span>
+<span class="line-hl"><span class="punct">}</span></span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">index.html</div>
+          <div class="panel-body">
+            <pre><span class="punct">&lt;</span><span class="tag">div</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">h3</span><span class="punct">&gt;</span>标题<span class="punct">&lt;/</span><span class="tag">h3</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">p</span><span class="punct">&gt;</span>第一段<span class="punct">&lt;/</span><span class="tag">p</span><span class="punct">&gt;</span>     <span class="comment">✓ 命中</span>
+  <span class="punct">&lt;</span><span class="tag">p</span><span class="punct">&gt;</span>第二段<span class="punct">&lt;/</span><span class="tag">p</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">p</span><span class="punct">&gt;</span>第三段<span class="punct">&lt;/</span><span class="tag">p</span><span class="punct">&gt;</span>
+<span class="punct">&lt;/</span><span class="tag">div</span><span class="punct">&gt;</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">实时渲染</div>
+          <div class="render-area">
+            <h3><span class="tag-label">h3</span>标题</h3>
+            <p class="hit"><span class="tag-label">p</span>第一段</p>
+            <p><span class="tag-label">p</span>第二段</p>
+            <p><span class="tag-label">p</span>第三段</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h4>关键差异</h4>
+        <p>这里如果改用 <code>p:first-child</code>，将<strong>什么也选不中</strong>——因为父元素的第一个子元素是 <code>&lt;h3&gt;</code> 而不是
+          <code>&lt;p&gt;</code>。<code>:first-of-type</code> 跳过 <code>&lt;h3&gt;</code>，从第一个 <code>&lt;p&gt;</code>
+          开始计数。这一点请进入下一章节"⚔️ child vs of-type"做深度对比。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ ⚔️ child vs of-type ============ -->
+    <section class="section" id="vs">
+      <div class="section-header">
+        <h2>⚔️ :first-child vs :first-of-type</h2>
+        <p class="desc">这是初学者最容易混淆的地方。下方使用<strong>同一段 HTML</strong>，左右分别应用两个选择器，一眼看清差异。</p>
+      </div>
+
+      <div class="panel" style="margin-bottom: 16px;">
+        <div class="panel-header">公共 HTML</div>
+        <div class="panel-body">
+          <pre><span class="punct">&lt;</span><span class="tag">div</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">h3</span><span class="punct">&gt;</span>这是一个标题<span class="punct">&lt;/</span><span class="tag">h3</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">p</span><span class="punct">&gt;</span>第一段<span class="punct">&lt;/</span><span class="tag">p</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">p</span><span class="punct">&gt;</span>第二段<span class="punct">&lt;/</span><span class="tag">p</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;</span><span class="tag">p</span><span class="punct">&gt;</span>第三段<span class="punct">&lt;/</span><span class="tag">p</span><span class="punct">&gt;</span>
+<span class="punct">&lt;/</span><span class="tag">div</span><span class="punct">&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card left">
+          <div class="panel-header">CSS：p:first-child</div>
+          <div class="panel-body">
+            <pre><span class="tag">p</span><span class="pseudo">:first-child</span> <span class="punct">{</span>
+  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span>
+<span class="punct">}</span></pre>
+            <div class="render-area" style="margin-top: 12px;">
+              <h3><span class="tag-label">h3</span>这是一个标题</h3>
+              <p><span class="tag-label">p</span>第一段</p>
+              <p><span class="tag-label">p</span>第二段</p>
+              <p><span class="tag-label">p</span>第三段</p>
+              <p style="background: #ffebe9; border-color: #ff8182; color: #82071e; margin-top: 14px; font-size: 13px;">
+                ❌ 没有元素被命中！因为父元素 div 的第一个子元素是 h3，而 :first-child 要求"既是 p 又是第一个子元素"。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-card right">
+          <div class="panel-header">CSS：p:first-of-type</div>
+          <div class="panel-body">
+            <pre><span class="tag">p</span><span class="pseudo">:first-of-type</span> <span class="punct">{</span>
+  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span>
+<span class="punct">}</span></pre>
+            <div class="render-area" style="margin-top: 12px;">
+              <h3><span class="tag-label">h3</span>这是一个标题</h3>
+              <p class="hit"><span class="tag-label">p</span>第一段</p>
+              <p><span class="tag-label">p</span>第二段</p>
+              <p><span class="tag-label">p</span>第三段</p>
+              <p style="background: #dafbe1; border-color: #4ac26b; color: #0a3622; margin-top: 14px; font-size: 13px;">
+                ✓ 第一个 p 被命中！:first-of-type 只在同类型中计数，跳过 h3，找到第一个 p。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h4>记忆口诀</h4>
+        <p><code>child</code> 系列看<strong>整体顺序</strong>——元素必须既是目标类型，又恰好处于该位置；<br><code>of-type</code>
+          系列看<strong>同类顺序</strong>——只在同类型兄弟中独立计数，其他类型完全忽略。</p>
+      </div>
+    </section>
+
+    <!-- ============ :empty ============ -->
+    <section class="section" id="empty">
+      <div class="section-header">
+        <h2>:empty 选择器</h2>
+        <p class="desc">选中没有任何子元素且不包含任何文本（包括空格）的标签。</p>
+      </div>
+
+      <div class="demo-grid">
+        <div class="panel">
+          <div class="panel-header">style.css</div>
+          <div class="panel-body">
+            <pre><span class="line-hl"><span class="tag">div</span><span class="pseudo">:empty</span> <span class="punct">{</span></span>
+<span class="line-hl">  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span></span>
+<span class="line-hl">  <span class="prop">height</span><span class="punct">:</span> <span class="val">30px</span><span class="punct">;</span></span>
+<span class="line-hl"><span class="punct">}</span></span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">index.html</div>
+          <div class="panel-body">
+            <pre><span class="punct">&lt;</span><span class="tag">div</span><span class="punct">&gt;</span>有内容<span class="punct">&lt;/</span><span class="tag">div</span><span class="punct">&gt;</span>      <span class="comment">✗ 含文本</span>
+<span class="punct">&lt;</span><span class="tag">div</span><span class="punct">&gt;&lt;/</span><span class="tag">div</span><span class="punct">&gt;</span>           <span class="comment">✓ 真空</span>
+<span class="punct">&lt;</span><span class="tag">div</span><span class="punct">&gt;</span> <span class="punct">&lt;/</span><span class="tag">div</span><span class="punct">&gt;</span>          <span class="comment">✗ 含空格</span>
+<span class="punct">&lt;</span><span class="tag">div</span><span class="punct">&gt;&lt;</span><span class="tag">span</span><span class="punct">&gt;&lt;/</span><span class="tag">span</span><span class="punct">&gt;&lt;/</span><span class="tag">div</span><span class="punct">&gt;</span>  <span class="comment">✗ 含子元素</span>
+<span class="punct">&lt;</span><span class="tag">div</span><span class="punct">&gt;&lt;/</span><span class="tag">div</span><span class="punct">&gt;</span>           <span class="comment">✓ 真空</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">实时渲染</div>
+          <div class="render-area">
+            <div
+              style="padding: 8px 12px; margin: 6px 0; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px;">
+              <span class="tag-label">div</span>有内容
+            </div>
+            <div class="hit" style="padding: 8px 12px; margin: 6px 0; border-radius: 6px; min-height: 30px;"><span
+                class="tag-label">div</span>(真空)</div>
+            <div
+              style="padding: 8px 12px; margin: 6px 0; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px;">
+              <span class="tag-label">div</span>&nbsp;<span style="color:#cf222e;font-size:11px;">← 这里有一个空格</span>
+            </div>
+            <div
+              style="padding: 8px 12px; margin: 6px 0; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px;">
+              <span class="tag-label">div</span><span
+                style="border:1px dashed #999;padding:1px 4px;font-size:11px;color:#666;">含 span 子元素</span>
+            </div>
+            <div class="hit" style="padding: 8px 12px; margin: 6px 0; border-radius: 6px; min-height: 30px;"><span
+                class="tag-label">div</span>(真空)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h4>苛刻的"空"标准</h4>
+        <p>哪怕只有一个空格、一个换行符，<code>:empty</code> 也认为不是空。但是 HTML
+          <strong>注释</strong>不算内容——<code>&lt;div&gt;&lt;!-- 注释 --&gt;&lt;/div&gt;</code>
+          仍然会被命中。这一行为常用于动态加载场景下，给空容器一个占位样式。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ :target ============ -->
+    <section class="section" id="target">
+      <div class="section-header">
+        <h2>:target 选择器</h2>
+        <p class="desc">当 URL 中的锚点 <code>#xxx</code> 指向某个元素时，该元素就是当前 target。点击下方链接亲身体验。</p>
+      </div>
+
+      <div class="demo-grid">
+        <div class="panel">
+          <div class="panel-header">style.css</div>
+          <div class="panel-body">
+            <pre><span class="line-hl"><span class="pseudo">:target</span> <span class="punct">{</span></span>
+<span class="line-hl">  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span></span>
+<span class="line-hl">  <span class="prop">border-left</span><span class="punct">:</span> <span class="val">4px solid red</span><span class="punct">;</span></span>
+<span class="line-hl"><span class="punct">}</span></span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">index.html</div>
+          <div class="panel-body">
+            <pre><span class="punct">&lt;</span><span class="tag">a</span> <span class="attr">href</span>=<span class="str">"#s1"</span><span class="punct">&gt;</span>第一节<span class="punct">&lt;/</span><span class="tag">a</span><span class="punct">&gt;</span>
+<span class="punct">&lt;</span><span class="tag">a</span> <span class="attr">href</span>=<span class="str">"#s2"</span><span class="punct">&gt;</span>第二节<span class="punct">&lt;/</span><span class="tag">a</span><span class="punct">&gt;</span>
+<span class="punct">&lt;</span><span class="tag">a</span> <span class="attr">href</span>=<span class="str">"#s3"</span><span class="punct">&gt;</span>第三节<span class="punct">&lt;/</span><span class="tag">a</span><span class="punct">&gt;</span>
+
+<span class="punct">&lt;</span><span class="tag">section</span> <span class="attr">id</span>=<span class="str">"s1"</span><span class="punct">&gt;</span>...<span class="punct">&lt;/</span><span class="tag">section</span><span class="punct">&gt;</span>
+<span class="punct">&lt;</span><span class="tag">section</span> <span class="attr">id</span>=<span class="str">"s2"</span><span class="punct">&gt;</span>...<span class="punct">&lt;/</span><span class="tag">section</span><span class="punct">&gt;</span>
+<span class="punct">&lt;</span><span class="tag">section</span> <span class="attr">id</span>=<span class="str">"s3"</span><span class="punct">&gt;</span>...<span class="punct">&lt;/</span><span class="tag">section</span><span class="punct">&gt;</span></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">实时渲染（请点击）</div>
+          <div class="render-area">
+            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+              <a href="#s1"
+                style="padding: 6px 12px; background: #0969da; color: white; border-radius: 6px; text-decoration: none; font-size: 13px;">第一节</a>
+              <a href="#s2"
+                style="padding: 6px 12px; background: #0969da; color: white; border-radius: 6px; text-decoration: none; font-size: 13px;">第二节</a>
+              <a href="#s3"
+                style="padding: 6px 12px; background: #0969da; color: white; border-radius: 6px; text-decoration: none; font-size: 13px;">第三节</a>
+            </div>
+            <section id="s1" class="target-section"
+              style="padding: 12px; margin: 6px 0; background: #f6f8fa; border: 1px solid #d0d7de; border-left: 4px solid transparent; border-radius: 6px; transition: all 0.3s ease;">
+              <strong>第一节</strong> · 点击上方"第一节"按钮，看这里如何被点亮
+            </section>
+            <section id="s2" class="target-section"
+              style="padding: 12px; margin: 6px 0; background: #f6f8fa; border: 1px solid #d0d7de; border-left: 4px solid transparent; border-radius: 6px; transition: all 0.3s ease;">
+              <strong>第二节</strong> · 点击上方"第二节"按钮，看这里如何被点亮
+            </section>
+            <section id="s3" class="target-section"
+              style="padding: 12px; margin: 6px 0; background: #f6f8fa; border: 1px solid #d0d7de; border-left: 4px solid transparent; border-radius: 6px; transition: all 0.3s ease;">
+              <strong>第三节</strong> · 点击上方"第三节"按钮，看这里如何被点亮
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h4>纯 CSS 交互的妙用</h4>
+        <p>仅用 <code>:target</code> 一行 CSS 就能实现"点击高亮"效果，无需任何 JavaScript。这一思路还可扩展为纯 CSS 的标签页切换、模态框开关、单页导航等等，是 CSS
+          的"伪交互"利器。</p>
+      </div>
+
+      <style>
+        .target-section:target {
+          background: linear-gradient(135deg, #fff8c5 0%, #fff3cd 100%) !important;
+          border-color: #d4a72c !important;
+          border-left-color: #cf222e !important;
+          box-shadow: 0 4px 12px rgba(207, 34, 46, 0.15);
+        }
+      </style>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>CSS3 STRUCTURAL PSEUDO-CLASSES · INTERACTIVE TEACHING DEMO</p>
+    <p style="margin-top: 6px;">Built with <span class="heart">♥</span> for HTML5+CSS3</p>
+  </footer>
+
+  <script>
+    // ===== 导航切换 =====
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('.section');
+
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        navBtns.forEach(b => b.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(target).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    // ===== :nth-child 演示交互 =====
+    const nthBtns = document.querySelectorAll('.ctrl-btn[data-nth]');
+    const nthList = document.getElementById('nth-list');
+    const nthCss = document.getElementById('nth-css');
+
+    // 各种 nth 表达式对应的命中位置（1-indexed），列表共 8 项
+    const nthMap = {
+      '3': { hits: [3], css: ':nth-child(3)', desc: '第 3 个' },
+      'odd': { hits: [1, 3, 5, 7], css: ':nth-child(odd)', desc: '奇数位' },
+      'even': { hits: [2, 4, 6, 8], css: ':nth-child(even)', desc: '偶数位' },
+      '3n': { hits: [3, 6], css: ':nth-child(3n)', desc: '3 的倍数' },
+      '3n+1': { hits: [1, 4, 7], css: ':nth-child(3n+1)', desc: 'n=0,1,2... → 1,4,7' },
+      '-n+3': { hits: [1, 2, 3], css: ':nth-child(-n+3)', desc: '前 3 个' },
+      'last2': { hits: [7], css: ':nth-last-child(2)', desc: '倒数第 2 个' },
+    };
+
+    function applyNth(key) {
+      const cfg = nthMap[key];
+      // 高亮列表项
+      nthList.querySelectorAll('li').forEach((li, i) => {
+        li.classList.toggle('hit', cfg.hits.includes(i + 1));
+      });
+      // 更新 CSS 显示
+      nthCss.innerHTML = `<span class="line-hl"><span class="tag">li</span><span class="pseudo">${cfg.css}</span> <span class="punct">{</span></span>
+<span class="line-hl">  <span class="prop">background</span><span class="punct">:</span> <span class="val">高亮</span><span class="punct">;</span>  <span class="comment">/* ${cfg.desc} */</span></span>
+<span class="line-hl"><span class="punct">}</span></span>`;
+    }
+
+    nthBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        nthBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyNth(btn.dataset.nth);
+      });
+    });
+
+    // 初始化默认状态
+    applyNth('3');
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 7 章 · 表格 — HTML5 教学手册</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --paper:       #f5f0e8;
+  --paper-dark:  #ede7d9;
+  --paper-mid:   #e8e1d3;
+  --vermilion:   #c0392b;
+  --verm-light:  #f5e6e4;
+  --verm-mid:    #e8b4af;
+  --verm-dark:   #922b21;
+  --ink:         #1a1208;
+  --ink-2:       #3d2e1a;
+  --ink-3:       #6b5740;
+  --ink-4:       #9a8470;
+  --ink-5:       #c4b49e;
+  --rule:        #d4c8b4;
+  --rule-dark:   #b8a990;
+  --code-bg:     #1c1917;
+  --code-line:   #292524;
+  --teal:        #0d6e6e;
+  --teal-light:  #e0f0f0;
+  --amber:       #92400e;
+  --amber-light: #fef3c7;
+  --green:       #166534;
+  --green-light: #dcfce7;
+  --sidebar-w:   272px;
+  --serif: 'Noto Serif SC', 'SimSun', 'STSong', Georgia, serif;
+  --mono:  'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--serif);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15.5px;
+  line-height: 1.85;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  position: fixed; top: 0; left: 0; bottom: 0;
+  background: var(--paper-dark);
+  border-right: 2px solid var(--rule-dark);
+  display: flex; flex-direction: column;
+  z-index: 200; overflow-y: auto;
+}
+.sidebar-header {
+  padding: 1.75rem 1.5rem 1.4rem;
+  border-bottom: 1px solid var(--rule-dark);
+  background: var(--paper-mid);
+}
+.sidebar-title { font-size: 15px; font-weight: 700; color: var(--vermilion); line-height: 1.4; font-family: var(--serif); }
+.sidebar-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; font-style: italic; }
+
+.sidebar-nav { padding: 0.9rem 0; flex: 1; }
+.nav-group { margin-bottom: 0.35rem; }
+.nav-group-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; color: var(--ink-5); text-transform: uppercase; padding: 5px 18px 3px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 14px; border-radius: 3px; cursor: pointer;
+  color: var(--ink-3); font-family: var(--serif); font-size: 13px; line-height: 1.35;
+  transition: all 0.16s; border-left: 3px solid transparent; text-decoration: none;
+}
+.nav-item:hover { background: var(--paper-mid); color: var(--ink-2); border-left-color: var(--verm-mid); }
+.nav-item.active { background: var(--verm-light); color: var(--vermilion); border-left-color: var(--vermilion); font-weight: 600; }
+.nav-num { font-family: var(--mono); font-size: 10px; color: var(--ink-5); min-width: 24px; font-weight: 500; }
+.nav-item.active .nav-num { color: var(--vermilion); opacity: 0.65; }
+.sidebar-footer { padding: 0.9rem 1.5rem; border-top: 1px solid var(--rule); font-size: 11px; color: var(--ink-5); font-style: italic; }
+
+/* ══ MAIN ══ */
+.main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; }
+
+.page-header {
+  background: var(--ink-2); color: var(--paper);
+  padding: 3rem 4rem 2.25rem; position: relative; overflow: hidden;
+  border-bottom: 4px solid var(--vermilion);
+}
+.page-header::before { content:''; position:absolute; top:-40px; right:-40px; width:260px; height:260px; border:38px solid rgba(192,57,43,0.1); border-radius:50%; }
+.page-header::after  { content:''; position:absolute; bottom:-20px; right:80px; width:140px; height:140px; border:2px solid rgba(192,57,43,0.16); border-radius:50%; }
+.page-header h1 { font-size:2.2rem; font-weight:700; color:#f5f0e8; letter-spacing:0.04em; line-height:1.2; margin-bottom:0.5rem; position:relative; font-family:var(--serif); }
+.header-desc { font-size:13.5px; color:var(--ink-5); font-style:italic; position:relative; }
+.header-meta { display:flex; gap:1.5rem; margin-top:1rem; flex-wrap:wrap; }
+.header-meta-item { font-family:var(--mono); font-size:11px; color:var(--ink-5); display:flex; align-items:center; gap:5px; }
+.header-meta-item::before { content:''; width:6px; height:6px; background:var(--vermilion); border-radius:50%; display:inline-block; opacity:0.7; }
+
+.content-wrap { max-width: 820px; padding: 2.75rem 4rem 5rem; }
+
+/* ══ CHAPTER ══ */
+.chapter { margin-bottom: 3.5rem; scroll-margin-top: 20px; }
+.chapter-header { display:flex; align-items:baseline; gap:14px; margin-bottom:1.6rem; padding-bottom:0.8rem; border-bottom:2px solid var(--rule-dark); position:relative; }
+.chapter-header::after { content:''; position:absolute; bottom:-2px; left:0; width:52px; height:2px; background:var(--vermilion); }
+.ch-num { font-family:var(--mono); font-size:12.5px; font-weight:500; color:var(--vermilion); letter-spacing:0.05em; opacity:0.8; }
+.ch-title { font-family:var(--serif); font-size:1.3rem; font-weight:700; color:var(--ink); letter-spacing:0.06em; }
+.ch-hint { font-size:11.5px; color:var(--ink-4); font-style:italic; margin-left:auto; }
+
+.sub-section { margin-bottom: 2.1rem; scroll-margin-top: 20px; }
+.sub-header { display:flex; align-items:center; gap:10px; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--rule); }
+.sub-badge { font-family:var(--mono); font-size:10px; background:var(--paper-mid); color:var(--ink-4); border:1px solid var(--rule-dark); padding:2px 7px; border-radius:2px; letter-spacing:0.06em; }
+.sub-title { font-family:var(--serif); font-size:1.05rem; font-weight:600; color:var(--ink); letter-spacing:0.05em; }
+
+.body-text { color:var(--ink-2); margin-bottom:1.1rem; text-indent:2em; }
+.body-text.no-indent { text-indent:0; }
+code { font-family:var(--mono); font-size:0.86em; background:var(--verm-light); color:var(--verm-dark); padding:1px 5px; border-radius:3px; border:1px solid var(--verm-mid); }
+strong { font-weight:600; color:var(--ink); }
+
+.def-block { background:var(--paper-dark); border-left:3px solid var(--vermilion); padding:0.9rem 1.2rem; margin:1.1rem 0; border-radius:0 4px 4px 0; }
+.def-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.18em; color:var(--vermilion); text-transform:uppercase; margin-bottom:4px; font-weight:500; }
+.def-text { font-size:14.5px; color:var(--ink-2); line-height:1.7; }
+
+.note-box { display:flex; gap:11px; padding:0.8rem 1.05rem; border-radius:4px; margin:1.1rem 0; font-size:13.5px; line-height:1.6; }
+.note-box.warning { background:var(--amber-light); border:1px solid #d97706; color:var(--amber); }
+.note-box.info    { background:var(--teal-light);  border:1px solid #0d9488; color:var(--teal); }
+.note-box.success { background:var(--green-light); border:1px solid #16a34a; color:var(--green); }
+.note-box.accent  { background:var(--verm-light);  border:1px solid var(--verm-mid); color:var(--verm-dark); }
+.note-icon { font-size:15px; margin-top:1px; flex-shrink:0; }
+
+.data-table { width:100%; border-collapse:collapse; font-size:13.5px; margin:1.1rem 0; }
+.data-table th { background:var(--paper-mid); padding:8px 13px; text-align:left; font-family:var(--serif); font-weight:600; color:var(--ink-2); border-bottom:2px solid var(--rule-dark); border-top:1px solid var(--rule-dark); letter-spacing:0.04em; }
+.data-table td { padding:8px 13px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink-2); }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:rgba(192,57,43,0.03); }
+.data-table code { font-size:11.5px; }
+
+.code-block { background:var(--code-bg); border-radius:6px; margin:1.1rem 0; box-shadow:0 6px 24px rgba(26,18,8,0.22),0 2px 8px rgba(26,18,8,0.12); overflow:hidden; }
+.code-header { background:var(--code-line); padding:7px 15px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #3c3532; }
+.code-dots { display:flex; gap:5px; }
+.code-dots span { width:10px; height:10px; border-radius:50%; }
+.code-dots .d1{background:#ff5f57}.code-dots .d2{background:#febc2e}.code-dots .d3{background:#28c840}
+.code-lang { font-family:var(--mono); font-size:10.5px; color:#6b6563; letter-spacing:0.08em; margin-left:3px; }
+.code-copy { margin-left:auto; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); color:#9a8e88; font-family:var(--mono); font-size:10.5px; padding:3px 9px; border-radius:3px; cursor:pointer; transition:all 0.16s; }
+.code-copy:hover { background:rgba(255,255,255,0.15); color:#d4c8b4; }
+.code-body { padding:1.1rem 1.4rem; font-family:var(--mono); font-size:12.5px; line-height:1.9; color:#d4c8b4; overflow-x:auto; tab-size:2; white-space:pre; }
+.kw{color:#93c5fd}.prop{color:#86efac}.val{color:#fca5a5}.cmt{color:#6b6360;font-style:italic}
+.htag{color:#c4b5fd}.attr{color:#fde68a}.str{color:#6ee7b7}
+
+.sec-divider { display:flex; align-items:center; gap:10px; margin:1.8rem 0 1.1rem; }
+.sec-divider-line { flex:1; height:1px; background:var(--rule); }
+.sec-divider-text { font-family:var(--serif); font-size:12.5px; font-weight:600; color:var(--ink-3); letter-spacing:0.1em; white-space:nowrap; }
+
+.feat-list { list-style:none; margin:0.6rem 0; }
+.feat-list li { display:flex; align-items:flex-start; gap:9px; padding:6px 0; font-size:14.5px; color:var(--ink-2); border-bottom:1px solid var(--rule); }
+.feat-list li:last-child { border-bottom:none; }
+.feat-mark { font-family:var(--mono); font-size:12px; min-width:18px; margin-top:2px; font-weight:600; }
+.feat-mark.yes{color:#166534}.feat-mark.no{color:#922b21}.feat-mark.neu{color:var(--amber)}
+
+/* ══ DEMOS ══ */
+.demo-wrap { background:var(--paper-dark); border:1px solid var(--rule-dark); border-radius:6px; padding:1.4rem; margin:1.1rem 0; }
+.demo-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.2em; color:var(--ink-4); text-transform:uppercase; margin-bottom:1rem; display:flex; align-items:center; gap:8px; }
+.demo-label::after { content:''; flex:1; height:1px; background:var(--rule); }
+.stage-desc { margin-top:0.7rem; font-family:var(--mono); font-size:11.5px; color:var(--ink-4); padding:7px 10px; background:var(--paper-mid); border-radius:3px; border-left:2px solid var(--vermilion); }
+
+.pill-group { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:1rem; }
+.pill { font-family:var(--mono); font-size:11.5px; padding:5px 13px; border-radius:2px; border:1px solid var(--rule-dark); background:var(--paper); color:var(--ink-3); cursor:pointer; transition:all 0.16s; }
+.pill:hover { border-color:var(--vermilion); color:var(--verm-dark); }
+.pill.on { background:var(--vermilion); border-color:var(--verm-dark); color:#f5f0e8; }
+
+/* ── live table demos ── */
+.live-table-wrap { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1rem 1.25rem; overflow-x:auto; }
+.demo-tbl { border-collapse:collapse; font-family:var(--serif); font-size:13.5px; color:var(--ink-2); }
+.demo-tbl td, .demo-tbl th { padding:8px 14px; }
+.demo-tbl.bordered td, .demo-tbl.bordered th { border:1px solid #999; }
+.demo-tbl.collapse-border { border-collapse:collapse; }
+.demo-tbl.collapse-border td, .demo-tbl.collapse-border th { border:1px solid #b8a990; }
+.demo-tbl th { background:var(--paper-mid); font-weight:700; }
+.demo-tbl tr:hover td { background:rgba(192,57,43,0.04); }
+
+/* ── spacing visualizer ── */
+.spacing-diagram {
+  background: var(--paper);
+  border: 1.5px solid var(--rule-dark);
+  border-radius: 4px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.spacing-outer {
+  border: 2px solid var(--ink-3);
+  border-radius: 3px;
+  padding: 16px;
+  background: rgba(26,18,8,0.04);
+  display: inline-flex;
+  gap: 0;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.spacing-cell-row { display: flex; gap: 0; }
+.spacing-cell {
+  background: var(--verm-light);
+  border: 1.5px solid var(--vermilion);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 11px; color: var(--verm-dark);
+  font-weight: 600;
+}
+.spacing-legend { display:flex; gap:1.5rem; margin-top:12px; flex-wrap:wrap; }
+.sleg { display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-3); }
+.sleg-dot { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+
+/* ── structure diagram ── */
+.struct-diagram { display:flex; flex-direction:column; gap:3px; margin:0.75rem 0; }
+.struct-row { display:flex; align-items:stretch; gap:3px; }
+.struct-block {
+  border-radius:3px;
+  padding:8px 14px;
+  font-family:var(--mono);
+  font-size:11.5px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  transition:all 0.2s;
+}
+.sb-table { background:rgba(192,57,43,0.1); border:2px solid var(--vermilion); color:var(--verm-dark); padding:14px; }
+.sb-thead { background:rgba(13,110,110,0.1); border:1.5px solid var(--teal); color:var(--teal); flex:1; }
+.sb-tbody { background:rgba(146,64,14,0.08); border:1.5px solid var(--amber); color:var(--amber); flex:2; }
+.sb-tfoot { background:rgba(22,101,52,0.08); border:1.5px solid var(--green); color:var(--green); flex:1; }
+.sb-tr   { background:rgba(13,110,110,0.07); border:1px solid #9ecece; color:var(--teal); flex:1; font-size:11px; }
+.sb-th   { background:rgba(192,57,43,0.1); border:1px solid var(--verm-mid); color:var(--verm-dark); flex:1; font-size:11px; }
+.sb-td   { background:var(--paper); border:1px solid var(--rule-dark); color:var(--ink-3); flex:1; font-size:11px; }
+
+/* ── merge demo ── */
+.merge-demo { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; overflow:hidden; }
+.merge-table { border-collapse:collapse; width:100%; font-family:var(--serif); font-size:13.5px; }
+.merge-table td, .merge-table th { border:1.5px solid var(--rule-dark); padding:10px 14px; text-align:center; }
+.merge-table th { background:var(--paper-mid); font-weight:700; color:var(--ink); }
+.cell-merged { background:var(--verm-light) !important; color:var(--verm-dark) !important; font-weight:700; border-color:var(--vermilion) !important; }
+.cell-gone { background:rgba(26,18,8,0.06) !important; color:var(--ink-5) !important; position:relative; font-size:11px; }
+
+/* quick ref */
+.quick-table { width:100%; border-collapse:collapse; font-size:13px; margin:0.8rem 0; }
+.quick-table th { background:var(--ink-2); color:var(--paper); padding:7px 12px; text-align:left; font-family:var(--serif); font-weight:600; letter-spacing:0.04em; }
+.quick-table td { padding:7px 12px; border-bottom:1px solid var(--rule); color:var(--ink-2); }
+.quick-table tr:last-child td { border-bottom:none; }
+.quick-table tr:nth-child(even) td { background:rgba(192,57,43,0.025); }
+.quick-table code { font-size:11px; }
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--paper-dark)}
+::-webkit-scrollbar-thumb{background:var(--rule-dark);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-5)}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">表格</div>
+    <div class="sidebar-sub">Table 标签 · 属性 · CSS 美化</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">基础创建</div>
+      <a class="nav-item active" onclick="window.goTo('s1')"><span class="nav-num">01</span>创建表格</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">标签属性</div>
+      <a class="nav-item" onclick="window.goTo('s2')"><span class="nav-num">02</span>&lt;table&gt; 属性</a>
+      <a class="nav-item" onclick="window.goTo('s3')"><span class="nav-num">03</span>&lt;tr&gt; 属性</a>
+      <a class="nav-item" onclick="window.goTo('s4')"><span class="nav-num">04</span>&lt;td&gt; 属性</a>
+      <a class="nav-item" onclick="window.goTo('s4m')"><span class="nav-num">　↳</span>合并单元格</a>
+      <a class="nav-item" onclick="window.goTo('s5')"><span class="nav-num">05</span>&lt;th&gt; 标签</a>
+      <a class="nav-item" onclick="window.goTo('s6')"><span class="nav-num">06</span>表格结构标签</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">CSS 美化</div>
+      <a class="nav-item" onclick="window.goTo('s7')"><span class="nav-num">07</span>控制表格边框</a>
+      <a class="nav-item" onclick="window.goTo('s8')"><span class="nav-num">08</span>控制单元格边距</a>
+      <a class="nav-item" onclick="window.goTo('s9')"><span class="nav-num">09</span>控制单元格宽高</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">附录</div>
+      <a class="nav-item" onclick="window.goTo('summary')"><span class="nav-num">总结</span>属性速查表</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">点击目录项跳转对应章节</div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <header class="page-header">
+    <h1>表格</h1>
+    <div class="header-desc">从创建到美化，掌握 HTML 表格的完整使用方法</div>
+    <div class="header-meta">
+      <span class="header-meta-item">table · tr · td · th</span>
+      <span class="header-meta-item">colspan · rowspan 合并</span>
+      <span class="header-meta-item">thead · tbody · tfoot 结构</span>
+      <span class="header-meta-item">border-collapse CSS 美化</span>
+    </div>
+  </header>
+
+  <div class="content-wrap">
+
+    <!-- ══ §01 创建表格 ══ -->
+    <section class="chapter" id="s1">
+      <div class="chapter-header">
+        <span class="ch-num">§ 01</span>
+        <span class="ch-title">创建表格</span>
+        <span class="ch-hint">三个核心标签嵌套使用</span>
+      </div>
+
+      <p class="body-text">当页面需要展示有规律的数据时（如成绩单、课程表、价格对比），表格是最直观的呈现方式。HTML 表格由<strong>三个核心标签</strong>嵌套而成，理解它们的层级关系是学习表格的第一步。</p>
+
+      <!-- 结构图 -->
+      <div class="demo-wrap">
+        <div class="demo-label">结构层次图 · table → tr → td</div>
+        <div class="struct-diagram">
+          <div class="struct-row">
+            <div class="struct-block sb-table" style="width:100%">
+              &lt;table&gt; — 整个表格的容器（最外层）
+            </div>
+          </div>
+          <div style="padding-left:20px;display:flex;flex-direction:column;gap:3px">
+            <div class="struct-row" style="gap:6px">
+              <div class="struct-block sb-tr">&lt;tr&gt; 第一行</div>
+              <div class="struct-row" style="gap:3px;flex:3">
+                <div class="struct-block sb-td">&lt;td&gt; 格1</div>
+                <div class="struct-block sb-td">&lt;td&gt; 格2</div>
+                <div class="struct-block sb-td">&lt;td&gt; 格3</div>
+              </div>
+            </div>
+            <div class="struct-row" style="gap:6px">
+              <div class="struct-block sb-tr">&lt;tr&gt; 第二行</div>
+              <div class="struct-row" style="gap:3px;flex:3">
+                <div class="struct-block sb-td">&lt;td&gt; 格4</div>
+                <div class="struct-block sb-td">&lt;td&gt; 格5</div>
+                <div class="struct-block sb-td">&lt;td&gt; 格6</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>标签</th><th>英文全称</th><th>职责</th><th>嵌套规则</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>&lt;table&gt;</code></td><td>Table</td><td>定义整个表格的容器</td><td>最外层，包裹所有内容</td></tr>
+          <tr><td><code>&lt;tr&gt;</code></td><td>Table Row</td><td>定义表格中的一行</td><td>必须嵌套在 <code>&lt;table&gt;</code> 内</td></tr>
+          <tr><td><code>&lt;td&gt;</code></td><td>Table Data</td><td>定义行内的单元格</td><td>必须嵌套在 <code>&lt;tr&gt;</code> 内</td></tr>
+        </tbody>
+      </table>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 基本语法</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;table&gt;</span>
+  <span class="htag">&lt;tr&gt;</span>
+    <span class="htag">&lt;td&gt;</span>单元格1<span class="htag">&lt;/td&gt;</span>
+    <span class="htag">&lt;td&gt;</span>单元格2<span class="htag">&lt;/td&gt;</span>
+  <span class="htag">&lt;/tr&gt;</span>
+  <span class="htag">&lt;tr&gt;</span>
+    <span class="htag">&lt;td&gt;</span>单元格3<span class="htag">&lt;/td&gt;</span>
+    <span class="htag">&lt;td&gt;</span>单元格4<span class="htag">&lt;/td&gt;</span>
+  <span class="htag">&lt;/tr&gt;</span>
+<span class="htag">&lt;/table&gt;</span></div>
+      </div>
+
+      <!-- live preview -->
+      <div class="demo-wrap">
+        <div class="demo-label">实时效果 · 上方代码的渲染结果</div>
+        <div class="live-table-wrap">
+          <table class="demo-tbl bordered">
+            <tr><td>单元格1</td><td>单元格2</td></tr>
+            <tr><td>单元格3</td><td>单元格4</td></tr>
+          </table>
+        </div>
+        <div class="stage-desc">已加 border="1" 使边框可见，默认无边框</div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div><strong>重要规则：</strong><code>&lt;tr&gt;</code> 标签中只能嵌套 <code>&lt;td&gt;</code> 或 <code>&lt;th&gt;</code> 标签，<strong>不可以直接在 <code>&lt;tr&gt;</code> 中输入文字</strong>，否则页面结构会错乱。</div>
+      </div>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span>记忆技巧：把表格想象成 Excel——<code>&lt;table&gt;</code> 是整张工作表，<code>&lt;tr&gt;</code> 是每一行，<code>&lt;td&gt;</code> 是每个格子。</span>
+      </div>
+    </section>
+
+    <!-- ══ §02 table 属性 ══ -->
+    <section class="chapter" id="s2">
+      <div class="chapter-header">
+        <span class="ch-num">§ 02</span>
+        <span class="ch-title">&lt;table&gt; 标签的属性</span>
+        <span class="ch-hint">点击按钮查看效果对比</span>
+      </div>
+
+      <p class="body-text">HTML 为 <code>&lt;table&gt;</code> 标签提供了多个原生属性，用于控制表格的基本显示样式。虽然大部分属性可用 CSS 替代，但仍需了解其含义，尤其是 <code>cellspacing</code> 无法被 CSS margin 替代。</p>
+
+      <table class="data-table">
+        <thead><tr><th>属性</th><th>描述</th><th>常用值</th><th>默认值</th></tr></thead>
+        <tbody>
+          <tr><td><code>border</code></td><td>表格边框粗细</td><td>像素值（如 <code>1</code>）</td><td><code>0</code>（无边框）</td></tr>
+          <tr><td><code>cellspacing</code></td><td>单元格与单元格之间的间距</td><td>像素值</td><td><code>2px</code></td></tr>
+          <tr><td><code>cellpadding</code></td><td>单元格内容与边框的内边距</td><td>像素值</td><td><code>1px</code></td></tr>
+          <tr><td><code>width</code></td><td>表格宽度</td><td>像素值 / 百分比</td><td>自适应</td></tr>
+          <tr><td><code>height</code></td><td>表格高度</td><td>像素值</td><td>自适应</td></tr>
+          <tr><td><code>align</code></td><td>表格在页面中的水平对齐</td><td><code>left</code> / <code>center</code> / <code>right</code></td><td><code>left</code></td></tr>
+          <tr><td><code>bgcolor</code></td><td>表格背景颜色</td><td>颜色值</td><td>—</td></tr>
+          <tr><td><code>background</code></td><td>表格背景图像</td><td>图像 URL</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <!-- spacing visualizer -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">cellspacing 与 cellpadding 的区别</div><div class="sec-divider-line"></div></div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">图解 · 两个间距属性的作用位置</div>
+        <div class="spacing-diagram">
+          <div class="spacing-outer" id="spacing-vis" style="gap:12px;padding:18px">
+            <div class="spacing-cell-row" style="gap:12px">
+              <div class="spacing-cell" style="width:90px;height:52px;padding:10px">内容</div>
+              <div class="spacing-cell" style="width:90px;height:52px;padding:10px">内容</div>
+            </div>
+            <div class="spacing-cell-row" style="gap:12px">
+              <div class="spacing-cell" style="width:90px;height:52px;padding:10px">内容</div>
+              <div class="spacing-cell" style="width:90px;height:52px;padding:10px">内容</div>
+            </div>
+          </div>
+          <div class="spacing-legend">
+            <div class="sleg"><div class="sleg-dot" style="background:rgba(26,18,8,0.15);border:1.5px solid var(--ink-3)"></div>cellspacing — 格子与格子之间的"走廊"</div>
+            <div class="sleg"><div class="sleg-dot" style="background:var(--verm-light);border:1.5px solid var(--vermilion)"></div>cellpadding — 格子内容与边框之间的"呼吸空间"</div>
+          </div>
+        </div>
+        <div class="pill-group" style="margin-top:1rem">
+          <button class="pill on" onclick="window.setSpacing('default',this)">默认间距</button>
+          <button class="pill" onclick="window.setSpacing('nosp',this)">cellspacing="0"</button>
+          <button class="pill" onclick="window.setSpacing('bigpad',this)">cellpadding="20"</button>
+          <button class="pill" onclick="window.setSpacing('both',this)">两者都大</button>
+        </div>
+        <div class="stage-desc" id="spacing-desc">当前：默认 — cellspacing ≈ 2px，cellpadding ≈ 1px</div>
+      </div>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span>使用像素值属性时可以<strong>省略单位 <code>px</code></strong>，如 <code>border="1"</code>、<code>cellspacing="0"</code>。</span>
+      </div>
+    </section>
+
+    <!-- ══ §03 tr 属性 ══ -->
+    <section class="chapter" id="s3">
+      <div class="chapter-header">
+        <span class="ch-num">§ 03</span>
+        <span class="ch-title">&lt;tr&gt; 标签的属性</span>
+      </div>
+
+      <p class="body-text">当需要让某一行特殊显示（如为表头行添加背景色、调整行高）时，可以为 <code>&lt;tr&gt;</code> 标签添加属性。</p>
+
+      <table class="data-table">
+        <thead><tr><th>属性</th><th>描述</th><th>常用属性值</th></tr></thead>
+        <tbody>
+          <tr><td><code>height</code></td><td>设置行高</td><td>像素值</td></tr>
+          <tr><td><code>align</code></td><td>行内内容的水平对齐方式</td><td><code>left</code> / <code>center</code> / <code>right</code></td></tr>
+          <tr><td><code>valign</code></td><td>行内内容的垂直对齐方式</td><td><code>top</code> / <code>middle</code> / <code>bottom</code></td></tr>
+          <tr><td><code>bgcolor</code></td><td>行背景颜色</td><td>颜色值</td></tr>
+          <tr><td><code>background</code></td><td>行背景图像</td><td>图像 URL</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo-wrap">
+        <div class="demo-label">效果演示 · 为不同行设置属性</div>
+        <div class="live-table-wrap">
+          <table class="demo-tbl" style="border-collapse:collapse;width:100%">
+            <tr style="background:#f5e6e4;height:44px">
+              <td style="border:1px solid #b8a990;padding:8px 14px;text-align:center;font-weight:600">科目</td>
+              <td style="border:1px solid #b8a990;padding:8px 14px;text-align:center;font-weight:600">平时分</td>
+              <td style="border:1px solid #b8a990;padding:8px 14px;text-align:center;font-weight:600">考试分</td>
+              <td style="border:1px solid #b8a990;padding:8px 14px;text-align:center;font-weight:600">总分</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">语文</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">28</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">62</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">90</td>
+            </tr>
+            <tr style="background:#e8f4f8">
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">数学</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">30</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">65</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">95</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">英语</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">25</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">70</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px;text-align:center">95</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <span><code>&lt;tr&gt;</code> 标签<strong>没有 <code>width</code> 属性</strong>，行的宽度由外层 <code>&lt;table&gt;</code> 决定。实际项目中，以上属性均推荐用 <strong>CSS 替代</strong>，更灵活可维护。</span>
+      </div>
+    </section>
+
+    <!-- ══ §04 td 属性 ══ -->
+    <section class="chapter" id="s4">
+      <div class="chapter-header">
+        <span class="ch-num">§ 04</span>
+        <span class="ch-title">&lt;td&gt; 标签的属性</span>
+      </div>
+
+      <p class="body-text"><code>&lt;td&gt;</code> 是控制粒度最细的标签，可以精确控制每一个单元格的样式。其中 <code>colspan</code> 和 <code>rowspan</code> 是最重要的属性，用于合并单元格。</p>
+
+      <table class="data-table">
+        <thead><tr><th>属性名</th><th>含义</th><th>常用属性值</th><th>重要程度</th></tr></thead>
+        <tbody>
+          <tr><td><code>width</code></td><td>单元格宽度</td><td>像素值</td><td>了解，用 CSS 替代</td></tr>
+          <tr><td><code>height</code></td><td>单元格高度</td><td>像素值</td><td>了解，用 CSS 替代</td></tr>
+          <tr><td><code>align</code></td><td>内容水平对齐</td><td><code>left</code> / <code>center</code> / <code>right</code></td><td>了解，用 CSS 替代</td></tr>
+          <tr><td><code>valign</code></td><td>内容垂直对齐</td><td><code>top</code> / <code>middle</code> / <code>bottom</code></td><td>了解，用 CSS 替代</td></tr>
+          <tr><td><code>bgcolor</code></td><td>背景颜色</td><td>颜色值</td><td>了解，用 CSS 替代</td></tr>
+          <tr><td><code>background</code></td><td>背景图像</td><td>URL</td><td>了解</td></tr>
+          <tr><td><code style="color:var(--verm-dark);font-weight:700">colspan</code></td><td><strong>横跨列数（水平合并）</strong></td><td>正整数</td><td>⭐ <strong>重点掌握</strong></td></tr>
+          <tr><td><code style="color:var(--verm-dark);font-weight:700">rowspan</code></td><td><strong>竖跨行数（垂直合并）</strong></td><td>正整数</td><td>⭐ <strong>重点掌握</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box accent">
+        <span class="note-icon">📌</span>
+        <div>
+          <strong>联动规律（容易踩坑）：</strong><br>
+          对某个 <code>&lt;td&gt;</code> 设置 <code>width</code> → 该<strong>整列</strong>所有单元格都会跟着同宽<br>
+          对某个 <code>&lt;td&gt;</code> 设置 <code>height</code> → 该<strong>整行</strong>所有单元格都会跟着同高
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 合并单元格 ══ -->
+    <section class="chapter" id="s4m">
+      <div class="chapter-header">
+        <span class="ch-num">§ 04</span>
+        <span class="ch-title">合并单元格</span>
+        <span class="ch-hint">colspan · rowspan — 点击演示查看过程</span>
+      </div>
+
+      <p class="body-text">合并单元格是表格操作中最重要的技能，分为两种方向：<strong>水平合并</strong>（跨列）和<strong>垂直合并</strong>（跨行）。操作分为固定的两步。</p>
+
+      <div class="def-block">
+        <div class="def-label">合并步骤</div>
+        <div class="def-text">
+          <strong>第一步：</strong>在<strong>保留的单元格</strong>上添加 <code>colspan</code>（横向合并列数）或 <code>rowspan</code>（纵向合并行数）属性<br>
+          <strong>第二步：</strong>删除或注释掉被"吞并"的多余单元格（<code>&lt;td&gt;</code>）
+        </div>
+      </div>
+
+      <!-- colspan demo -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">水平合并 colspan — 合并同一行的多列</div><div class="sec-divider-line"></div></div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · colspan 合并过程</div>
+        <div class="pill-group">
+          <button class="pill on" onclick="window.setMerge('colspan-before',this)">合并前（3列×2行）</button>
+          <button class="pill" onclick="window.setMerge('colspan-after',this)">合并后（colspan="3"）</button>
+        </div>
+        <div class="merge-demo">
+          <table class="merge-table" id="colspan-table">
+            <tr>
+              <td class="cell-merged" colspan="3">已合并：跨 3 列的大格子（colspan="3"）</td>
+            </tr>
+            <tr>
+              <td>格子4</td>
+              <td>格子5</td>
+              <td>格子6</td>
+            </tr>
+          </table>
+        </div>
+        <div class="stage-desc" id="merge-desc-colspan">已合并 — 第一行的3个格子合并为1个，显示为宽格子</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · colspan 水平合并示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;table</span> <span class="attr">border</span>=<span class="str">"1"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;tr&gt;</span>
+    <span class="cmt">&lt;!-- colspan="3" 表示这个格子横跨3列 --&gt;</span>
+    <span class="htag">&lt;td</span> <span class="attr">colspan</span>=<span class="str">"3"</span><span class="htag">&gt;</span>跨3列的大格子<span class="htag">&lt;/td&gt;</span>
+    <span class="cmt">&lt;!-- 原来第2、第3个 td 已删除 --&gt;</span>
+  <span class="htag">&lt;/tr&gt;</span>
+  <span class="htag">&lt;tr&gt;</span>
+    <span class="htag">&lt;td&gt;</span>格子4<span class="htag">&lt;/td&gt;</span>
+    <span class="htag">&lt;td&gt;</span>格子5<span class="htag">&lt;/td&gt;</span>
+    <span class="htag">&lt;td&gt;</span>格子6<span class="htag">&lt;/td&gt;</span>
+  <span class="htag">&lt;/tr&gt;</span>
+<span class="htag">&lt;/table&gt;</span></div>
+      </div>
+
+      <!-- rowspan demo -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">垂直合并 rowspan — 合并同一列的多行</div><div class="sec-divider-line"></div></div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · rowspan 合并过程</div>
+        <div class="pill-group">
+          <button class="pill on" onclick="window.setMerge('rowspan-before',this)">合并前（2列×3行）</button>
+          <button class="pill" onclick="window.setMerge('rowspan-after',this)">合并后（rowspan="3"）</button>
+        </div>
+        <div class="merge-demo">
+          <table class="merge-table" id="rowspan-table">
+            <tr>
+              <td class="cell-merged" rowspan="3" style="width:160px">已合并：跨3行的格子<br>（rowspan="3"）</td>
+              <td>第1行第2列</td>
+            </tr>
+            <tr><td>第2行第2列</td></tr>
+            <tr><td>第3行第2列</td></tr>
+          </table>
+        </div>
+        <div class="stage-desc" id="merge-desc-rowspan">已合并 — 第一列的3个格子合并为1个高格子</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · rowspan 垂直合并示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;table</span> <span class="attr">border</span>=<span class="str">"1"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;tr&gt;</span>
+    <span class="cmt">&lt;!-- rowspan="3" 表示这个格子竖跨3行 --&gt;</span>
+    <span class="htag">&lt;td</span> <span class="attr">rowspan</span>=<span class="str">"3"</span><span class="htag">&gt;</span>跨3行的格子<span class="htag">&lt;/td&gt;</span>
+    <span class="htag">&lt;td&gt;</span>第1行第2列<span class="htag">&lt;/td&gt;</span>
+  <span class="htag">&lt;/tr&gt;</span>
+  <span class="htag">&lt;tr&gt;</span>
+    <span class="cmt">&lt;!-- 第2、第3行的第1列 td 已删除 --&gt;</span>
+    <span class="htag">&lt;td&gt;</span>第2行第2列<span class="htag">&lt;/td&gt;</span>
+  <span class="htag">&lt;/tr&gt;</span>
+  <span class="htag">&lt;tr&gt;</span>
+    <span class="htag">&lt;td&gt;</span>第3行第2列<span class="htag">&lt;/td&gt;</span>
+  <span class="htag">&lt;/tr&gt;</span>
+<span class="htag">&lt;/table&gt;</span></div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div>
+          <strong>合并注意事项：</strong><br>
+          ① 合并后必须<strong>删除多余的 <code>&lt;td&gt;</code></strong>，否则表格列数会超出，布局错乱<br>
+          ② 合并方向要确认：横向（同行多列）用 <code>colspan</code>，纵向（同列多行）用 <code>rowspan</code><br>
+          ③ <code>colspan</code> 和 <code>rowspan</code> 是重点，其余 <code>&lt;td&gt;</code> 属性均可用 CSS 替代
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §05 th ══ -->
+    <section class="chapter" id="s5">
+      <div class="chapter-header">
+        <span class="ch-num">§ 05</span>
+        <span class="ch-title">&lt;th&gt; 标签</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text"><code>&lt;th&gt;</code> 是专门用于<strong>表头单元格</strong>的标签，与 <code>&lt;td&gt;</code> 用法完全相同（属性一致），但默认样式不同，能让表格结构语义更清晰。</div>
+      </div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">对比演示 · th 与 td 的默认样式差异</div>
+        <div class="live-table-wrap">
+          <table class="demo-tbl" style="border-collapse:collapse;width:100%">
+            <tr>
+              <th style="border:1px solid #b8a990;padding:8px 14px">姓名 &lt;th&gt;</th>
+              <th style="border:1px solid #b8a990;padding:8px 14px">年龄 &lt;th&gt;</th>
+              <th style="border:1px solid #b8a990;padding:8px 14px">成绩 &lt;th&gt;</th>
+            </tr>
+            <tr>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">张三 &lt;td&gt;</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">20</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">95</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">李四 &lt;td&gt;</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">21</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">88</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.1rem 0">
+        <div class="def-block">
+          <div class="def-label">&lt;th&gt; 表头单元格</div>
+          <div class="def-text">文本<strong>加粗</strong> + <strong>居中</strong>对齐（浏览器默认样式）<br>适合放列标题、行标题</div>
+        </div>
+        <div class="def-block" style="border-left-color:var(--teal)">
+          <div class="def-label" style="color:var(--teal)">&lt;td&gt; 普通数据单元格</div>
+          <div class="def-text">普通字体 + 左对齐（浏览器默认样式）<br>适合放实际数据内容</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · th 表头用法</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;table</span> <span class="attr">border</span>=<span class="str">"1"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;tr&gt;</span>
+    <span class="htag">&lt;th&gt;</span>姓名<span class="htag">&lt;/th&gt;</span>   <span class="cmt">&lt;!-- 加粗居中 --&gt;</span>
+    <span class="htag">&lt;th&gt;</span>年龄<span class="htag">&lt;/th&gt;</span>
+    <span class="htag">&lt;th&gt;</span>成绩<span class="htag">&lt;/th&gt;</span>
+  <span class="htag">&lt;/tr&gt;</span>
+  <span class="htag">&lt;tr&gt;</span>
+    <span class="htag">&lt;td&gt;</span>张三<span class="htag">&lt;/td&gt;</span>   <span class="cmt">&lt;!-- 普通字体左对齐 --&gt;</span>
+    <span class="htag">&lt;td&gt;</span>20<span class="htag">&lt;/td&gt;</span>
+    <span class="htag">&lt;td&gt;</span>95<span class="htag">&lt;/td&gt;</span>
+  <span class="htag">&lt;/tr&gt;</span>
+<span class="htag">&lt;/table&gt;</span></div>
+      </div>
+    </section>
+
+    <!-- ══ §06 结构标签 ══ -->
+    <section class="chapter" id="s6">
+      <div class="chapter-header">
+        <span class="ch-num">§ 06</span>
+        <span class="ch-title">表格的结构标签</span>
+        <span class="ch-hint">thead · tbody · tfoot</span>
+      </div>
+
+      <p class="body-text">为了让表格具有更清晰的语义，HTML 提供了三个结构化容器标签，将表格划分为头部、主体和页脚三个区域，便于浏览器和开发者理解表格的内容层次。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">结构图 · thead / tbody / tfoot 的层次关系</div>
+        <div class="struct-diagram">
+          <div class="struct-row">
+            <div class="struct-block sb-table" style="width:100%">&lt;table&gt;</div>
+          </div>
+          <div style="padding-left:20px;display:flex;flex-direction:column;gap:4px">
+            <div class="struct-block sb-thead" style="text-align:center">
+              &lt;thead&gt; — 表格头部（列标题行）
+            </div>
+            <div class="struct-block sb-tfoot" style="text-align:center">
+              &lt;tfoot&gt; — 表格页脚（合计 / 备注）⬅ 写在 tbody 前
+            </div>
+            <div class="struct-block sb-tbody" style="text-align:center">
+              &lt;tbody&gt; — 表格主体（实际数据行，可有多个）
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>标签</th><th>描述</th><th>位置规则</th><th>数量限制</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;thead&gt;</code></td><td>表格头部，通常放列标题行</td><td>位于 <code>&lt;table&gt;</code> 内最前</td><td>只能有 1 个</td></tr>
+          <tr><td><code>&lt;tfoot&gt;</code></td><td>表格页脚，通常放合计行或备注</td><td>位于 <code>&lt;thead&gt;</code> 之后，<code>&lt;tbody&gt;</code> 之前</td><td>只能有 1 个</td></tr>
+          <tr><td><code>&lt;tbody&gt;</code></td><td>表格主体，放实际数据行</td><td>位于 <code>&lt;tfoot&gt;</code> 之后</td><td>可以有多个</td></tr>
+        </tbody>
+      </table>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 使用结构标签的完整示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;table</span> <span class="attr">border</span>=<span class="str">"1"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;thead&gt;</span>
+    <span class="htag">&lt;tr&gt;</span>
+      <span class="htag">&lt;th&gt;</span>科目<span class="htag">&lt;/th&gt;</span>
+      <span class="htag">&lt;th&gt;</span>平时分<span class="htag">&lt;/th&gt;</span>
+      <span class="htag">&lt;th&gt;</span>考试分<span class="htag">&lt;/th&gt;</span>
+    <span class="htag">&lt;/tr&gt;</span>
+  <span class="htag">&lt;/thead&gt;</span>
+
+  <span class="htag">&lt;tfoot&gt;</span>  <span class="cmt">&lt;!-- 注意：tfoot 写在 tbody 之前 --&gt;</span>
+    <span class="htag">&lt;tr&gt;</span>
+      <span class="htag">&lt;td&gt;</span>合计<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;td&gt;</span>83<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;td&gt;</span>197<span class="htag">&lt;/td&gt;</span>
+    <span class="htag">&lt;/tr&gt;</span>
+  <span class="htag">&lt;/tfoot&gt;</span>
+
+  <span class="htag">&lt;tbody&gt;</span>
+    <span class="htag">&lt;tr&gt;</span><span class="htag">&lt;td&gt;</span>语文<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;td&gt;</span>28<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;td&gt;</span>62<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;/tr&gt;</span>
+    <span class="htag">&lt;tr&gt;</span><span class="htag">&lt;td&gt;</span>数学<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;td&gt;</span>30<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;td&gt;</span>65<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;/tr&gt;</span>
+    <span class="htag">&lt;tr&gt;</span><span class="htag">&lt;td&gt;</span>英语<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;td&gt;</span>25<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;td&gt;</span>70<span class="htag">&lt;/td&gt;</span><span class="htag">&lt;/tr&gt;</span>
+  <span class="htag">&lt;/tbody&gt;</span>
+<span class="htag">&lt;/table&gt;</span></div>
+      </div>
+
+      <!-- live demo with structure -->
+      <div class="demo-wrap">
+        <div class="demo-label">渲染效果 · thead / tfoot / tbody 分区表格</div>
+        <div class="live-table-wrap">
+          <table style="border-collapse:collapse;width:100%;font-family:var(--serif);font-size:14px">
+            <thead>
+              <tr style="background:var(--paper-mid)">
+                <th style="border:1px solid #b8a990;padding:9px 14px">科目</th>
+                <th style="border:1px solid #b8a990;padding:9px 14px">平时分</th>
+                <th style="border:1px solid #b8a990;padding:9px 14px">考试分</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr style="background:#f0fce8;font-weight:600">
+                <td style="border:1px solid #b8a990;padding:9px 14px">合计</td>
+                <td style="border:1px solid #b8a990;padding:9px 14px;text-align:center">83</td>
+                <td style="border:1px solid #b8a990;padding:9px 14px;text-align:center">197</td>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr><td style="border:1px solid #d4c8b4;padding:9px 14px">语文</td><td style="border:1px solid #d4c8b4;padding:9px 14px;text-align:center">28</td><td style="border:1px solid #d4c8b4;padding:9px 14px;text-align:center">62</td></tr>
+              <tr style="background:rgba(192,57,43,0.03)"><td style="border:1px solid #d4c8b4;padding:9px 14px">数学</td><td style="border:1px solid #d4c8b4;padding:9px 14px;text-align:center">30</td><td style="border:1px solid #d4c8b4;padding:9px 14px;text-align:center">65</td></tr>
+              <tr><td style="border:1px solid #d4c8b4;padding:9px 14px">英语</td><td style="border:1px solid #d4c8b4;padding:9px 14px;text-align:center">25</td><td style="border:1px solid #d4c8b4;padding:9px 14px;text-align:center">70</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span><code>&lt;tfoot&gt;</code> 写在 <code>&lt;tbody&gt;</code> 之前是有原因的：当表格数据量很大时，浏览器可以在接收到全部数据之前<strong>先渲染出页脚</strong>，提升用户体验。这是 HTML 规范的设计决定。</span>
+      </div>
+    </section>
+
+    <!-- ══ §07 CSS 边框 ══ -->
+    <section class="chapter" id="s7">
+      <div class="chapter-header">
+        <span class="ch-num">§ 07</span>
+        <span class="ch-title">使用 CSS 控制表格边框</span>
+        <span class="ch-hint">border-collapse 是关键</span>
+      </div>
+
+      <p class="body-text">使用 CSS 的 <code>border</code> 属性可以为表格和单元格分别设置更丰富的边框样式（颜色、宽度、线型）。其中 <code>border-collapse</code> 是控制表格边框呈现的核心属性。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 切换 border-collapse 效果</div>
+        <div class="pill-group">
+          <button class="pill on" onclick="window.setBorderCollapse('separate',this)">border-collapse: separate（默认，双线）</button>
+          <button class="pill" onclick="window.setBorderCollapse('collapse',this)">border-collapse: collapse（合并，单线）</button>
+        </div>
+        <div class="live-table-wrap">
+          <table id="border-table" style="width:100%;font-family:var(--serif);font-size:14px;border:1px solid #922b21;border-collapse:separate;border-spacing:3px">
+            <tr>
+              <th style="border:1px solid #922b21;padding:8px 14px;background:var(--verm-light)">品牌</th>
+              <th style="border:1px solid #922b21;padding:8px 14px;background:var(--verm-light)">型号</th>
+              <th style="border:1px solid #922b21;padding:8px 14px;background:var(--verm-light)">价格</th>
+            </tr>
+            <tr>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">苹果</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">iPhone 16</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">¥ 5,999</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">华为</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">Mate 70</td>
+              <td style="border:1px solid #d4c8b4;padding:8px 14px">¥ 5,499</td>
+            </tr>
+          </table>
+        </div>
+        <div class="stage-desc" id="border-desc">当前：separate — 相邻边框分离显示，呈现双线效果</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css · border-collapse 用法</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="sel">table</span> {
+  <span class="prop">border</span>: <span class="val">1px solid #333</span>;
+  <span class="prop">border-collapse</span>: <span class="val">collapse</span>;  <span class="cmt">/* 合并相邻边框为单线 */</span>
+}
+
+<span class="sel">th, td</span> {
+  <span class="prop">border</span>: <span class="val">1px solid #ccc</span>;
+  <span class="prop">padding</span>: <span class="val">8px 12px</span>;
+}</div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div>
+          当 <code>border-collapse: collapse</code> 生效时，HTML 中设置的 <code>cellspacing</code> 属性<strong>会失效</strong>，两者不能同时生效。<br>
+          另外：<code>&lt;tr&gt;</code> 标签<strong>不支持</strong> <code>border</code> CSS 样式属性，只能对 <code>&lt;table&gt;</code>、<code>&lt;th&gt;</code>、<code>&lt;td&gt;</code> 设置边框。
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §08 CSS 边距 ══ -->
+    <section class="chapter" id="s8">
+      <div class="chapter-header">
+        <span class="ch-num">§ 08</span>
+        <span class="ch-title">使用 CSS 控制单元格边距</span>
+      </div>
+
+      <p class="body-text">控制单元格与内容的距离，以及相邻单元格之间的距离，是表格美化中最常见的需求。</p>
+
+      <table class="data-table">
+        <thead><tr><th>需求</th><th>方法</th><th>注意</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>单元格内容与边框的距离（内边距）</td>
+            <td>对 <code>&lt;th&gt;</code> / <code>&lt;td&gt;</code> 设置 CSS <code>padding</code></td>
+            <td>✅ 完全支持</td>
+          </tr>
+          <tr>
+            <td>相邻单元格之间的距离（外边距）</td>
+            <td>只能用 <code>&lt;table&gt;</code> 的 HTML 属性 <code>cellspacing</code></td>
+            <td>⚠️ <code>margin</code> 对 <code>td</code> 无效</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css · 使用 padding 控制单元格内边距</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="sel">th, td</span> {
+  <span class="prop">padding</span>: <span class="val">10px 16px</span>;  <span class="cmt">/* 上下10px，左右16px */</span>
+}
+
+<span class="cmt">/* ❌ 以下写法无效 — td 不支持 margin */</span>
+<span class="sel">td</span> {
+  <span class="prop">margin</span>: <span class="val">10px</span>;  <span class="cmt">/* 无效！ */</span>
+}</div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div>
+          <strong>三个"没有"要记住：</strong><br>
+          ① <code>&lt;th&gt;</code> 和 <code>&lt;td&gt;</code> <strong>没有</strong> <code>margin</code> 外边距属性<br>
+          ② <code>&lt;tr&gt;</code> 标签既没有 <code>padding</code> 也没有 <code>margin</code><br>
+          ③ 要设置相邻单元格间距，只能用 <code>&lt;table cellspacing="..."&gt;</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §09 CSS 宽高 ══ -->
+    <section class="chapter" id="s9">
+      <div class="chapter-header">
+        <span class="ch-num">§ 09</span>
+        <span class="ch-title">使用 CSS 控制单元格宽高</span>
+      </div>
+
+      <p class="body-text">使用 CSS 的 <code>width</code> 和 <code>height</code> 属性可以控制单元格的宽高。单元格有一个与众不同的联动特性，需要特别注意。</p>
+
+      <div class="def-block">
+        <div class="def-label">联动规律（重要）</div>
+        <div class="def-text">
+          设置某个 <code>&lt;td&gt;</code> 的 <code>width</code> → 该<strong>整列</strong>所有单元格宽度统一变化<br>
+          设置某个 <code>&lt;td&gt;</code> 的 <code>height</code> → 该<strong>整行</strong>所有单元格高度统一变化
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css · 控制单元格宽高</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">/* 设置第一列宽度（整列生效）*/</span>
+<span class="sel">td:first-child</span> {
+  <span class="prop">width</span>: <span class="val">120px</span>;
+}
+
+<span class="cmt">/* 设置表头行高（整行生效）*/</span>
+<span class="sel">th</span> {
+  <span class="prop">height</span>: <span class="val">48px</span>;
+}</div>
+      </div>
+
+      <!-- 完整 CSS 美化示例 -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">综合示例 · 一张完整的 CSS 美化表格</div><div class="sec-divider-line"></div></div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">效果展示 · CSS 全面美化后的表格</div>
+        <div class="live-table-wrap">
+          <table style="width:100%;border-collapse:collapse;font-family:var(--serif);font-size:14px;color:var(--ink-2)">
+            <thead>
+              <tr style="background:var(--ink-2);color:var(--paper)">
+                <th style="padding:11px 16px;text-align:left;font-weight:600;letter-spacing:0.04em">学生姓名</th>
+                <th style="padding:11px 16px;text-align:center;font-weight:600">语文</th>
+                <th style="padding:11px 16px;text-align:center;font-weight:600">数学</th>
+                <th style="padding:11px 16px;text-align:center;font-weight:600">英语</th>
+                <th style="padding:11px 16px;text-align:center;font-weight:600">总分</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:10px 16px;border-bottom:1px solid var(--rule)">张 三</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule)">90</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule)">95</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule)">88</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule);font-weight:600;color:var(--vermilion)">273</td></tr>
+              <tr style="background:rgba(192,57,43,0.03)"><td style="padding:10px 16px;border-bottom:1px solid var(--rule)">李 四</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule)">85</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule)">92</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule)">79</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule);font-weight:600;color:var(--vermilion)">256</td></tr>
+              <tr><td style="padding:10px 16px;border-bottom:1px solid var(--rule)">王 五</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule)">78</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule)">88</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule)">95</td><td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--rule);font-weight:600;color:var(--vermilion)">261</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css · 完整美化样式代码</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="sel">table</span> {
+  <span class="prop">width</span>: <span class="val">100%</span>;
+  <span class="prop">border-collapse</span>: <span class="val">collapse</span>;
+}
+
+<span class="sel">thead tr</span> {
+  <span class="prop">background-color</span>: <span class="val">#3d2e1a</span>;
+  <span class="prop">color</span>: <span class="val">#f5f0e8</span>;
+}
+
+<span class="sel">th, td</span> {
+  <span class="prop">padding</span>: <span class="val">10px 16px</span>;
+}
+
+<span class="sel">th</span> {
+  <span class="prop">font-weight</span>: <span class="val">600</span>;
+  <span class="prop">letter-spacing</span>: <span class="val">0.04em</span>;
+}
+
+<span class="sel">td</span> {
+  <span class="prop">border-bottom</span>: <span class="val">1px solid #d4c8b4</span>;
+}
+
+<span class="cmt">/* 斑马纹效果 */</span>
+<span class="sel">tbody tr:nth-child(even)</span> {
+  <span class="prop">background-color</span>: <span class="val">rgba(192, 57, 43, 0.03)</span>;
+}
+
+<span class="cmt">/* 鼠标悬停效果 */</span>
+<span class="sel">tbody tr:hover td</span> {
+  <span class="prop">background-color</span>: <span class="val">rgba(192, 57, 43, 0.06)</span>;
+}</div>
+      </div>
+    </section>
+
+    <!-- ══ 总结速查 ══ -->
+    <section class="chapter" id="summary">
+      <div class="chapter-header">
+        <span class="ch-num">总结</span>
+        <span class="ch-title">属性速查表</span>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">核心标签一览</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>标签</th><th>作用</th><th>重要属性</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;table&gt;</code></td><td>表格容器（最外层）</td><td><code>border</code> <code>cellspacing</code> <code>cellpadding</code> <code>width</code></td></tr>
+          <tr><td><code>&lt;tr&gt;</code></td><td>表格行</td><td><code>height</code> <code>align</code> <code>valign</code> <code>bgcolor</code>（无 width）</td></tr>
+          <tr><td><code>&lt;td&gt;</code></td><td>普通单元格</td><td><code>colspan</code> ⭐ <code>rowspan</code> ⭐ <code>width</code> <code>align</code></td></tr>
+          <tr><td><code>&lt;th&gt;</code></td><td>表头单元格（自动加粗居中）</td><td>与 <code>&lt;td&gt;</code> 属性相同</td></tr>
+          <tr><td><code>&lt;thead&gt;</code></td><td>表格头部区域</td><td>—</td></tr>
+          <tr><td><code>&lt;tbody&gt;</code></td><td>表格主体区域（可多个）</td><td>—</td></tr>
+          <tr><td><code>&lt;tfoot&gt;</code></td><td>表格页脚区域</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">CSS 表格专用属性</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>CSS 属性</th><th>作用</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>border-collapse: collapse</code></td><td>合并相邻边框为单线</td><td>生效后 <code>cellspacing</code> 失效</td></tr>
+          <tr><td><code>border-collapse: separate</code></td><td>边框分离（默认）</td><td>配合 <code>border-spacing</code> 控制间距</td></tr>
+          <tr><td><code>border-spacing</code></td><td>相邻边框之间的距离</td><td>CSS 版 <code>cellspacing</code>，需 <code>separate</code> 模式</td></tr>
+          <tr><td><code>padding</code>（作用于 td/th）</td><td>单元格内容内边距</td><td>CSS 版 <code>cellpadding</code>，推荐使用</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">三个不支持 / 没有的重要规则</div><div class="sec-divider-line"></div></div>
+      <div class="note-box accent">
+        <span class="note-icon">📌</span>
+        <div>
+          ① <code>&lt;tr&gt;</code> 没有 <code>width</code> 属性（行宽由 table 决定）<br>
+          ② <code>&lt;td&gt;</code> / <code>&lt;th&gt;</code> 没有 <code>margin</code> 外边距<br>
+          ③ <code>&lt;tr&gt;</code> 没有 <code>padding</code> 和 <code>margin</code><br>
+          ④ <code>&lt;tr&gt;</code> 不支持 CSS <code>border</code> 属性<br>
+          ⑤ 要设置单元格间距只能用 HTML <code>cellspacing</code> 或 CSS <code>border-spacing</code>（需 separate 模式）
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+const navItems = document.querySelectorAll('.nav-item');
+const sectionIds = ['s1','s2','s3','s4','s4m','s5','s6','s7','s8','s9','summary'];
+
+window.goTo = function(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+};
+
+window.addEventListener('scroll', () => {
+  let cur = 0;
+  sectionIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 80) cur = i;
+  });
+  navItems.forEach(n => n.classList.remove('active'));
+  if (navItems[cur]) navItems[cur].classList.add('active');
+}, { passive: true });
+
+window.copyCode = function(btn) {
+  const body = btn.closest('.code-block').querySelector('.code-body');
+  navigator.clipboard.writeText(body.innerText.trim()).then(() => {
+    btn.textContent = '已复制';
+    setTimeout(() => btn.textContent = '复制', 1600);
+  });
+};
+
+/* ── spacing demo ── */
+const spacingMap = {
+  default: { gap:'12px', padding:'18px', cellPad:'10px', desc:'当前：默认 — cellspacing ≈ 2px，cellpadding ≈ 1px' },
+  nosp:    { gap:'0px',  padding:'0px',  cellPad:'10px', desc:'cellspacing="0" — 单元格之间的走廊消失，边框紧贴在一起' },
+  bigpad:  { gap:'10px', padding:'14px', cellPad:'22px', desc:'cellpadding="20" — 单元格内容与边框之间有更大的呼吸空间' },
+  both:    { gap:'18px', padding:'22px', cellPad:'20px', desc:'两者都大 — 整个表格更加宽松，阅读舒适度提升' },
+};
+
+window.setSpacing = function(key, btn) {
+  document.querySelectorAll('.pill-group .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const d = spacingMap[key];
+  const vis = document.getElementById('spacing-vis');
+  vis.style.gap = d.gap;
+  vis.style.padding = d.padding;
+  vis.querySelectorAll('.spacing-cell-row').forEach(r => r.style.gap = d.gap);
+  vis.querySelectorAll('.spacing-cell').forEach(c => c.style.padding = d.cellPad);
+  document.getElementById('spacing-desc').textContent = d.desc;
+};
+
+/* ── merge demo ── */
+const colspanBefore = `<tr>
+  <td style="border:1.5px solid #b8a990;padding:10px 14px;text-align:center">格子1</td>
+  <td style="border:1.5px solid #b8a990;padding:10px 14px;text-align:center">格子2</td>
+  <td style="border:1.5px solid #b8a990;padding:10px 14px;text-align:center">格子3</td>
+</tr>
+<tr>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">格子4</td>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">格子5</td>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">格子6</td>
+</tr>`;
+
+const colspanAfter = `<tr>
+  <td colspan="3" style="border:1.5px solid #c0392b;padding:10px 14px;text-align:center;background:#f5e6e4;color:#922b21;font-weight:700">已合并：跨 3 列的大格子（colspan="3"）</td>
+</tr>
+<tr>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">格子4</td>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">格子5</td>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">格子6</td>
+</tr>`;
+
+const rowspanBefore = `<tr>
+  <td style="border:1.5px solid #b8a990;padding:10px 14px;text-align:center">第1行第1列</td>
+  <td style="border:1.5px solid #b8a990;padding:10px 14px;text-align:center">第1行第2列</td>
+</tr>
+<tr>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">第2行第1列</td>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">第2行第2列</td>
+</tr>
+<tr>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">第3行第1列</td>
+  <td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">第3行第2列</td>
+</tr>`;
+
+const rowspanAfter = `<tr>
+  <td rowspan="3" style="border:1.5px solid #c0392b;padding:10px 14px;text-align:center;background:#f5e6e4;color:#922b21;font-weight:700;width:160px">已合并：跨3行的格子<br>（rowspan="3"）</td>
+  <td style="border:1.5px solid #b8a990;padding:10px 14px;text-align:center">第1行第2列</td>
+</tr>
+<tr><td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">第2行第2列</td></tr>
+<tr><td style="border:1.5px solid #d4c8b4;padding:10px 14px;text-align:center">第3行第2列</td></tr>`;
+
+window.setMerge = function(key, btn) {
+  const group = btn.closest('.demo-wrap').querySelectorAll('.pill');
+  group.forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+
+  if (key === 'colspan-before') {
+    document.getElementById('colspan-table').innerHTML = colspanBefore;
+    document.getElementById('merge-desc-colspan').textContent = '合并前 — 3列×2行，共6个独立格子';
+  } else if (key === 'colspan-after') {
+    document.getElementById('colspan-table').innerHTML = colspanAfter;
+    document.getElementById('merge-desc-colspan').textContent = '合并后 — 第一行3个格子合并，仅保留1个并设 colspan="3"';
+  } else if (key === 'rowspan-before') {
+    document.getElementById('rowspan-table').innerHTML = rowspanBefore;
+    document.getElementById('merge-desc-rowspan').textContent = '合并前 — 2列×3行，共6个独立格子';
+  } else if (key === 'rowspan-after') {
+    document.getElementById('rowspan-table').innerHTML = rowspanAfter;
+    document.getElementById('merge-desc-rowspan').textContent = '合并后 — 第一列3个格子合并，仅保留1个并设 rowspan="3"';
+  }
+};
+
+/* ── border-collapse demo ── */
+window.setBorderCollapse = function(val, btn) {
+  document.querySelectorAll('.pill-group .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const tbl = document.getElementById('border-table');
+  const desc = document.getElementById('border-desc');
+  if (val === 'collapse') {
+    tbl.style.borderCollapse = 'collapse';
+    tbl.style.borderSpacing = '0';
+    desc.textContent = 'collapse — 相邻边框合并为单线，清晰整洁（推荐）';
+  } else {
+    tbl.style.borderCollapse = 'separate';
+    tbl.style.borderSpacing = '3px';
+    desc.textContent = 'separate — 相邻边框各自显示，出现双线效果（默认）';
+  }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<h2 class="sr-only">Interactive CSS pseudo-class playground demonstrating hover, nth-child, checked, focus, empty, not, and target states.</h2>
+
+<style>
+  .pc-wrap { font-family: var(--font-sans); color: var(--color-text-primary); padding: 0.5rem 0; }
+  .pc-section { margin-bottom: 1.75rem; padding: 1rem 1.25rem; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); }
+  .pc-title { font-size: 15px; font-weight: 500; margin: 0 0 4px; color: var(--color-text-primary); }
+  .pc-hint { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 14px; }
+  .pc-code { font-family: var(--font-mono); font-size: 12px; background: var(--color-background-secondary); padding: 2px 6px; border-radius: 4px; color: var(--color-text-primary); }
+
+  /* hover + focus demo */
+  .demo-btn { padding: 8px 16px; font-size: 14px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); border-radius: var(--border-radius-md); color: var(--color-text-primary); cursor: pointer; transition: all .15s; margin-right: 8px; }
+  .demo-btn:hover { background: #E6F1FB; color: #0C447C; border-color: #378ADD; transform: translateY(-1px); }
+  .demo-btn:active { background: #B5D4F4; transform: translateY(0); }
+  .demo-input { padding: 8px 12px; font-size: 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); width: 200px; }
+  .demo-input:focus { outline: none; border-color: #378ADD; box-shadow: 0 0 0 3px #E6F1FB; }
+
+  /* nth-child demo */
+  .nth-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin-top: 8px; }
+  .nth-grid .cell { aspect-ratio: 1; background: var(--color-background-secondary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--color-text-secondary); font-weight: 500; }
+  .nth-grid.odd .cell:nth-child(odd) { background: #CECBF6; color: #26215C; }
+  .nth-grid.even .cell:nth-child(even) { background: #9FE1CB; color: #04342C; }
+  .nth-grid.three-n .cell:nth-child(3n) { background: #FAC775; color: #412402; }
+  .nth-grid.first-three .cell:nth-child(-n+3) { background: #F4C0D1; color: #4B1528; }
+  .nth-grid.last-two .cell:nth-last-child(-n+2) { background: #F5C4B3; color: #4A1B0C; }
+  .nth-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+
+  /* checked demo */
+  .toggle-wrap { display: inline-flex; align-items: center; gap: 10px; }
+  .toggle-wrap input[type="checkbox"] { display: none; }
+  .toggle-slider { width: 44px; height: 24px; background: var(--color-background-secondary); border-radius: 999px; position: relative; transition: background .2s; border: 0.5px solid var(--color-border-tertiary); }
+  .toggle-slider::before { content: ""; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: transform .2s; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+  .toggle-wrap input:checked + .toggle-slider { background: #1D9E75; }
+  .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(20px); }
+  .theme-demo { margin-top: 12px; padding: 14px; background: #F1EFE8; border-radius: var(--border-radius-md); color: #2C2C2A; transition: all .25s; font-size: 14px; }
+  #theme-toggle:checked ~ .theme-demo { background: #26215C; color: #EEEDFE; }
+
+  /* not demo */
+  .chip-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { padding: 4px 12px; font-size: 13px; border-radius: 999px; background: var(--color-background-secondary); color: var(--color-text-secondary); }
+  .chip-list .chip:not(.active) { opacity: 0.5; }
+  .chip.active { background: #CECBF6; color: #26215C; font-weight: 500; opacity: 1; }
+
+  /* empty demo */
+  .empty-box { min-height: 36px; padding: 8px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); font-size: 13px; color: var(--color-text-primary); border: 0.5px solid var(--color-border-tertiary); }
+  .empty-box:empty { background: #FCEBEB; border: 1px dashed #E24B4A; }
+  .empty-box:empty::before { content: "（此元素为空，:empty 已匹配）"; color: #A32D2D; font-size: 12px; }
+
+  /* first/last of type */
+  .fot-demo p { margin: 4px 0; padding: 6px 10px; background: var(--color-background-secondary); border-radius: 4px; font-size: 13px; }
+  .fot-demo p:first-of-type { background: #C0DD97; color: #173404; font-weight: 500; }
+  .fot-demo p:last-of-type { background: #F7C1C1; color: #501313; font-weight: 500; }
+
+  .active-btn { background: #CECBF6 !important; color: #26215C !important; border-color: #7F77DD !important; font-weight: 500; }
+</style>
+
+<div class="pc-wrap">
+
+  <div class="pc-section">
+    <p class="pc-title">:hover、:focus、:active</p>
+    <p class="pc-hint">鼠标移上按钮、按住按钮、点击输入框，观察三种状态变化。</p>
+    <button class="demo-btn">悬停或点击我</button>
+    <button class="demo-btn">另一个按钮</button>
+    <br><br>
+    <input class="demo-input" type="text" placeholder="点击这里聚焦" />
+  </div>
+
+  <div class="pc-section">
+    <p class="pc-title">:nth-child(n) 用法实战</p>
+    <p class="pc-hint">下方 10 个方块，点击按钮切换不同的 nth-child 规则：</p>
+    <div class="nth-buttons">
+      <button class="demo-btn active-btn" data-cls="">全部</button>
+      <button class="demo-btn" data-cls="odd">:nth-child(odd)</button>
+      <button class="demo-btn" data-cls="even">:nth-child(even)</button>
+      <button class="demo-btn" data-cls="three-n">:nth-child(3n)</button>
+      <button class="demo-btn" data-cls="first-three">:nth-child(-n+3)</button>
+      <button class="demo-btn" data-cls="last-two">:nth-last-child(-n+2)</button>
+    </div>
+    <div class="nth-grid" id="nth-grid">
+      <div class="cell">1</div><div class="cell">2</div><div class="cell">3</div><div class="cell">4</div><div class="cell">5</div>
+      <div class="cell">6</div><div class="cell">7</div><div class="cell">8</div><div class="cell">9</div><div class="cell">10</div>
+    </div>
+  </div>
+
+  <div class="pc-section">
+    <p class="pc-title">:checked ——纯 CSS 实现主题切换</p>
+    <p class="pc-hint">点击开关，下方盒子颜色会变化。整个过程没有 JS，全靠 <span class="pc-code">input:checked ~ .theme-demo</span>。</p>
+    <label class="toggle-wrap">
+      <input type="checkbox" id="theme-toggle" />
+      <span class="toggle-slider"></span>
+      <span style="font-size: 14px;">深色模式</span>
+    </label>
+    <div class="theme-demo">我的背景色由 :checked 伪类控制</div>
+  </div>
+
+  <div class="pc-section">
+    <p class="pc-title">:not(.active) ——排除匹配</p>
+    <p class="pc-hint"><span class="pc-code">.chip:not(.active)</span> 选中所有没有 active 类的标签，让它们变淡。</p>
+    <div class="chip-list">
+      <span class="chip active">CSS</span>
+      <span class="chip">JavaScript</span>
+      <span class="chip active">HTML</span>
+      <span class="chip">Python</span>
+      <span class="chip">Rust</span>
+      <span class="chip active">React</span>
+    </div>
+  </div>
+
+  <div class="pc-section">
+    <p class="pc-title">:empty ——选中空元素</p>
+    <p class="pc-hint">第一个盒子有内容，第二个是空的。空盒子被 <span class="pc-code">:empty</span> 标红提示。</p>
+    <div class="empty-box">这是有内容的盒子</div>
+    <br>
+    <div class="empty-box"></div>
+  </div>
+
+  <div class="pc-section">
+    <p class="pc-title">:first-of-type 与 :last-of-type</p>
+    <p class="pc-hint">下方 4 个 p 元素，第一个标绿，最后一个标红——即使它们之间还有 h4。</p>
+    <div class="fot-demo">
+      <p>第一段：我会变绿（first-of-type）</p>
+      <p>第二段：普通段落</p>
+      <p>第三段：普通段落</p>
+      <p>第四段：我会变红（last-of-type）</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const grid = document.getElementById('nth-grid');
+  const buttons = document.querySelectorAll('.nth-buttons .demo-btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active-btn'));
+      btn.classList.add('active-btn');
+      grid.className = 'nth-grid ' + (btn.dataset.cls || '');
+    });
+  });
+</script>

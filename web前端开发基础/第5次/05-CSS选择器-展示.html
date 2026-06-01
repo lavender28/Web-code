@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS3基础 · CSS选择器</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --paper:       #f5f0e8;
+  --paper-dark:  #ede7d9;
+  --paper-mid:   #e8e1d3;
+  --vermilion:   #c0392b;
+  --verm-light:  #f5e6e4;
+  --verm-mid:    #e8b4af;
+  --verm-dark:   #922b21;
+  --ink:         #1a1208;
+  --ink-2:       #3d2e1a;
+  --ink-3:       #6b5740;
+  --ink-4:       #9a8470;
+  --ink-5:       #c4b49e;
+  --rule:        #d4c8b4;
+  --rule-dark:   #b8a990;
+  --code-bg:     #1c1917;
+  --code-line:   #292524;
+  --teal:        #0d6e6e;
+  --teal-light:  #e0f0f0;
+  --amber:       #92400e;
+  --amber-light: #fef3c7;
+  --green:       #166534;
+  --green-light: #dcfce7;
+  --sidebar-w:   268px;
+  --serif: 'Noto Serif SC', 'SimSun', 'STSong', Georgia, serif;
+  --mono:  'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--serif);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15.5px;
+  line-height: 1.85;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  position: fixed; top: 0; left: 0; bottom: 0;
+  background: var(--paper-dark);
+  border-right: 2px solid var(--rule-dark);
+  display: flex; flex-direction: column;
+  z-index: 200; overflow-y: auto;
+}
+.sidebar-header {
+  padding: 1.75rem 1.5rem 1.4rem;
+  border-bottom: 1px solid var(--rule-dark);
+  background: var(--paper-mid);
+}
+.sidebar-title { font-size: 15px; font-weight: 700; color: var(--vermilion); line-height: 1.4; font-family: var(--serif); }
+.sidebar-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; font-style: italic; }
+
+.sidebar-nav { padding: 0.9rem 0; flex: 1; }
+.nav-group { margin-bottom: 0.35rem; }
+.nav-group-label {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em;
+  color: var(--ink-5); text-transform: uppercase; padding: 5px 18px 3px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 14px; border-radius: 3px; cursor: pointer;
+  color: var(--ink-3); font-family: var(--serif); font-size: 13px; line-height: 1.35;
+  transition: all 0.16s; border-left: 3px solid transparent; text-decoration: none;
+}
+.nav-item:hover { background: var(--paper-mid); color: var(--ink-2); border-left-color: var(--verm-mid); }
+.nav-item.active { background: var(--verm-light); color: var(--vermilion); border-left-color: var(--vermilion); font-weight: 600; }
+.nav-num { font-family: var(--mono); font-size: 10.5px; color: var(--ink-5); min-width: 20px; font-weight: 500; }
+.nav-item.active .nav-num { color: var(--vermilion); opacity: 0.65; }
+.sidebar-footer { padding: 0.9rem 1.5rem; border-top: 1px solid var(--rule); font-size: 11px; color: var(--ink-5); font-style: italic; }
+
+/* ══ MAIN ══ */
+.main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; }
+
+.page-header {
+  background: var(--ink-2); color: var(--paper);
+  padding: 3rem 4rem 2.25rem; position: relative; overflow: hidden;
+  border-bottom: 4px solid var(--vermilion);
+}
+.page-header::before { content:''; position:absolute; top:-40px; right:-40px; width:260px; height:260px; border:38px solid rgba(192,57,43,0.1); border-radius:50%; }
+.page-header::after  { content:''; position:absolute; bottom:-20px; right:80px; width:140px; height:140px; border:2px solid rgba(192,57,43,0.16); border-radius:50%; }
+.page-header h1 { font-size:2.2rem; font-weight:700; color:#f5f0e8; letter-spacing:0.04em; line-height:1.2; margin-bottom:0.5rem; position:relative; font-family:var(--serif); }
+.header-desc { font-size:13.5px; color:var(--ink-5); font-style:italic; position:relative; }
+.header-meta { display:flex; gap:1.5rem; margin-top:1rem; flex-wrap:wrap; }
+.header-meta-item { font-family:var(--mono); font-size:11px; color:var(--ink-5); display:flex; align-items:center; gap:5px; }
+.header-meta-item::before { content:''; width:6px; height:6px; background:var(--vermilion); border-radius:50%; display:inline-block; opacity:0.7; }
+
+.content-wrap { max-width: 800px; padding: 2.75rem 4rem 5rem; }
+
+/* ══ CHAPTER ══ */
+.chapter { margin-bottom: 3.5rem; scroll-margin-top: 20px; }
+.chapter-header {
+  display:flex; align-items:baseline; gap:14px;
+  margin-bottom:1.6rem; padding-bottom:0.8rem;
+  border-bottom:2px solid var(--rule-dark); position:relative;
+}
+.chapter-header::after { content:''; position:absolute; bottom:-2px; left:0; width:52px; height:2px; background:var(--vermilion); }
+.ch-num { font-family:var(--mono); font-size:12.5px; font-weight:500; color:var(--vermilion); letter-spacing:0.05em; opacity:0.8; }
+.ch-title { font-family:var(--serif); font-size:1.3rem; font-weight:700; color:var(--ink); letter-spacing:0.06em; }
+.ch-hint { font-size:11.5px; color:var(--ink-4); font-style:italic; margin-left:auto; }
+
+/* sub section */
+.sub-section { margin-bottom: 2.1rem; scroll-margin-top: 20px; }
+.sub-header { display:flex; align-items:center; gap:10px; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--rule); }
+.sub-badge { font-family:var(--mono); font-size:10px; background:var(--paper-mid); color:var(--ink-4); border:1px solid var(--rule-dark); padding:2px 7px; border-radius:2px; letter-spacing:0.06em; }
+.sub-title { font-family:var(--serif); font-size:1.05rem; font-weight:600; color:var(--ink); letter-spacing:0.05em; }
+
+/* text */
+.body-text { color:var(--ink-2); margin-bottom:1.1rem; text-indent:2em; }
+.body-text.no-indent { text-indent:0; }
+code { font-family:var(--mono); font-size:0.86em; background:var(--verm-light); color:var(--verm-dark); padding:1px 5px; border-radius:3px; border:1px solid var(--verm-mid); }
+strong { font-weight:600; color:var(--ink); }
+
+/* def box */
+.def-block { background:var(--paper-dark); border-left:3px solid var(--vermilion); padding:0.9rem 1.2rem; margin:1.1rem 0; border-radius:0 4px 4px 0; }
+.def-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.18em; color:var(--vermilion); text-transform:uppercase; margin-bottom:4px; font-weight:500; }
+.def-text { font-size:14.5px; color:var(--ink-2); line-height:1.7; }
+
+/* note boxes */
+.note-box { display:flex; gap:11px; padding:0.8rem 1.05rem; border-radius:4px; margin:1.1rem 0; font-size:13.5px; line-height:1.6; }
+.note-box.warning { background:var(--amber-light); border:1px solid #d97706; color:var(--amber); }
+.note-box.info    { background:var(--teal-light);  border:1px solid #0d9488; color:var(--teal); }
+.note-box.success { background:var(--green-light); border:1px solid #16a34a; color:var(--green); }
+.note-box.accent  { background:var(--verm-light);  border:1px solid var(--verm-mid); color:var(--verm-dark); }
+.note-icon { font-size:15px; margin-top:1px; flex-shrink:0; }
+
+/* table */
+.data-table { width:100%; border-collapse:collapse; font-size:13.5px; margin:1.1rem 0; }
+.data-table th { background:var(--paper-mid); padding:8px 13px; text-align:left; font-family:var(--serif); font-weight:600; color:var(--ink-2); border-bottom:2px solid var(--rule-dark); border-top:1px solid var(--rule-dark); letter-spacing:0.04em; }
+.data-table td { padding:8px 13px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink-2); }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:rgba(192,57,43,0.03); }
+.data-table code { font-size:11.5px; }
+
+/* code block */
+.code-block { background:var(--code-bg); border-radius:6px; margin:1.1rem 0; box-shadow:0 6px 24px rgba(26,18,8,0.22),0 2px 8px rgba(26,18,8,0.12); overflow:hidden; }
+.code-header { background:var(--code-line); padding:7px 15px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #3c3532; }
+.code-dots { display:flex; gap:5px; }
+.code-dots span { width:10px; height:10px; border-radius:50%; }
+.code-dots .d1{background:#ff5f57}.code-dots .d2{background:#febc2e}.code-dots .d3{background:#28c840}
+.code-lang { font-family:var(--mono); font-size:10.5px; color:#6b6563; letter-spacing:0.08em; margin-left:3px; }
+.code-copy { margin-left:auto; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); color:#9a8e88; font-family:var(--mono); font-size:10.5px; padding:3px 9px; border-radius:3px; cursor:pointer; transition:all 0.16s; }
+.code-copy:hover { background:rgba(255,255,255,0.15); color:#d4c8b4; }
+.code-body { padding:1.1rem 1.4rem; font-family:var(--mono); font-size:12.5px; line-height:1.9; color:#d4c8b4; overflow-x:auto; tab-size:4; white-space:pre; }
+.kw{color:#93c5fd} .prop{color:#86efac} .val{color:#fca5a5} .cmt{color:#6b6360;font-style:italic}
+.htag{color:#c4b5fd} .attr{color:#fde68a} .str{color:#6ee7b7} .sel{color:#fb923c}
+
+/* divider */
+.sec-divider { display:flex; align-items:center; gap:10px; margin:1.8rem 0 1.1rem; }
+.sec-divider-line { flex:1; height:1px; background:var(--rule); }
+.sec-divider-text { font-family:var(--serif); font-size:12.5px; font-weight:600; color:var(--ink-3); letter-spacing:0.1em; white-space:nowrap; }
+
+/* feat list */
+.feat-list { list-style:none; margin:0.6rem 0; }
+.feat-list li { display:flex; align-items:flex-start; gap:9px; padding:5px 0; font-size:14.5px; color:var(--ink-2); border-bottom:1px solid var(--rule); }
+.feat-list li:last-child { border-bottom:none; }
+.feat-mark { font-family:var(--mono); font-size:12px; min-width:18px; margin-top:2px; font-weight:600; }
+.feat-mark.yes{color:#166534} .feat-mark.no{color:#922b21} .feat-mark.neu{color:var(--amber)}
+
+/* ══ INTERACTIVE DEMOS ══ */
+.demo-wrap { background:var(--paper-dark); border:1px solid var(--rule-dark); border-radius:6px; padding:1.4rem; margin:1.1rem 0; }
+.demo-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.2em; color:var(--ink-4); text-transform:uppercase; margin-bottom:1rem; display:flex; align-items:center; gap:8px; }
+.demo-label::after { content:''; flex:1; height:1px; background:var(--rule); }
+
+.pill-group { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:1rem; }
+.pill { font-family:var(--mono); font-size:11.5px; padding:5px 13px; border-radius:2px; border:1px solid var(--rule-dark); background:var(--paper); color:var(--ink-3); cursor:pointer; transition:all 0.16s; }
+.pill:hover { border-color:var(--vermilion); color:var(--verm-dark); }
+.pill.on { background:var(--vermilion); border-color:var(--verm-dark); color:#f5f0e8; }
+.stage-desc { margin-top:0.7rem; font-family:var(--mono); font-size:11.5px; color:var(--ink-4); padding:7px 10px; background:var(--paper-mid); border-radius:3px; border-left:2px solid var(--vermilion); }
+
+/* selector anatomy diagram */
+.anatomy { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1.25rem 1.5rem; font-family:var(--mono); font-size:14px; margin:1.1rem 0; }
+.anatomy-line { display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin-bottom:0.6rem; }
+.anat-sel { color:#fb923c; font-weight:600; font-size:16px; }
+.anat-brace { color:#d4c8b4; font-size:16px; }
+.anat-prop { color:#86efac; }
+.anat-colon { color:#d4c8b4; }
+.anat-val { color:#fca5a5; }
+.anat-semi { color:#d4c8b4; }
+.anatomy-labels { display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:8px; padding-top:8px; border-top:1px solid var(--rule); }
+.anat-label { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--ink-4); }
+.anat-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+/* selector cards */
+.sel-cards { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:1.1rem 0; }
+.sel-card { background:var(--paper); border:1px solid var(--rule-dark); border-radius:4px; padding:1rem 1.1rem; cursor:pointer; transition:all 0.18s; }
+.sel-card:hover { border-color:var(--vermilion); }
+.sel-card.on { border-color:var(--vermilion); background:var(--verm-light); box-shadow:0 0 0 2px var(--verm-light),0 0 0 3px var(--vermilion); }
+.sc-glyph { font-family:var(--mono); font-size:1.1rem; color:var(--vermilion); margin-bottom:4px; font-weight:500; }
+.sc-name { font-family:var(--serif); font-size:13.5px; font-weight:600; color:var(--ink); margin-bottom:2px; }
+.sc-syntax { font-family:var(--mono); font-size:10px; color:var(--ink-4); }
+.sc-detail { display:none; background:var(--paper-mid); border-radius:3px; padding:0.75rem 0.9rem; font-size:13.5px; color:var(--ink-2); line-height:1.6; margin-top:8px; animation:fadeUp 0.22s ease; }
+.sc-detail.show { display:block; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* priority bar */
+.priority-bar { margin:1.1rem 0; }
+.prio-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.prio-label { font-family:var(--mono); font-size:11px; color:var(--ink-3); min-width:90px; text-align:right; }
+.prio-track { flex:1; background:var(--paper-mid); border-radius:20px; height:22px; border:1px solid var(--rule-dark); overflow:hidden; }
+.prio-fill { height:100%; border-radius:20px; display:flex; align-items:center; padding:0 10px; font-family:var(--mono); font-size:10.5px; font-weight:600; color:#f5f0e8; transition:width 0.6s cubic-bezier(0.34,1.3,0.64,1); }
+.prio-score { font-family:var(--mono); font-size:12px; color:var(--ink-3); min-width:50px; }
+
+/* intro method tabs */
+.method-tabs { display:flex; gap:6px; margin-bottom:1rem; flex-wrap:wrap; }
+.m-tab { font-family:var(--serif); font-size:13px; padding:5px 14px; border-radius:2px; border:1px solid var(--rule-dark); background:var(--paper); color:var(--ink-3); cursor:pointer; transition:all 0.16s; }
+.m-tab:hover { border-color:var(--teal); color:var(--teal); }
+.m-tab.on { background:var(--teal); border-color:var(--teal); color:#f5f0e8; }
+.method-content { display:none; animation:fadeUp 0.22s ease; }
+.method-content.show { display:block; }
+
+/* decision tree */
+.dtree { background:var(--paper); border:1px solid var(--rule-dark); border-radius:4px; padding:1.1rem 1.25rem; font-size:13.5px; color:var(--ink-2); font-family:var(--mono); line-height:2; }
+.dtree-q { color:var(--vermilion); font-weight:600; }
+.dtree-a { color:var(--teal); }
+.dtree-node { margin-left:1.5em; }
+
+/* quick ref table */
+.quick-table { width:100%; border-collapse:collapse; font-size:13px; margin:0.8rem 0; }
+.quick-table th { background:var(--ink-2); color:var(--paper); padding:7px 12px; text-align:left; font-family:var(--serif); font-weight:600; letter-spacing:0.04em; }
+.quick-table td { padding:7px 12px; border-bottom:1px solid var(--rule); color:var(--ink-2); }
+.quick-table tr:last-child td { border-bottom:none; }
+.quick-table tr:nth-child(even) td { background:rgba(192,57,43,0.025); }
+.quick-table code { font-size:11px; }
+
+/* scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--paper-dark)}
+::-webkit-scrollbar-thumb{background:var(--rule-dark);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-5)}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">CSS 选择器</div>
+    <div class="sidebar-sub">HTML5 + CSS3 前端基础</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">基础概念</div>
+      <a class="nav-item active" onclick="window.goTo('s1')"><span class="nav-num">§1</span>CSS 简介</a>
+      <a class="nav-item" onclick="window.goTo('s2')"><span class="nav-num">§2</span>CSS 样式规则</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">引入方式</div>
+      <a class="nav-item" onclick="window.goTo('s3')"><span class="nav-num">§3</span>三种引入方式</a>
+      <a class="nav-item" onclick="window.goTo('s4')"><span class="nav-num">§4</span>样式优先级</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">基础选择器</div>
+      <a class="nav-item" onclick="window.goTo('s5')"><span class="nav-num">§5</span>标记选择器</a>
+      <a class="nav-item" onclick="window.goTo('s6')"><span class="nav-num">§6</span>类选择器</a>
+      <a class="nav-item" onclick="window.goTo('s7')"><span class="nav-num">§7</span>ID 选择器</a>
+      <a class="nav-item" onclick="window.goTo('s8')"><span class="nav-num">§8</span>通配符选择器</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">附录</div>
+      <a class="nav-item" onclick="window.goTo('s9')"><span class="nav-num">总结</span>选择器速查</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">点击目录项跳转对应章节</div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <header class="page-header">
+    <h1>CSS 选择器</h1>
+    <div class="header-desc">从样式规则到四种基础选择器，掌握 CSS 精准定位元素的核心技术</div>
+    <div class="header-meta">
+      <span class="header-meta-item">前置：HTML 基础结构</span>
+      <span class="header-meta-item">标记 · 类 · ID · 通配符</span>
+      <span class="header-meta-item">三种引入方式 · 优先级规则</span>
+    </div>
+  </header>
+
+  <div class="content-wrap">
+
+    <!-- ══ §1 CSS 简介 ══ -->
+    <section class="chapter" id="s1">
+      <div class="chapter-header">
+        <span class="ch-num">§ 01</span>
+        <span class="ch-title">CSS 简介</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text"><strong>CSS（Cascading Style Sheets，层叠样式表）</strong>是用于控制网页外观的样式语言。在现代 Web 开发中，<strong>HTML5 负责网页结构，CSS3 负责网页样式</strong>，两者分工明确、相互配合。</div>
+      </div>
+
+      <p class="body-text">如果把制作网页比作建房子：<strong>HTML</strong> 是房屋的砖块和结构（定义了哪里是墙壁、哪里是门）；<strong>CSS</strong> 则是房屋的装修（决定了墙漆什么颜色、门有多宽）。CSS 的核心作用就是告诉浏览器，HTML 元素应该以什么样的外观展示在屏幕上。</p>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span>早期 HTML 中，样式与结构混写在一起（如用 <code>&lt;font&gt;</code> 标签设置颜色），导致代码冗余、维护困难。CSS 的出现实现了<strong>结构与表现的分离</strong>，极大提升了开发效率和可维护性。</span>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">CSS 的四大优势</div><div class="sec-divider-line"></div></div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark yes">①</span><div><strong>内容与样式分离</strong>：HTML 专心负责内容逻辑，CSS 专心负责视觉表现，代码更易于阅读和维护。</div></li>
+        <li><span class="feat-mark yes">②</span><div><strong>极高的复用性</strong>：一套 CSS 规则可应用到成百上千个网页。修改一个文件，整个网站风格瞬间统一更新。</div></li>
+        <li><span class="feat-mark yes">③</span><div><strong>响应式设计</strong>：CSS 可检测用户设备屏幕大小，自动调整网页布局，在任何设备上保持美观。</div></li>
+        <li><span class="feat-mark yes">④</span><div><strong>丰富的视觉效果</strong>：动画、阴影、渐变、过渡等效果，极大丰富了用户的交互体验。</div></li>
+      </ul>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">CSS 发展版本</div><div class="sec-divider-line"></div></div>
+
+      <table class="data-table">
+        <thead><tr><th>版本</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CSS1</strong></td><td>最早版本，支持基础字体、颜色、边距等属性</td></tr>
+          <tr><td><strong>CSS2</strong></td><td>增加了定位、z-index、媒体类型等特性</td></tr>
+          <tr><td><strong>CSS2.1</strong></td><td>CSS2 的修订版，修复了诸多错误，是长期主流版本</td></tr>
+          <tr><td><strong>CSS3</strong></td><td>模块化设计，新增圆角、渐变、动画、弹性盒等大量现代特性</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══ §2 CSS 样式规则 ══ -->
+    <section class="chapter" id="s2">
+      <div class="chapter-header">
+        <span class="ch-num">§ 02</span>
+        <span class="ch-title">CSS 样式规则</span>
+      </div>
+
+      <p class="body-text">一条完整的 CSS 样式规则由两大部分组成：<strong>选择器（Selector）</strong>和<strong>声明块（Declaration Block）</strong>。声明块由花括号 <code>{}</code> 包裹，其中每条声明由属性和属性值用冒号分隔组成。</p>
+
+      <div class="anatomy" style="background:var(--code-bg);border-color:#3c3532">
+        <div style="font-family:var(--mono);font-size:13.5px;line-height:2.1">
+          <span style="color:#fb923c;font-weight:600">p</span>
+          <span style="color:#d4c8b4"> {</span><br>
+          <span style="color:#d4c8b4">    </span><span style="color:#86efac">font-size</span><span style="color:#d4c8b4">: </span><span style="color:#fca5a5">18px</span><span style="color:#d4c8b4">;</span><br>
+          <span style="color:#d4c8b4">    </span><span style="color:#86efac">color</span><span style="color:#d4c8b4">: </span><span style="color:#fca5a5">blue</span><span style="color:#d4c8b4">;</span><br>
+          <span style="color:#d4c8b4">}</span>
+        </div>
+        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #3c3532">
+          <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:#9a8e88"><span style="width:8px;height:8px;border-radius:50%;background:#fb923c;display:inline-block"></span>选择器</div>
+          <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:#9a8e88"><span style="width:8px;height:8px;border-radius:50%;background:#86efac;display:inline-block"></span>属性（Property）</div>
+          <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:#9a8e88"><span style="width:8px;height:8px;border-radius:50%;background:#fca5a5;display:inline-block"></span>属性值（Value）</div>
+          <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:#9a8e88"><span style="width:8px;height:8px;border-radius:50%;background:#6b6360;display:inline-block"></span>分号分隔多条声明</div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>要素</th><th>内容</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>选择器</td><td><code>p</code></td><td>作用于页面中所有 <code>&lt;p&gt;</code> 标签</td></tr>
+          <tr><td>属性</td><td><code>font-size</code></td><td>字体大小</td></tr>
+          <tr><td>属性值</td><td><code>18px</code></td><td>18 像素</td></tr>
+          <tr><td>属性</td><td><code>color</code></td><td>文字颜色</td></tr>
+          <tr><td>属性值</td><td><code>blue</code></td><td>蓝色</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div>
+          <strong>书写规范：</strong><br>
+          ① 属性和属性值之间用冒号 <code>:</code> 分隔（不能用等号）<br>
+          ② 多条声明之间用分号 <code>;</code> 分隔<br>
+          ③ 最后一条声明的分号可省略，但建议保留（便于扩展）<br>
+          ④ CSS 对大小写不敏感，但建议统一用小写
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §3 引入方式 ══ -->
+    <section class="chapter" id="s3">
+      <div class="chapter-header">
+        <span class="ch-num">§ 03</span>
+        <span class="ch-title">CSS 样式的三种引入方式</span>
+        <span class="ch-hint">点击标签切换查看</span>
+      </div>
+
+      <p class="body-text">CSS 样式有三种引入 HTML 文档的方式，分别适用于不同的使用场景。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 三种引入方式对比</div>
+        <div class="method-tabs">
+          <button class="m-tab on" onclick="window.setMethod('inline',this)">方式一：行内式</button>
+          <button class="m-tab" onclick="window.setMethod('embed',this)">方式二：内嵌式</button>
+          <button class="m-tab" onclick="window.setMethod('link',this)">方式三：链接式</button>
+        </div>
+
+        <!-- 行内式 -->
+        <div class="method-content show" id="mc-inline">
+          <div class="def-block">
+            <div class="def-label">定义</div>
+            <div class="def-text">通过 HTML 标签的 <code>style</code> 属性，直接在标签内部书写 CSS 样式。</div>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 行内式示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+            <div class="code-body"><span class="htag">&lt;p</span> <span class="attr">style</span>=<span class="str">"font-size:18px; color:blue;"</span><span class="htag">&gt;</span>
+    行内式样式的使用示例
+<span class="htag">&lt;/p&gt;</span></div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>优点</th><th>缺点</th></tr></thead>
+            <tbody>
+              <tr><td>书写简单，即写即用</td><td>样式与结构混写，不易维护</td></tr>
+              <tr><td>优先级最高（1000），可覆盖其他样式</td><td>无法复用，每个标签都要单独写</td></tr>
+              <tr><td>适合临时覆盖某个元素样式</td><td>不利于统一修改</td></tr>
+            </tbody>
+          </table>
+          <div class="note-box warning"><span class="note-icon">⚠</span><span>行内式适合调试时临时覆盖样式。<strong>日常开发中不推荐大量使用。</strong></span></div>
+        </div>
+
+        <!-- 内嵌式 -->
+        <div class="method-content" id="mc-embed">
+          <div class="def-block">
+            <div class="def-label">定义</div>
+            <div class="def-text">将 CSS 样式集中写在 HTML 文件的 <code>&lt;head&gt;</code> 标签内，并定义在 <code>&lt;style&gt;</code> 标签之间。</div>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 内嵌式示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+            <div class="code-body"><span class="htag">&lt;head&gt;</span>
+    <span class="htag">&lt;style</span> <span class="attr">type</span>=<span class="str">"text/css"</span><span class="htag">&gt;</span>
+        <span class="sel">h1</span> {
+            <span class="prop">font-style</span>: <span class="val">italic</span>;
+            <span class="prop">color</span>: <span class="val">#00F</span>;
+            <span class="prop">text-decoration</span>: <span class="val">underline</span>;
+        }
+        <span class="sel">p</span> {
+            <span class="prop">font-size</span>: <span class="val">36px</span>;
+            <span class="prop">color</span>: <span class="val">#F00</span>;
+        }
+    <span class="htag">&lt;/style&gt;</span>
+<span class="htag">&lt;/head&gt;</span></div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>优点</th><th>缺点</th></tr></thead>
+            <tbody>
+              <tr><td>样式与结构分离，便于管理</td><td>仅对当前 HTML 文档有效</td></tr>
+              <tr><td>修改方便，一处修改全页生效</td><td>多个页面需要重复编写</td></tr>
+              <tr><td>适合单页面项目</td><td>样式不能被其他页面复用</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 链接式 -->
+        <div class="method-content" id="mc-link">
+          <div class="def-block">
+            <div class="def-label">定义</div>
+            <div class="def-text">将所有 CSS 样式单独存放在 <code>.css</code> 文件中，通过 <code>&lt;link&gt;</code> 标签链接到 HTML 文档。</div>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · index.html</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+            <div class="code-body"><span class="htag">&lt;head&gt;</span>
+    <span class="htag">&lt;link</span> <span class="attr">href</span>=<span class="str">"style.css"</span> <span class="attr">rel</span>=<span class="str">"stylesheet"</span> <span class="attr">type</span>=<span class="str">"text/css"</span><span class="htag">&gt;</span>
+<span class="htag">&lt;/head&gt;</span></div>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css · style.css</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+            <div class="code-body"><span class="kw">@charset</span> <span class="str">"utf-8"</span>;  <span class="cmt">/* 含中文时必须声明编码，避免乱码 */</span>
+<span class="sel">p</span> {
+    <span class="prop">font-family</span>: <span class="val">"黑体"</span>;
+    <span class="prop">font-size</span>: <span class="val">24px</span>;
+    <span class="prop">color</span>: <span class="val">#390</span>;
+}</div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>优点</th><th>缺点</th></tr></thead>
+            <tbody>
+              <tr><td>多个页面共享同一 CSS 文件</td><td>需要额外维护单独的 CSS 文件</td></tr>
+              <tr><td>修改一次，全站同步生效</td><td>首次加载需要额外网络请求</td></tr>
+              <tr><td>浏览器可缓存 CSS，后续访问更快</td><td>路径配置出错会导致样式失效</td></tr>
+            </tbody>
+          </table>
+          <div class="note-box success"><span class="note-icon">✓</span><span>链接式是<strong>实际项目中最推荐的方式</strong>，有利于代码复用和维护。</span></div>
+        </div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">三种方式对比总结</div><div class="sec-divider-line"></div></div>
+      <table class="data-table">
+        <thead><tr><th>引入方式</th><th>书写位置</th><th>作用范围</th><th>优先级</th><th>推荐程度</th></tr></thead>
+        <tbody>
+          <tr><td>行内式</td><td>标签的 <code>style</code> 属性内</td><td>仅当前标签</td><td>最高（1000）</td><td>不推荐</td></tr>
+          <tr><td>内嵌式</td><td><code>&lt;head&gt;</code> 内的 <code>&lt;style&gt;</code> 标签中</td><td>当前 HTML 文件</td><td>中（100）</td><td>单页面可用</td></tr>
+          <tr><td>链接式</td><td><code>&lt;head&gt;</code> 内的 <code>&lt;link&gt;</code> 标签</td><td>所有链接该文件的页面</td><td>低（10）</td><td>★ 推荐</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══ §4 优先级 ══ -->
+    <section class="chapter" id="s4">
+      <div class="chapter-header">
+        <span class="ch-num">§ 04</span>
+        <span class="ch-title">CSS 样式的优先级</span>
+      </div>
+
+      <p class="body-text">当同一个元素被多种方式设置了样式，CSS 通过<strong>优先级（权重）</strong>机制决定最终显示哪套样式。基本规则：行内样式 &gt; 内嵌样式 &gt; 链接样式。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">选择器权重可视化</div>
+        <div class="priority-bar">
+          <div class="prio-row">
+            <div class="prio-label">行内样式</div>
+            <div class="prio-track"><div class="prio-fill" style="width:100%;background:#c0392b">style=""</div></div>
+            <div class="prio-score">1000</div>
+          </div>
+          <div class="prio-row">
+            <div class="prio-label">ID 选择器</div>
+            <div class="prio-track"><div class="prio-fill" style="width:80%;background:#922b21">#id</div></div>
+            <div class="prio-score">100</div>
+          </div>
+          <div class="prio-row">
+            <div class="prio-label">类选择器</div>
+            <div class="prio-track"><div class="prio-fill" style="width:55%;background:#0d6e6e">.class</div></div>
+            <div class="prio-score">10</div>
+          </div>
+          <div class="prio-row">
+            <div class="prio-label">标记选择器</div>
+            <div class="prio-track"><div class="prio-fill" style="width:30%;background:#92400e">p / div…</div></div>
+            <div class="prio-score">1</div>
+          </div>
+          <div class="prio-row">
+            <div class="prio-label">通配符</div>
+            <div class="prio-track"><div class="prio-fill" style="width:10%;background:#6b5740">*</div></div>
+            <div class="prio-score">0</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>权重值</th><th>选择器类型</th><th>示例</th></tr></thead>
+        <tbody>
+          <tr><td><code>1000</code></td><td>行内样式</td><td><code>style="color:red"</code></td></tr>
+          <tr><td><code>100</code></td><td>ID 选择器</td><td><code>#header</code></td></tr>
+          <tr><td><code>10</code></td><td>类选择器、伪类选择器</td><td><code>.nav</code>、<code>:hover</code></td></tr>
+          <tr><td><code>1</code></td><td>标记选择器、伪元素选择器</td><td><code>p</code>、<code>::before</code></td></tr>
+          <tr><td><code>0</code></td><td>通配符、子选择器、继承样式</td><td><code>*</code>、<code>&gt;</code>、<code>+</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box accent">
+        <span class="note-icon">🔑</span>
+        <div><strong>复合选择器的权重计算：</strong>各基础选择器权重<strong>叠加</strong>。<br>
+        例：<code>div p.highlight</code> = div(1) + p(1) + .highlight(10) = 权重 <strong>12</strong></div>
+      </div>
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span><strong>优先级口诀：</strong>权重相同时，后写的样式覆盖先写的（就近原则）；权重不同时，权重高的优先显示，与书写顺序无关。</span>
+      </div>
+    </section>
+
+    <!-- ══ §5 标记选择器 ══ -->
+    <section class="chapter" id="s5">
+      <div class="chapter-header">
+        <span class="ch-num">§ 05</span>
+        <span class="ch-title">标记选择器</span>
+        <span class="ch-hint">元素选择器 · 权重 1</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text">直接通过 HTML 的<strong>标签名称</strong>来选中页面上的元素。当需要给某种类型的所有标签设置统一样式时，标记选择器是首选。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css · 语法格式</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="sel">标签名</span> {
+    <span class="prop">属性1</span>: <span class="val">属性值1</span>;
+    <span class="prop">属性2</span>: <span class="val">属性值2</span>;
+}</div>
+      </div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark neu">—</span><div><strong>全局性</strong>：会影响页面上所有匹配的标签。设置 <code>div { border: 1px solid black; }</code>，则每一个 div 都会带上边框。</div></li>
+        <li><span class="feat-mark neu">—</span><div><strong>优先级低</strong>：权重仅为 <strong>1</strong>，很容易被类选择器（10）或 ID 选择器（100）覆盖，适合设置网站的"基础底色"。</div></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html + css · 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;style</span> <span class="attr">type</span>=<span class="str">"text/css"</span><span class="htag">&gt;</span>
+    <span class="sel">h1</span> {
+        <span class="prop">font-size</span>: <span class="val">16px</span>;
+        <span class="prop">font-style</span>: <span class="val">italic</span>;
+        <span class="prop">color</span>: <span class="val">#F00</span>;
+    }
+<span class="htag">&lt;/style&gt;</span>
+<span class="htag">&lt;body&gt;</span>
+    <span class="htag">&lt;h1&gt;</span>第一个 h1 标题<span class="htag">&lt;/h1&gt;</span>
+    <span class="htag">&lt;h1&gt;</span>第二个 h1 标题（也会变红）<span class="htag">&lt;/h1&gt;</span>
+<span class="htag">&lt;/body&gt;</span></div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">常用场景</div><div class="sec-divider-line"></div></div>
+      <table class="data-table">
+        <thead><tr><th>使用场景</th><th>示例</th></tr></thead>
+        <tbody>
+          <tr><td>重置默认样式</td><td><code>body { margin: 0; padding: 0; }</code></td></tr>
+          <tr><td>统一段落样式</td><td><code>p { line-height: 1.8; font-size: 14px; }</code></td></tr>
+          <tr><td>统一链接颜色</td><td><code>a { color: #333; text-decoration: none; }</code></td></tr>
+          <tr><td>统一标题字号</td><td><code>h1 { font-size: 28px; color: #222; }</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══ §6 类选择器 ══ -->
+    <section class="chapter" id="s6">
+      <div class="chapter-header">
+        <span class="ch-num">§ 06</span>
+        <span class="ch-title">类选择器</span>
+        <span class="ch-hint">以 . 开头 · 权重 10</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text">类选择器就像给 HTML 元素贴上了一个自定义"标签"。在 CSS 中以英文句点 <strong><code>.</code></strong> 开头，后跟自定义名字，能让你精准挑选出想要装饰的一组元素。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css + html · 定义与应用</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">/* CSS 中定义 */</span>
+<span class="sel">.类名</span> {
+    <span class="prop">属性1</span>: <span class="val">属性值1</span>;
+}
+
+<span class="cmt">/* HTML 中应用 */</span>
+<span class="htag">&lt;标签名</span> <span class="attr">class</span>=<span class="str">"类名"</span><span class="htag">&gt;</span>内容<span class="htag">&lt;/标签名&gt;</span>
+
+<span class="cmt">/* 一个元素可同时应用多个类（空格分隔） */</span>
+<span class="htag">&lt;p</span> <span class="attr">class</span>=<span class="str">"bluefont font1"</span><span class="htag">&gt;</span>此段落同时拥有两个类<span class="htag">&lt;/p&gt;</span></div>
+      </div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark yes">✓</span><div><strong>灵活性</strong>：可以把同一个类应用到不同类型的标签上（<code>&lt;h1&gt;</code>、<code>&lt;p&gt;</code>、<code>&lt;div&gt;</code> 均可）。</div></li>
+        <li><span class="feat-mark yes">✓</span><div><strong>可复用性</strong>：写一次 CSS 样式，可在页面任何地方多次使用，代码非常整洁。</div></li>
+        <li><span class="feat-mark yes">✓</span><div><strong>优先级</strong>：权重分值为 <strong>10</strong>，高于标记选择器（1分），可覆盖基础标签样式。</div></li>
+        <li><span class="feat-mark yes">✓</span><div><strong>多类叠加</strong>：一个元素可同时拥有多个 class，多个类名之间用<strong>空格</strong>分隔，自动继承所有类的样式。</div></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html + css · 完整示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="sel">h1</span>       { <span class="prop">font-size</span>: <span class="val">16px</span>; <span class="prop">font-style</span>: <span class="val">italic</span>; }
+<span class="sel">p</span>        { <span class="prop">font-family</span>: <span class="val">"黑体"</span>; }
+<span class="sel">.font1</span>   { <span class="prop">text-decoration</span>: <span class="val">underline</span>; }
+<span class="sel">.bluefont</span>{ <span class="prop">color</span>: <span class="val">#00F</span>; }
+
+<span class="htag">&lt;h1&gt;</span>普通标题<span class="htag">&lt;/h1&gt;</span>
+<span class="htag">&lt;h1</span> <span class="attr">class</span>=<span class="str">"bluefont"</span><span class="htag">&gt;</span>蓝色标题<span class="htag">&lt;/h1&gt;</span>
+<span class="htag">&lt;p&gt;</span>普通段落<span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;p</span> <span class="attr">class</span>=<span class="str">"bluefont font1"</span><span class="htag">&gt;</span>蓝色 + 下划线段落<span class="htag">&lt;/p&gt;</span></div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div><strong>类名命名规范：</strong><br>
+        ① 第一个字符<strong>不能是数字</strong>（<code>1btn</code> 非法，应改为 <code>btn1</code>）<br>
+        ② 类名<strong>区分大小写</strong>（<code>NavBar</code> 和 <code>navbar</code> 是不同的类名）<br>
+        ③ 一般使用<strong>小写字母</strong>，多词之间用连字符 <code>-</code> 分隔（如 <code>main-content</code>）<br>
+        ④ 类名应具有<strong>语义性</strong>，能反映用途（如 <code>.highlight</code>、<code>.nav-link</code>）</div>
+      </div>
+    </section>
+
+    <!-- ══ §7 ID 选择器 ══ -->
+    <section class="chapter" id="s7">
+      <div class="chapter-header">
+        <span class="ch-num">§ 07</span>
+        <span class="ch-title">ID 选择器</span>
+        <span class="ch-hint">以 # 开头 · 权重 100 · 页面唯一</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text">通过为 HTML 元素设置唯一的 <code>id</code> 属性来精确定位并设置该元素的样式。ID 选择器具有<strong>唯一性</strong>，一个页面中每个 id 值只能出现一次。在 CSS 中以井号 <strong><code>#</code></strong> 开头。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css + html · 定义与应用</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">/* CSS 中定义 */</span>
+<span class="sel">#id名</span> {
+    <span class="prop">属性1</span>: <span class="val">属性值1</span>;
+}
+
+<span class="cmt">/* HTML 中应用 */</span>
+<span class="htag">&lt;标签名</span> <span class="attr">id</span>=<span class="str">"id名"</span><span class="htag">&gt;</span>内容<span class="htag">&lt;/标签名&gt;</span></div>
+      </div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark no">★</span><div><strong>唯一性</strong>：同一个页面中，每个 id 值只能赋予<strong>一个元素</strong>，不可重复。</div></li>
+        <li><span class="feat-mark no">★</span><div><strong>精确性</strong>：只作用于那一个指定 id 的元素，不会影响其他元素。</div></li>
+        <li><span class="feat-mark no">★</span><div><strong>权重高</strong>：权重为 <strong>100</strong>，高于类选择器（10）和标记选择器（1）。</div></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html + css · 完整示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="sel">p</span>           { <span class="prop">font-size</span>: <span class="val">14px</span>; <span class="prop">color</span>: <span class="val">#333</span>; }
+<span class="sel">#intro</span>      { <span class="prop">font-size</span>: <span class="val">18px</span>; <span class="prop">color</span>: <span class="val">#c00</span>; <span class="prop">font-weight</span>: <span class="val">bold</span>; }
+<span class="sel">#copyright</span>  { <span class="prop">font-size</span>: <span class="val">12px</span>; <span class="prop">color</span>: <span class="val">#999</span>; <span class="prop">text-align</span>: <span class="val">center</span>; }
+
+<span class="htag">&lt;p</span> <span class="attr">id</span>=<span class="str">"intro"</span><span class="htag">&gt;</span>引言段落：18px 红色加粗<span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;p&gt;</span>普通段落：14px 深灰色<span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;p</span> <span class="attr">id</span>=<span class="str">"copyright"</span><span class="htag">&gt;</span>版权信息：12px 灰色居中<span class="htag">&lt;/p&gt;</span></div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">ID 选择器 vs 类选择器</div><div class="sec-divider-line"></div></div>
+      <table class="data-table">
+        <thead><tr><th>对比项</th><th>ID 选择器</th><th>类选择器</th></tr></thead>
+        <tbody>
+          <tr><td>CSS 语法</td><td><code>#id名 { }</code></td><td><code>.类名 { }</code></td></tr>
+          <tr><td>HTML 应用</td><td><code>id="id名"</code></td><td><code>class="类名"</code></td></tr>
+          <tr><td>唯一性</td><td>同页面唯一，只能用一次</td><td>可在多个元素上重复使用</td></tr>
+          <tr><td>一个元素能用多少个</td><td>只能有一个 id</td><td>可同时拥有多个 class</td></tr>
+          <tr><td>权重</td><td>100</td><td>10</td></tr>
+          <tr><td>适用场景</td><td>页面唯一关键区域（页头、页脚、主内容区）</td><td>需要复用的通用样式</td></tr>
+        </tbody>
+      </table>
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span>实践建议：ID 选择器常用于配合 JavaScript 操作 DOM（<code>document.getElementById()</code>），样式控制更多推荐使用类选择器，这样可以更灵活地复用样式。</span>
+      </div>
+    </section>
+
+    <!-- ══ §8 通配符 ══ -->
+    <section class="chapter" id="s8">
+      <div class="chapter-header">
+        <span class="ch-num">§ 08</span>
+        <span class="ch-title">通配符选择器</span>
+        <span class="ch-hint">使用 * · 权重 0 · 作用全部元素</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text">使用星号 <strong><code>*</code></strong> 作为选择器，可以匹配页面中的<strong>所有 HTML 元素</strong>，是作用范围最广的选择器。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css · 最常见用法：全局样式重置</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">/* 清除所有元素的默认内外边距，使布局更易控制 */</span>
+<span class="sel">*</span> {
+    <span class="prop">margin</span>: <span class="val">0</span>;
+    <span class="prop">padding</span>: <span class="val">0</span>;
+    <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+}</div>
+      </div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark neu">—</span><div><strong>作用范围</strong>：页面中<strong>所有元素</strong>，无一例外。</div></li>
+        <li><span class="feat-mark neu">—</span><div><strong>权重</strong>：<code>0</code>（所有选择器中权重最低），极容易被其他选择器覆盖。</div></li>
+        <li><span class="feat-mark neu">—</span><div><strong>常见用途</strong>：清除浏览器默认的内外边距，作为 CSS 重置的起点。</div></li>
+      </ul>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">为什么要清除默认样式？</div><div class="sec-divider-line"></div></div>
+
+      <p class="body-text">浏览器对不同 HTML 元素有各自的<strong>默认样式</strong>（User Agent Stylesheet），不同浏览器的默认值略有差异，导致同一页面在不同浏览器中显示不一致。使用通配符选择器统一重置，可以<strong>消除浏览器差异</strong>，让布局从"零"开始。</p>
+
+      <table class="data-table">
+        <thead><tr><th>元素</th><th>浏览器默认样式</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;body&gt;</code></td><td>上下左右各有 8px 的 <code>margin</code></td></tr>
+          <tr><td><code>&lt;h1&gt;~&lt;h6&gt;</code></td><td>有上下 <code>margin</code> 和加粗效果</td></tr>
+          <tr><td><code>&lt;p&gt;</code></td><td>有上下 <code>margin</code></td></tr>
+          <tr><td><code>&lt;ul&gt;</code>、<code>&lt;ol&gt;</code></td><td>有 <code>padding-left</code> 和列表符号</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <span>通配符选择器会作用于页面每一个元素，在元素数量非常多的大型页面中，过度使用可能影响性能。实际项目中常用专门的 CSS 重置库（如 Normalize.css）代替纯通配符重置。</span>
+      </div>
+    </section>
+
+    <!-- ══ §9 总结 ══ -->
+    <section class="chapter" id="s9">
+      <div class="chapter-header">
+        <span class="ch-num">总结</span>
+        <span class="ch-title">选择器速查与决策思路</span>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">四种基础选择器速查</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>选择器</th><th>语法</th><th>权重</th><th>作用范围</th><th>适用场景</th></tr></thead>
+        <tbody>
+          <tr><td>通配符</td><td><code>* { }</code></td><td>0</td><td>所有元素</td><td>CSS 重置、清除默认边距</td></tr>
+          <tr><td>标记选择器</td><td><code>p { }</code></td><td>1</td><td>所有该标签</td><td>设置通用基础样式</td></tr>
+          <tr><td>类选择器</td><td><code>.box { }</code></td><td>10</td><td>有该 class 的元素</td><td>复用样式，精准批量控制</td></tr>
+          <tr><td>ID 选择器</td><td><code>#header { }</code></td><td>100</td><td>唯一元素</td><td>页面唯一区域、JS 操作</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">选择器选用决策思路</div><div class="sec-divider-line"></div></div>
+      <div class="dtree">
+        <div style="margin-bottom:6px;color:var(--ink-2)">需要设置样式时，问自己：</div>
+        <div class="dtree-node">
+          <div class="dtree-q">├── 需要清除所有元素的默认样式（重置）？</div>
+          <div class="dtree-node"><div class="dtree-a">└── 使用【通配符选择器】 <span style="color:var(--verm-dark)">* { margin: 0; padding: 0; }</span></div></div>
+        </div>
+        <div class="dtree-node">
+          <div class="dtree-q">├── 要改变页面中"所有"某类标签的样式？</div>
+          <div class="dtree-node"><div class="dtree-a">└── 使用【标记选择器】 <span style="color:var(--verm-dark)">p { color: gray; }</span></div></div>
+        </div>
+        <div class="dtree-node">
+          <div class="dtree-q">├── 要改变"某些特定"元素，且需要复用到多个元素？</div>
+          <div class="dtree-node"><div class="dtree-a">└── 使用【类选择器】 <span style="color:var(--verm-dark)">.highlight { color: red; }</span></div></div>
+        </div>
+        <div class="dtree-node">
+          <div class="dtree-q">└── 要精确定位页面中"唯一一个"元素？</div>
+          <div class="dtree-node"><div class="dtree-a">└── 使用【ID 选择器】 <span style="color:var(--verm-dark)">#main-title { font-size: 32px; }</span></div></div>
+        </div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">引入方式选用决策思路</div><div class="sec-divider-line"></div></div>
+      <div class="dtree">
+        <div style="margin-bottom:6px;color:var(--ink-2)">选择 CSS 引入方式时，问自己：</div>
+        <div class="dtree-node">
+          <div class="dtree-q">├── 只是临时测试某个元素的样式？</div>
+          <div class="dtree-node"><div class="dtree-a">└── <span style="color:var(--verm-dark)">行内式</span>（调试后建议移除）</div></div>
+        </div>
+        <div class="dtree-node">
+          <div class="dtree-q">├── 只有一个 HTML 文件，无需共享样式？</div>
+          <div class="dtree-node"><div class="dtree-a">└── <span style="color:var(--verm-dark)">内嵌式</span>（写在 &lt;head&gt; 的 &lt;style&gt; 标签中）</div></div>
+        </div>
+        <div class="dtree-node">
+          <div class="dtree-q">└── 有多个 HTML 页面，需要统一风格？</div>
+          <div class="dtree-node"><div class="dtree-a">└── <span style="color:var(--verm-dark)">链接式</span>（推荐，写在独立的 .css 文件中）</div></div>
+        </div>
+      </div>
+
+      <div class="note-box accent" style="margin-top:1.5rem">
+        <span class="note-icon">📌</span>
+        <div><strong>学习建议：</strong>按照"理解概念 → 查看示例 → 动手实践 → 综合运用"的路径进行学习。CSS 的核心在于<strong>灵活组合</strong>，掌握优先级规则是解决样式冲突的关键。重点感受各类选择器作用范围的差异——"谁能命中这个元素、谁的权重更高"，是 CSS 学习的核心思维。</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+const navItems = document.querySelectorAll('.nav-item');
+const sectionIds = ['s1','s2','s3','s4','s5','s6','s7','s8','s9'];
+
+window.goTo = function(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+};
+
+window.addEventListener('scroll', () => {
+  let cur = 0;
+  sectionIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 80) cur = i;
+  });
+  navItems.forEach(n => n.classList.remove('active'));
+  if (navItems[cur]) navItems[cur].classList.add('active');
+}, { passive: true });
+
+window.copyCode = function(btn) {
+  const body = btn.closest('.code-block').querySelector('.code-body');
+  navigator.clipboard.writeText(body.innerText.trim()).then(() => {
+    btn.textContent = '已复制';
+    setTimeout(() => btn.textContent = '复制', 1600);
+  });
+};
+
+window.setMethod = function(key, btn) {
+  document.querySelectorAll('.m-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  ['inline','embed','link'].forEach(k => {
+    const el = document.getElementById('mc-' + k);
+    if (el) el.classList.toggle('show', k === key);
+  });
+};
+</script>
+</body>
+</html>

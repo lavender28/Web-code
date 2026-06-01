@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>后代选择器</title>
+  <style>
+    nav ul li a {
+      color: red;
+    }
+
+    .article p {
+      color: steelblue;
+      font-size: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <ul>
+      <li><a href="#">首页</a></li>
+      <li><a href="#">关于我们</a></li>
+      <li><a href="#">联系我们</a></li>
+    </ul>
+  </nav>
+
+  <div class="article">
+    <p>第一段：直接子元素</p>
+    <section>
+      <p>第二段：孙子元素</p>
+      <div>
+        <p>第三段：曾孙元素</p>
+      </div>
+    </section>
+  </div>
+
+  <p>文章外部的段落</p>
+</body>
+
+</html>

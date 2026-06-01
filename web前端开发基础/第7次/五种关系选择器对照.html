@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关系选择器</title>
+  <style>
+    .cb-wrap {
+      font-family: var(--font-sans);
+      color: var(--color-text-primary);
+      padding: 0.5rem 0;
+    }
+
+    .cb-section {
+      margin-bottom: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+    }
+
+    .cb-title {
+      font-size: 15px;
+      font-weight: 500;
+      margin: 0 0 4px;
+      color: var(--color-text-primary);
+    }
+
+    .cb-hint {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin: 0 0 12px;
+      line-height: 1.6;
+    }
+
+    .cb-code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--color-background-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--color-text-primary);
+    }
+
+    .sel-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .sel-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      border: 0.5px solid var(--color-border-secondary);
+      background: var(--color-background-primary);
+      border-radius: var(--border-radius-md);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .sel-btn:hover {
+      background: var(--color-background-secondary);
+    }
+
+    .sel-btn.active {
+      background: #CECBF6;
+      color: #26215C;
+      border-color: #7F77DD;
+      font-weight: 500;
+    }
+
+    .current-sel {
+      padding: 10px 12px;
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      margin-bottom: 12px;
+      color: var(--color-text-primary);
+    }
+
+    .sel-desc {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-top: 6px;
+      font-family: var(--font-sans);
+      line-height: 1.6;
+    }
+
+    /* DOM tree visualization */
+    .tree {
+      padding: 12px;
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .node {
+      padding: 6px 10px;
+      margin: 4px 0;
+      background: var(--color-background-primary);
+      border-radius: 6px;
+      border: 0.5px solid var(--color-border-tertiary);
+      transition: all .25s;
+      position: relative;
+    }
+
+    .node .tag {
+      color: #534AB7;
+    }
+
+    .node .tag-name {
+      color: #0F6E56;
+      font-weight: 500;
+    }
+
+    .node.matched {
+      background: #C0DD97;
+      border-color: #639922;
+      transform: translateX(4px);
+    }
+
+    .node.matched .tag-name {
+      color: #173404;
+    }
+
+    .node.matched::after {
+      content: "✓";
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #173404;
+      font-weight: 700;
+    }
+
+    .children {
+      margin-left: 20px;
+      border-left: 1px dashed var(--color-border-secondary);
+      padding-left: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2 class="sr-only">进行集中展示五种关系选择器，交互演示，可以实时切换效果对照语法</h2>
+  <div class="cb-wrap">
+    <div class="cb-section">
+      <p class="cb-title">五种关系选择器对照</p>
+      <p class="cb-hint">同一棵 DOM 树，切换不同选择器看哪些节点被选中。注意 <span class="cb-code">></span> 和空格的区别，<span
+          class="cb-code">+</span>
+        和 <span class="cb-code">~</span> 的区别。</p>
+
+      <div class="sel-tabs" id="sel-tabs">
+        <button class="sel-btn active" data-sel="descendant">section p</button>
+        <button class="sel-btn" data-sel="child">section > p</button>
+        <button class="sel-btn" data-sel="adjacent">h2 + p</button>
+        <button class="sel-btn" data-sel="general">h2 ~ p</button>
+        <button class="sel-btn" data-sel="has">section:has(img)</button>
+      </div>
+
+      <div class="current-sel" id="current-sel">
+        section p
+        <div class="sel-desc">后代选择器：选中 section 内部所有的 p，不管嵌套多深。</div>
+      </div>
+
+      <div class="tree">
+        <div class="node" data-tag="section">&lt;<span class="tag-name">section</span>&gt;</div>
+        <div class="children">
+          <div class="node" data-tag="h2">&lt;<span class="tag-name">h2</span>&gt; 大标题</div>
+          <div class="node" data-tag="p" data-pos="first">&lt;<span class="tag-name">p</span>&gt; 紧跟 h2 的段落</div>
+          <div class="node" data-tag="div">&lt;<span class="tag-name">div</span>&gt;</div>
+          <div class="children">
+            <div class="node" data-tag="p" data-pos="nested">&lt;<span class="tag-name">p</span>&gt; 嵌套段落（div 里面）</div>
+            <div class="node" data-tag="img">&lt;<span class="tag-name">img</span>&gt;</div>
+          </div>
+          <div class="node" data-tag="p" data-pos="middle">&lt;<span class="tag-name">p</span>&gt; 中间段落</div>
+          <div class="node" data-tag="ul">&lt;<span class="tag-name">ul</span>&gt;</div>
+          <div class="children">
+            <div class="node" data-tag="li">&lt;<span class="tag-name">li</span>&gt; 列表项</div>
+          </div>
+          <div class="node" data-tag="p" data-pos="last">&lt;<span class="tag-name">p</span>&gt; 末尾段落</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('#sel-tabs .sel-btn');
+    const nodes = document.querySelectorAll('.tree .node');
+    const currentSel = document.getElementById('current-sel');
+
+    const selectors = {
+      descendant: {
+        code: 'section p',
+        desc: '后代选择器：选中 section 内部所有的 p，不管嵌套多深（包括 div 里的 p）。',
+        match: n => n.dataset.tag === 'p'
+      },
+      child: {
+        code: 'section > p',
+        desc: '子代选择器：只选中 section 的直接子级 p。嵌套在 div 里的 p 不算。',
+        match: n => n.dataset.tag === 'p' && n.dataset.pos !== 'nested'
+      },
+      adjacent: {
+        code: 'h2 + p',
+        desc: '相邻兄弟：只选中紧跟 h2 后面的第一个 p（中间不能隔元素）。',
+        match: n => n.dataset.tag === 'p' && n.dataset.pos === 'first'
+      },
+      general: {
+        code: 'h2 ~ p',
+        desc: '通用兄弟：选中 h2 之后所有的 p 兄弟。但嵌套在 div 里的 p 不算（它和 h2 不同父）。',
+        match: n => n.dataset.tag === 'p' && n.dataset.pos !== 'nested'
+      },
+      has: {
+        code: 'section:has(img)',
+        desc: ':has() 父选择器：选中内部包含 img 的 section。让父元素能响应子元素存在与否。',
+        match: n => n.dataset.tag === 'section'
+      }
+    };
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const info = selectors[tab.dataset.sel];
+        currentSel.innerHTML = info.code + '<div class="sel-desc">' + info.desc + '</div>';
+        nodes.forEach(n => {
+          n.classList.toggle('matched', info.match(n));
+        });
+      });
+    });
+
+    nodes.forEach(n => {
+      if (selectors.descendant.match(n)) n.classList.add('matched');
+    });
+  </script>
+</body>
+
+</html>

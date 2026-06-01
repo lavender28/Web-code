@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML5 概述 · 开始学习 HTML</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --paper:       #f5f0e8;
+  --paper-dark:  #ede7d9;
+  --paper-mid:   #e8e1d3;
+  --vermilion:   #c0392b;
+  --verm-light:  #f5e6e4;
+  --verm-mid:    #e8b4af;
+  --verm-dark:   #922b21;
+  --ink:         #1a1208;
+  --ink-2:       #3d2e1a;
+  --ink-3:       #6b5740;
+  --ink-4:       #9a8470;
+  --ink-5:       #c4b49e;
+  --rule:        #d4c8b4;
+  --rule-dark:   #b8a990;
+  --code-bg:     #1c1917;
+  --code-line:   #292524;
+  --teal:        #0d6e6e;
+  --teal-light:  #e0f0f0;
+  --amber:       #92400e;
+  --amber-light: #fef3c7;
+  --green:       #166534;
+  --green-light: #dcfce7;
+  --sidebar-w:   272px;
+  --serif: 'Noto Serif SC', 'SimSun', 'STSong', Georgia, serif;
+  --mono:  'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--serif);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15.5px;
+  line-height: 1.85;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  position: fixed; top: 0; left: 0; bottom: 0;
+  background: var(--paper-dark);
+  border-right: 2px solid var(--rule-dark);
+  display: flex; flex-direction: column;
+  z-index: 200; overflow-y: auto;
+}
+.sidebar-header {
+  padding: 1.75rem 1.5rem 1.4rem;
+  border-bottom: 1px solid var(--rule-dark);
+  background: var(--paper-mid);
+}
+.sidebar-title { font-size: 15px; font-weight: 700; color: var(--vermilion); line-height: 1.4; font-family: var(--serif); }
+.sidebar-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; font-style: italic; }
+
+.sidebar-nav { padding: 0.9rem 0; flex: 1; }
+.nav-group { margin-bottom: 0.35rem; }
+.nav-group-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; color: var(--ink-5); text-transform: uppercase; padding: 5px 18px 3px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 14px; border-radius: 3px; cursor: pointer;
+  color: var(--ink-3); font-family: var(--serif); font-size: 13px; line-height: 1.35;
+  transition: all 0.16s; border-left: 3px solid transparent; text-decoration: none;
+}
+.nav-item:hover { background: var(--paper-mid); color: var(--ink-2); border-left-color: var(--verm-mid); }
+.nav-item.active { background: var(--verm-light); color: var(--vermilion); border-left-color: var(--vermilion); font-weight: 600; }
+.nav-num { font-family: var(--mono); font-size: 10px; color: var(--ink-5); min-width: 20px; font-weight: 500; }
+.nav-item.active .nav-num { color: var(--vermilion); opacity: 0.65; }
+.sidebar-footer { padding: 0.9rem 1.5rem; border-top: 1px solid var(--rule); font-size: 11px; color: var(--ink-5); font-style: italic; }
+
+/* ══ MAIN ══ */
+.main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; }
+
+.page-header {
+  background: var(--ink-2); color: var(--paper);
+  padding: 3rem 4rem 2.25rem; position: relative; overflow: hidden;
+  border-bottom: 4px solid var(--vermilion);
+}
+.page-header::before { content:''; position:absolute; top:-40px; right:-40px; width:260px; height:260px; border:38px solid rgba(192,57,43,0.1); border-radius:50%; }
+.page-header::after  { content:''; position:absolute; bottom:-20px; right:80px; width:140px; height:140px; border:2px solid rgba(192,57,43,0.16); border-radius:50%; }
+.page-header h1 { font-size:2.2rem; font-weight:700; color:#f5f0e8; letter-spacing:0.04em; line-height:1.2; margin-bottom:0.5rem; position:relative; font-family:var(--serif); }
+.header-desc { font-size:13.5px; color:var(--ink-5); font-style:italic; position:relative; }
+.header-meta { display:flex; gap:1.5rem; margin-top:1rem; flex-wrap:wrap; }
+.header-meta-item { font-family:var(--mono); font-size:11px; color:var(--ink-5); display:flex; align-items:center; gap:5px; }
+.header-meta-item::before { content:''; width:6px; height:6px; background:var(--vermilion); border-radius:50%; display:inline-block; opacity:0.7; }
+
+.content-wrap { max-width: 800px; padding: 2.75rem 4rem 5rem; }
+
+/* ══ CHAPTER ══ */
+.chapter { margin-bottom: 3.5rem; scroll-margin-top: 20px; }
+.chapter-header { display:flex; align-items:baseline; gap:14px; margin-bottom:1.6rem; padding-bottom:0.8rem; border-bottom:2px solid var(--rule-dark); position:relative; }
+.chapter-header::after { content:''; position:absolute; bottom:-2px; left:0; width:52px; height:2px; background:var(--vermilion); }
+.ch-num { font-family:var(--mono); font-size:12.5px; font-weight:500; color:var(--vermilion); letter-spacing:0.05em; opacity:0.8; }
+.ch-title { font-family:var(--serif); font-size:1.3rem; font-weight:700; color:var(--ink); letter-spacing:0.06em; }
+.ch-hint { font-size:11.5px; color:var(--ink-4); font-style:italic; margin-left:auto; }
+
+.sub-section { margin-bottom: 2.1rem; scroll-margin-top: 20px; }
+.sub-header { display:flex; align-items:center; gap:10px; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--rule); }
+.sub-badge { font-family:var(--mono); font-size:10px; background:var(--paper-mid); color:var(--ink-4); border:1px solid var(--rule-dark); padding:2px 7px; border-radius:2px; letter-spacing:0.06em; }
+.sub-title { font-family:var(--serif); font-size:1.05rem; font-weight:600; color:var(--ink); letter-spacing:0.05em; }
+
+.body-text { color:var(--ink-2); margin-bottom:1.1rem; text-indent:2em; }
+.body-text.no-indent { text-indent:0; }
+code { font-family:var(--mono); font-size:0.86em; background:var(--verm-light); color:var(--verm-dark); padding:1px 5px; border-radius:3px; border:1px solid var(--verm-mid); }
+strong { font-weight:600; color:var(--ink); }
+
+.def-block { background:var(--paper-dark); border-left:3px solid var(--vermilion); padding:0.9rem 1.2rem; margin:1.1rem 0; border-radius:0 4px 4px 0; }
+.def-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.18em; color:var(--vermilion); text-transform:uppercase; margin-bottom:4px; font-weight:500; }
+.def-text { font-size:14.5px; color:var(--ink-2); line-height:1.7; }
+
+.note-box { display:flex; gap:11px; padding:0.8rem 1.05rem; border-radius:4px; margin:1.1rem 0; font-size:13.5px; line-height:1.6; }
+.note-box.warning { background:var(--amber-light); border:1px solid #d97706; color:var(--amber); }
+.note-box.info    { background:var(--teal-light);  border:1px solid #0d9488; color:var(--teal); }
+.note-box.success { background:var(--green-light); border:1px solid #16a34a; color:var(--green); }
+.note-box.accent  { background:var(--verm-light);  border:1px solid var(--verm-mid); color:var(--verm-dark); }
+.note-icon { font-size:15px; margin-top:1px; flex-shrink:0; }
+
+.data-table { width:100%; border-collapse:collapse; font-size:13.5px; margin:1.1rem 0; }
+.data-table th { background:var(--paper-mid); padding:8px 13px; text-align:left; font-family:var(--serif); font-weight:600; color:var(--ink-2); border-bottom:2px solid var(--rule-dark); border-top:1px solid var(--rule-dark); letter-spacing:0.04em; }
+.data-table td { padding:8px 13px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink-2); }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:rgba(192,57,43,0.03); }
+.data-table code { font-size:11.5px; }
+
+.code-block { background:var(--code-bg); border-radius:6px; margin:1.1rem 0; box-shadow:0 6px 24px rgba(26,18,8,0.22),0 2px 8px rgba(26,18,8,0.12); overflow:hidden; }
+.code-header { background:var(--code-line); padding:7px 15px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #3c3532; }
+.code-dots { display:flex; gap:5px; }
+.code-dots span { width:10px; height:10px; border-radius:50%; }
+.code-dots .d1{background:#ff5f57}.code-dots .d2{background:#febc2e}.code-dots .d3{background:#28c840}
+.code-lang { font-family:var(--mono); font-size:10.5px; color:#6b6563; letter-spacing:0.08em; margin-left:3px; }
+.code-copy { margin-left:auto; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); color:#9a8e88; font-family:var(--mono); font-size:10.5px; padding:3px 9px; border-radius:3px; cursor:pointer; transition:all 0.16s; }
+.code-copy:hover { background:rgba(255,255,255,0.15); color:#d4c8b4; }
+.code-body { padding:1.1rem 1.4rem; font-family:var(--mono); font-size:12.5px; line-height:1.9; color:#d4c8b4; overflow-x:auto; tab-size:2; white-space:pre; }
+.kw{color:#93c5fd}.prop{color:#86efac}.val{color:#fca5a5}.cmt{color:#6b6360;font-style:italic}
+.htag{color:#c4b5fd}.attr{color:#fde68a}.str{color:#6ee7b7}
+
+.sec-divider { display:flex; align-items:center; gap:10px; margin:1.8rem 0 1.1rem; }
+.sec-divider-line { flex:1; height:1px; background:var(--rule); }
+.sec-divider-text { font-family:var(--serif); font-size:12.5px; font-weight:600; color:var(--ink-3); letter-spacing:0.1em; white-space:nowrap; }
+
+.feat-list { list-style:none; margin:0.6rem 0; }
+.feat-list li { display:flex; align-items:flex-start; gap:9px; padding:6px 0; font-size:14.5px; color:var(--ink-2); border-bottom:1px solid var(--rule); }
+.feat-list li:last-child { border-bottom:none; }
+.feat-mark { font-family:var(--mono); font-size:12px; min-width:18px; margin-top:2px; font-weight:600; }
+.feat-mark.yes{color:#166534}.feat-mark.no{color:#922b21}.feat-mark.neu{color:var(--amber)}
+
+/* ══ DEMOS ══ */
+.demo-wrap { background:var(--paper-dark); border:1px solid var(--rule-dark); border-radius:6px; padding:1.4rem; margin:1.1rem 0; }
+.demo-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.2em; color:var(--ink-4); text-transform:uppercase; margin-bottom:1rem; display:flex; align-items:center; gap:8px; }
+.demo-label::after { content:''; flex:1; height:1px; background:var(--rule); }
+.stage-desc { margin-top:0.7rem; font-family:var(--mono); font-size:11.5px; color:var(--ink-4); padding:7px 10px; background:var(--paper-mid); border-radius:3px; border-left:2px solid var(--vermilion); }
+
+/* ── Tag anatomy interactive ── */
+.anatomy-box {
+  background: var(--code-bg);
+  border-radius: 5px;
+  padding: 1.4rem 1.6rem;
+  box-shadow: 0 4px 18px rgba(26,18,8,0.2);
+  font-family: var(--mono);
+  overflow-x: auto;
+}
+.an-line { display:flex; align-items:center; flex-wrap:wrap; gap:0; font-size:18px; line-height:2.8; }
+.an-bracket { color:#d4c8b4; }
+.an-tag-name { color:#c4b5fd; font-weight:600; cursor:pointer; transition:all 0.16s; border-bottom:1px dashed #c4b5fd55; }
+.an-tag-name:hover { color:#e0d4ff; border-bottom-color:#c4b5fd; }
+.an-content { color:#6ee7b7; }
+.an-slash { color:#d4c8b4; }
+.an-label-row { display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:10px; padding-top:10px; border-top:1px solid #3c3532; }
+.an-label { display:flex; align-items:center; gap:6px; font-size:11px; color:#9a8e88; font-family:var(--mono); }
+.an-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+.part-popup { display:none; margin-top:0.75rem; background:var(--paper); border:1px solid var(--rule-dark); border-radius:4px; padding:0.9rem 1.1rem; font-size:13.5px; color:var(--ink-2); line-height:1.7; animation:fadeUp 0.22s ease; }
+.part-popup.show { display:block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── tag type cards ── */
+.tag-type-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:1.1rem 0; }
+.ttcard { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1.1rem 1.25rem; cursor:pointer; transition:all 0.18s; }
+.ttcard:hover { border-color:var(--vermilion); background:var(--verm-light); }
+.ttcard.on { border-color:var(--vermilion); background:var(--verm-light); box-shadow:0 0 0 2px var(--verm-light),0 0 0 3px var(--vermilion); }
+.ttcard-glyph { font-family:var(--mono); font-size:1.1rem; color:var(--vermilion); margin-bottom:5px; font-weight:600; }
+.ttcard-name { font-family:var(--serif); font-size:14px; font-weight:600; color:var(--ink); margin-bottom:3px; }
+.ttcard-desc { font-size:13px; color:var(--ink-3); line-height:1.55; }
+.ttcard-detail { display:none; margin-top:8px; padding-top:8px; border-top:1px solid var(--rule); font-size:13px; color:var(--ink-3); animation:fadeUp 0.22s ease; }
+.ttcard-detail.show { display:block; }
+
+/* ── doc structure tree ── */
+.doc-tree { background:var(--code-bg); border-radius:5px; padding:1.2rem 1.4rem; box-shadow:0 4px 18px rgba(26,18,8,0.18); font-family:var(--mono); font-size:12.5px; line-height:2.1; color:#d4c8b4; overflow-x:auto; }
+.dt-tag { color:#c4b5fd; cursor:pointer; border-bottom:1px dashed #c4b5fd44; transition:all 0.16s; }
+.dt-tag:hover { color:#e0d4ff; border-bottom-color:#c4b5fd; }
+.dt-attr { color:#fde68a; }
+.dt-val  { color:#6ee7b7; }
+.dt-cmt  { color:#6b6360; font-style:italic; }
+.dt-indent { display:inline-block; }
+.dt-content { color:#a8a09a; }
+
+.elem-popup { display:none; margin-top:0.75rem; background:var(--paper); border:1px solid var(--rule-dark); border-radius:4px; padding:0.9rem 1.1rem; font-size:13.5px; color:var(--ink-2); line-height:1.7; animation:fadeUp 0.22s ease; }
+.elem-popup.show { display:block; }
+
+/* ── lang switcher ── */
+.pill-group { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:1rem; }
+.pill { font-family:var(--mono); font-size:11.5px; padding:5px 13px; border-radius:2px; border:1px solid var(--rule-dark); background:var(--paper); color:var(--ink-3); cursor:pointer; transition:all 0.16s; }
+.pill:hover { border-color:var(--vermilion); color:var(--verm-dark); }
+.pill.on { background:var(--vermilion); border-color:var(--verm-dark); color:#f5f0e8; }
+
+/* ── quick ref table ── */
+.quick-table { width:100%; border-collapse:collapse; font-size:13px; margin:0.8rem 0; }
+.quick-table th { background:var(--ink-2); color:var(--paper); padding:7px 12px; text-align:left; font-family:var(--serif); font-weight:600; letter-spacing:0.04em; }
+.quick-table td { padding:7px 12px; border-bottom:1px solid var(--rule); color:var(--ink-2); }
+.quick-table tr:last-child td { border-bottom:none; }
+.quick-table tr:nth-child(even) td { background:rgba(192,57,43,0.025); }
+.quick-table code { font-size:11px; }
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--paper-dark)}
+::-webkit-scrollbar-thumb{background:var(--rule-dark);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-5)}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">HTML5 概述</div>
+    <div class="sidebar-sub">HTML5 + CSS3 前端基础</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">HTML 基础</div>
+      <a class="nav-item active" onclick="window.goTo('s1')"><span class="nav-num">§1</span>什么是 HTML</a>
+      <a class="nav-item" onclick="window.goTo('s2')"><span class="nav-num">§2</span>标签语法</a>
+      <a class="nav-item" onclick="window.goTo('s3')"><span class="nav-num">§3</span>标签分类</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">HTML 文档结构</div>
+      <a class="nav-item" onclick="window.goTo('s4')"><span class="nav-num">§4</span>文档类型声明</a>
+      <a class="nav-item" onclick="window.goTo('s5')"><span class="nav-num">§5</span>&lt;html&gt; 根元素</a>
+      <a class="nav-item" onclick="window.goTo('s6')"><span class="nav-num">§6</span>&lt;head&gt; 头部元素</a>
+      <a class="nav-item" onclick="window.goTo('s7')"><span class="nav-num">§7</span>&lt;body&gt; 主体元素</a>
+      <a class="nav-item" onclick="window.goTo('s8')"><span class="nav-num">§8</span>完整文档示例</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">附录</div>
+      <a class="nav-item" onclick="window.goTo('s9')"><span class="nav-num">总结</span>知识点速查</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">点击目录项跳转对应章节</div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <header class="page-header">
+    <h1>HTML5 概述</h1>
+    <div class="header-desc">从零认识超文本标记语言——标签语法、文档结构与核心元素</div>
+    <div class="header-meta">
+      <span class="header-meta-item">HTML 定义与组成</span>
+      <span class="header-meta-item">标签语法与分类</span>
+      <span class="header-meta-item">完整文档结构</span>
+    </div>
+  </header>
+
+  <div class="content-wrap">
+
+    <!-- ══ §1 什么是 HTML ══ -->
+    <section class="chapter" id="s1">
+      <div class="chapter-header">
+        <span class="ch-num">§ 01</span>
+        <span class="ch-title">什么是 HTML</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text"><strong>HTML（HyperText Markup Language，超文本标记语言）</strong>是一种用来告知浏览器如何组织页面的<strong>标记语言</strong>，它是构建网页的基础骨架。</div>
+      </div>
+
+      <p class="body-text">如果把建造网页比作建房子，那么 HTML 就是砖块和框架——它规定了页面上有哪些内容、内容的层次结构是什么。HTML 本身并不是编程语言，它不包含逻辑判断，只负责描述内容的<strong>结构与语义</strong>。</p>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">三个核心知识点</div><div class="sec-divider-line"></div></div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark neu">①</span><div><strong>标记 = 标签 = 元素</strong>：这三个说法在 HTML 中含义相同，都指一对（或单个）用尖括号包裹的指令符号。</div></li>
+        <li><span class="feat-mark neu">②</span><div><strong>大小写均可，建议小写</strong>：<code>&lt;H1&gt;</code> 和 <code>&lt;h1&gt;</code> 在浏览器看来是同一个标签，但业界规范建议统一使用<strong>小写</strong>，代码更整洁，团队协作更顺畅。</div></li>
+        <li><span class="feat-mark neu">③</span><div><strong>HTML 由一系列标签组成</strong>：简单说，学习 HTML 就是学习各种标签的名称、用途和写法。</div></li>
+      </ul>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span>记住这句话：<strong>学习 HTML，本质上就是学习标签。</strong> 理解了这一点，整个 HTML 的学习就有了明确的方向。</span>
+      </div>
+    </section>
+
+    <!-- ══ §2 标签语法 ══ -->
+    <section class="chapter" id="s2">
+      <div class="chapter-header">
+        <span class="ch-num">§ 02</span>
+        <span class="ch-title">标签语法</span>
+        <span class="ch-hint">点击标签部件查看说明</span>
+      </div>
+
+      <p class="body-text">HTML 标签用<strong>尖括号 <code>&lt; &gt;</code></strong> 表示。完整的双标签由开始标签、内容和结束标签三部分组成。</p>
+
+      <!-- Interactive anatomy diagram -->
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 点击标签各部分了解其作用</div>
+        <div class="anatomy-box">
+          <div class="an-line">
+            <span class="an-bracket">&lt;</span><span class="an-tag-name" onclick="window.showPart('open')" title="点击了解">h1</span><span class="an-bracket">&gt;</span>
+            <span class="an-content" style="margin:0 6px">标题内容</span>
+            <span class="an-bracket">&lt;/</span><span class="an-tag-name" onclick="window.showPart('close')" title="点击了解">h1</span><span class="an-bracket">&gt;</span>
+          </div>
+          <div class="an-label-row">
+            <div class="an-label"><div class="an-dot" style="background:#c4b5fd"></div><span onclick="window.showPart('open')" style="cursor:pointer">开始标签</span></div>
+            <div class="an-label"><div class="an-dot" style="background:#6ee7b7"></div><span onclick="window.showPart('content')" style="cursor:pointer">内容</span></div>
+            <div class="an-label"><div class="an-dot" style="background:#c4b5fd;opacity:0.6"></div><span onclick="window.showPart('close')" style="cursor:pointer">结束标签</span></div>
+          </div>
+        </div>
+        <div class="part-popup" id="part-popup"></div>
+        <div class="stage-desc" id="part-hint">点击上方标签的任意部分，查看详细说明</div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>组成部分</th><th>写法</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>开始标签</td><td><code>&lt;h1&gt;</code></td><td>标志一个元素的开始；由 <code>&lt;</code> 标签名 <code>&gt;</code> 组成</td></tr>
+          <tr><td>内容</td><td>标题内容</td><td>标签包裹的文字、图片或其他元素</td></tr>
+          <tr><td>结束标签</td><td><code>&lt;/h1&gt;</code></td><td>标志一个元素的结束；多了一个正斜杠 <code>/</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box success">
+        <span class="note-icon">✓</span>
+        <span><strong>开发技巧：</strong>在 VS Code / Trae 编辑器中直接输入标签名（如 <code>h1</code>），然后按 <strong>Tab</strong> 或 <strong>Enter</strong>，编辑器会自动补全开始标签和结束标签，大幅提升编码速度。</span>
+      </div>
+    </section>
+
+    <!-- ══ §3 标签分类 ══ -->
+    <section class="chapter" id="s3">
+      <div class="chapter-header">
+        <span class="ch-num">§ 03</span>
+        <span class="ch-title">标签分类</span>
+        <span class="ch-hint">点击卡片展开示例</span>
+      </div>
+
+      <p class="body-text">HTML 标签按照结构可以分为两大类：<strong>双标签</strong>（大部分标签都是）和<strong>单标签</strong>（少数）。</p>
+
+      <div class="tag-type-grid">
+        <div class="ttcard" id="tc-double" onclick="window.showTagType('double')">
+          <div class="ttcard-glyph">&lt;tag&gt; … &lt;/tag&gt;</div>
+          <div class="ttcard-name">双标签（成对标签）</div>
+          <div class="ttcard-desc">有开始标签和结束标签，内容写在两者之间。<strong>大部分 HTML 标签都是双标签。</strong></div>
+          <div class="ttcard-detail" id="detail-double">
+            <strong>常见双标签：</strong><br>
+            <code>&lt;h1&gt;</code>~<code>&lt;h6&gt;</code>（标题）、<code>&lt;p&gt;</code>（段落）、<code>&lt;div&gt;</code>（容器）、<code>&lt;a&gt;</code>（链接）、<code>&lt;ul&gt;</code>（列表）
+            <div style="margin-top:8px;background:var(--code-bg);border-radius:3px;padding:8px 12px;font-family:var(--mono);font-size:12px;color:#d4c8b4">
+              <span style="color:#c4b5fd">&lt;h1&gt;</span><span style="color:#6ee7b7">这是标题内容</span><span style="color:#c4b5fd">&lt;/h1&gt;</span>
+            </div>
+          </div>
+        </div>
+        <div class="ttcard" id="tc-single" onclick="window.showTagType('single')">
+          <div class="ttcard-glyph">&lt;tag&gt;</div>
+          <div class="ttcard-name">单标签（自闭合标签）</div>
+          <div class="ttcard-desc">没有结束标签，没有包裹的内容，自身即为完整元素。<strong>少数标签是单标签。</strong></div>
+          <div class="ttcard-detail" id="detail-single">
+            <strong>常见单标签：</strong><br>
+            <code>&lt;hr&gt;</code>（水平分割线）、<code>&lt;br&gt;</code>（换行）、<code>&lt;img&gt;</code>（图片）、<code>&lt;input&gt;</code>（输入框）、<code>&lt;meta&gt;</code>（元数据）
+            <div style="margin-top:8px;background:var(--code-bg);border-radius:3px;padding:8px 12px;font-family:var(--mono);font-size:12px;color:#d4c8b4">
+              <span style="color:#c4b5fd">&lt;hr&gt;</span><span style="color:#6b6360;font-style:italic"> &lt;!-- 水平分割线，无需结束标签 --&gt;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §4 文档类型声明 ══ -->
+    <section class="chapter" id="s4">
+      <div class="chapter-header">
+        <span class="ch-num">§ 04</span>
+        <span class="ch-title">文档类型声明</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">作用</div>
+        <div class="def-text"><code>&lt;!DOCTYPE html&gt;</code> 是 HTML5 的文档类型声明，<strong>必须位于文档第一行</strong>。它告诉浏览器当前页面是使用 HTML5 规范编写的，从而以标准模式渲染页面。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 文档类型声明</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">&lt;!-- 这必须是 HTML 文件的第一行 --&gt;</span>
+<span class="htag">&lt;!DOCTYPE</span> <span class="attr">html</span><span class="htag">&gt;</span></div>
+      </div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark neu">—</span><div><strong>不是 HTML 标签</strong>：<code>&lt;!DOCTYPE&gt;</code> 是一条给浏览器的"指令"，而不是 HTML 元素，不需要结束标签</div></li>
+        <li><span class="feat-mark neu">—</span><div><strong>必须在第一行</strong>：放在其他任何内容（包括注释）之前</div></li>
+        <li><span class="feat-mark neu">—</span><div><strong>大小写不敏感</strong>：<code>&lt;!DOCTYPE html&gt;</code> 和 <code>&lt;!doctype html&gt;</code> 效果一样，但习惯大写 DOCTYPE</div></li>
+      </ul>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <span>若省略 <code>&lt;!DOCTYPE html&gt;</code>，浏览器会进入"<strong>怪异模式</strong>"（Quirks Mode）——采用早期不标准的渲染方式，导致页面在不同浏览器中显示差异极大，布局混乱。</span>
+      </div>
+    </section>
+
+    <!-- ══ §5 html 根元素 ══ -->
+    <section class="chapter" id="s5">
+      <div class="chapter-header">
+        <span class="ch-num">§ 05</span>
+        <span class="ch-title">&lt;html&gt; 根元素</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">作用</div>
+        <div class="def-text"><code>&lt;html&gt;</code> 元素包裹了页面中<strong>所有的内容</strong>，是整个 HTML 文档的根容器，有时也被称为"根元素"。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · html 元素与 lang 属性</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">&lt;!-- 中文网页 --&gt;</span>
+<span class="htag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"zh-CN"</span><span class="htag">&gt;</span>
+  <span class="cmt">&lt;!-- 页面所有内容放在这里 --&gt;</span>
+<span class="htag">&lt;/html&gt;</span>
+
+<span class="cmt">&lt;!-- 英文网页 --&gt;</span>
+<span class="htag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"en"</span><span class="htag">&gt;</span>
+<span class="htag">&lt;/html&gt;</span></div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">lang 属性的作用</div><div class="sec-divider-line"></div></div>
+
+      <p class="body-text no-indent"><code>lang</code> 属性用于声明网页的主要语言，帮助浏览器、搜索引擎和辅助工具正确处理页面内容：</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">互动演示 · 选择语言查看 lang 值</div>
+        <div class="pill-group">
+          <button class="pill on" onclick="window.setLang('zh',this)">中文简体</button>
+          <button class="pill" onclick="window.setLang('zh-TW',this)">中文繁体</button>
+          <button class="pill" onclick="window.setLang('en',this)">英语</button>
+          <button class="pill" onclick="window.setLang('ja',this)">日语</button>
+          <button class="pill" onclick="window.setLang('ko',this)">韩语</button>
+          <button class="pill" onclick="window.setLang('fr',this)">法语</button>
+        </div>
+        <div id="lang-code" style="font-family:var(--mono);font-size:14px;background:var(--paper);border:1.5px solid var(--rule-dark);border-radius:4px;padding:10px 14px;color:var(--ink-2)">
+          <span style="color:#c4b5fd">&lt;html</span> <span style="color:#fde68a">lang</span>=<span style="color:#6ee7b7" id="lang-val">"zh-CN"</span><span style="color:#c4b5fd">&gt;</span>
+        </div>
+        <div class="stage-desc" id="lang-desc">zh-CN — 简体中文，用于中国大陆网站</div>
+      </div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark yes">✓</span><div><strong>搜索引擎优化</strong>：Google 等搜索引擎会根据 lang 将网页分发给对应语言的用户</div></li>
+        <li><span class="feat-mark yes">✓</span><div><strong>辅助工具支持</strong>：屏幕阅读器会按照指定语言的发音规则朗读页面内容</div></li>
+        <li><span class="feat-mark yes">✓</span><div><strong>浏览器自动翻译</strong>：Chrome 等浏览器会依据 lang 判断是否提示用户翻译页面</div></li>
+      </ul>
+    </section>
+
+    <!-- ══ §6 head 元素 ══ -->
+    <section class="chapter" id="s6">
+      <div class="chapter-header">
+        <span class="ch-num">§ 06</span>
+        <span class="ch-title">&lt;head&gt; 头部元素</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">作用</div>
+        <div class="def-text"><code>&lt;head&gt;</code> 是头部元素，包含了文档的<strong>元（meta）数据</strong>——这些信息主要供机器（浏览器、搜索引擎）处理，<strong>不会直接显示在网页上</strong>。</div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">HEAD 内容</span><span class="sub-title">字符集声明 &lt;meta charset&gt;</span></div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="htag">&gt;</span></div>
+        </div>
+        <p class="body-text no-indent">将文档字符集设置为 <strong>UTF-8</strong>。UTF-8 包含了绝大多数人类书面语言的字符（中文、日文、阿拉伯文……），是当今互联网最通用的编码。</p>
+        <div class="note-box warning">
+          <span class="note-icon">⚠</span>
+          <span>如果不加这行声明，页面在某些浏览器中<strong>可能出现乱码</strong>（尤其是含有中文内容时）。这是 head 里最重要的一行，不要遗漏！</span>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">HEAD 内容</span><span class="sub-title">移动端适配 &lt;meta viewport&gt;</span></div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"viewport"</span> <span class="attr">content</span>=<span class="str">"width=device-width, initial-scale=1.0"</span><span class="htag">&gt;</span></div>
+        </div>
+        <p class="body-text no-indent">这行代码让网页在<strong>手机、平板等移动设备</strong>上以最佳状态展示——让页面宽度等于设备屏幕宽度，初始缩放比例为 1:1，避免页面在手机上缩得很小。</p>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">HEAD 内容</span><span class="sub-title">页面标题 &lt;title&gt;</span></div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;title&gt;</span><span class="val">我的第一个网页</span><span class="htag">&lt;/title&gt;</span></div>
+        </div>
+        <p class="body-text no-indent">设置页面的标题，显示在浏览器<strong>标签页</strong>上，也是搜索引擎结果页面（SERP）中显示的标题。一个好的 title 对 SEO 非常重要。</p>
+      </div>
+    </section>
+
+    <!-- ══ §7 body 元素 ══ -->
+    <section class="chapter" id="s7">
+      <div class="chapter-header">
+        <span class="ch-num">§ 07</span>
+        <span class="ch-title">&lt;body&gt; 主体元素</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">作用</div>
+        <div class="def-text"><code>&lt;body&gt;</code> 元素包含了<strong>页面所有会显示在浏览器中的内容</strong>，包括文本、图片、视频、音频、链接、表单等等。用户在网页上看到的一切，都来自 body。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · body 可包含的内容示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;body&gt;</span>
+  <span class="cmt">&lt;!-- 文本内容 --&gt;</span>
+  <span class="htag">&lt;h1&gt;</span><span class="val">一级标题</span><span class="htag">&lt;/h1&gt;</span>
+  <span class="htag">&lt;p&gt;</span><span class="val">段落文本</span><span class="htag">&lt;/p&gt;</span>
+
+  <span class="cmt">&lt;!-- 图片 --&gt;</span>
+  <span class="htag">&lt;img</span> <span class="attr">src</span>=<span class="str">"photo.jpg"</span> <span class="attr">alt</span>=<span class="str">"一张照片"</span><span class="htag">&gt;</span>
+
+  <span class="cmt">&lt;!-- 超链接 --&gt;</span>
+  <span class="htag">&lt;a</span> <span class="attr">href</span>=<span class="str">"https://www.example.com"</span><span class="htag">&gt;</span><span class="val">访问示例网站</span><span class="htag">&lt;/a&gt;</span>
+<span class="htag">&lt;/body&gt;</span></div>
+      </div>
+    </section>
+
+    <!-- ══ §8 完整文档示例 ══ -->
+    <section class="chapter" id="s8">
+      <div class="chapter-header">
+        <span class="ch-num">§ 08</span>
+        <span class="ch-title">完整 HTML 文档示例</span>
+        <span class="ch-hint">点击各标签查看说明</span>
+      </div>
+
+      <p class="body-text">将以上所有知识点组合在一起，就得到了一个标准的 HTML5 文档骨架。这是所有网页的起点。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 点击任意标签名了解其作用</div>
+        <div class="doc-tree">
+          <span class="cmt">&lt;!-- 第一行：文档类型声明，告知浏览器使用 HTML5 --&gt;</span><br>
+          <span class="dt-tag" onclick="window.showElem('doctype')">&lt;!DOCTYPE html&gt;</span><br>
+          <br>
+          <span class="dt-tag" onclick="window.showElem('html')">&lt;html</span> <span class="dt-attr">lang</span>=<span class="dt-val">"zh-CN"</span><span class="dt-tag">></span><br>
+          <br>
+          <span style="margin-left:20px"><span class="dt-tag" onclick="window.showElem('head')">&lt;head&gt;</span></span><br>
+          <span style="margin-left:40px"><span class="dt-tag" onclick="window.showElem('charset')">&lt;meta</span> <span class="dt-attr">charset</span>=<span class="dt-val">"UTF-8"</span><span class="dt-tag">&gt;</span></span><br>
+          <span style="margin-left:40px"><span class="dt-tag" onclick="window.showElem('viewport')">&lt;meta</span> <span class="dt-attr">name</span>=<span class="dt-val">"viewport"</span> <span class="dt-attr">content</span>=<span class="dt-val">"width=device-width, initial-scale=1.0"</span><span class="dt-tag">&gt;</span></span><br>
+          <span style="margin-left:40px"><span class="dt-tag" onclick="window.showElem('title')">&lt;title&gt;</span><span class="dt-content">我的网页标题</span><span class="dt-tag">&lt;/title&gt;</span></span><br>
+          <span style="margin-left:20px"><span class="dt-tag">&lt;/head&gt;</span></span><br>
+          <br>
+          <span style="margin-left:20px"><span class="dt-tag" onclick="window.showElem('body')">&lt;body&gt;</span></span><br>
+          <span style="margin-left:40px"><span class="dt-tag">&lt;h1&gt;</span><span class="dt-content">Hello, World!</span><span class="dt-tag">&lt;/h1&gt;</span></span><br>
+          <span style="margin-left:40px"><span class="dt-tag">&lt;p&gt;</span><span class="dt-content">这里是页面内容，用户可以看到。</span><span class="dt-tag">&lt;/p&gt;</span></span><br>
+          <span style="margin-left:20px"><span class="dt-tag">&lt;/body&gt;</span></span><br>
+          <br>
+          <span class="dt-tag">&lt;/html&gt;</span>
+        </div>
+        <div class="elem-popup" id="elem-popup"></div>
+        <div class="stage-desc" id="elem-hint">点击上方代码中的蓝紫色标签名，查看该元素的详细说明</div>
+      </div>
+    </section>
+
+    <!-- ══ §9 总结速查 ══ -->
+    <section class="chapter" id="s9">
+      <div class="chapter-header">
+        <span class="ch-num">总结</span>
+        <span class="ch-title">知识点速查</span>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">HTML 核心概念</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>概念</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>HTML</td><td>超文本标记语言，用来描述网页结构，由标签组成</td></tr>
+          <tr><td>标签 / 元素</td><td>用 <code>&lt; &gt;</code> 尖括号包裹的指令符号，两种说法含义相同</td></tr>
+          <tr><td>双标签</td><td>有开始与结束标签，大部分标签属于此类，如 <code>&lt;p&gt;</code></td></tr>
+          <tr><td>单标签</td><td>无结束标签，少数标签属于此类，如 <code>&lt;br&gt;</code>、<code>&lt;hr&gt;</code></td></tr>
+          <tr><td>大小写</td><td>HTML 大小写不敏感，但<strong>规范建议使用小写</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">HTML 文档结构元素</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>标签 / 声明</th><th>位置</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;!DOCTYPE html&gt;</code></td><td>第一行</td><td>声明 HTML5 文档类型，启用标准模式</td></tr>
+          <tr><td><code>&lt;html lang="zh-CN"&gt;</code></td><td>根元素</td><td>包裹所有内容；lang 属性声明页面语言</td></tr>
+          <tr><td><code>&lt;head&gt;</code></td><td>html 内</td><td>包含元数据（不显示在页面上）</td></tr>
+          <tr><td><code>&lt;meta charset="UTF-8"&gt;</code></td><td>head 内</td><td>声明字符编码，防止中文乱码</td></tr>
+          <tr><td><code>&lt;meta name="viewport"…&gt;</code></td><td>head 内</td><td>移动端适配，让页面在手机上正常显示</td></tr>
+          <tr><td><code>&lt;title&gt;</code></td><td>head 内</td><td>设置浏览器标签页标题</td></tr>
+          <tr><td><code>&lt;body&gt;</code></td><td>html 内</td><td>包含所有用户可见内容</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box accent" style="margin-top:1.5rem">
+        <span class="note-icon">📌</span>
+        <div><strong>学习建议：</strong>HTML 的学习曲线比较平缓——核心是记住常用标签的名字和用法。建议养成"边看边敲"的习惯，每学一个新标签就立刻在编辑器里写一遍，比单纯读讲义效果好得多。</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+const navItems = document.querySelectorAll('.nav-item');
+const sectionIds = ['s1','s2','s3','s4','s5','s6','s7','s8','s9'];
+
+window.goTo = function(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+};
+
+window.addEventListener('scroll', () => {
+  let cur = 0;
+  sectionIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 80) cur = i;
+  });
+  navItems.forEach(n => n.classList.remove('active'));
+  if (navItems[cur]) navItems[cur].classList.add('active');
+}, { passive: true });
+
+window.copyCode = function(btn) {
+  const body = btn.closest('.code-block').querySelector('.code-body');
+  navigator.clipboard.writeText(body.innerText.trim()).then(() => {
+    btn.textContent = '已复制';
+    setTimeout(() => btn.textContent = '复制', 1600);
+  });
+};
+
+/* ── tag anatomy ── */
+const partData = {
+  open:    { title:'开始标签',   text:'由左尖括号 <code>&lt;</code>、标签名（如 <code>h1</code>）、右尖括号 <code>&gt;</code> 组成。标志着这个元素的开始，就像给内容打开了一扇门。' },
+  close:   { title:'结束标签',   text:'与开始标签结构相同，但在标签名前多了一个<strong>正斜杠 /</strong>。标志着元素的结束，把"门"关上。遗漏结束标签是新手最常见的错误之一！' },
+  content: { title:'内容',       text:'夹在开始标签与结束标签之间的内容。可以是文字、图片，也可以是其他 HTML 标签（即嵌套）。' },
+};
+
+window.showPart = function(key) {
+  const d = partData[key];
+  const popup = document.getElementById('part-popup');
+  popup.innerHTML = '<strong style="color:var(--vermilion);font-family:var(--serif)">' + d.title + '</strong> — ' + d.text;
+  popup.classList.add('show');
+  document.getElementById('part-hint').textContent = d.title + ' — 已显示说明';
+};
+
+/* ── tag type cards ── */
+window.showTagType = function(key) {
+  ['double','single'].forEach(k => {
+    document.getElementById('tc-'+k).classList.toggle('on', k===key);
+    document.getElementById('detail-'+k).classList.toggle('show', k===key);
+  });
+};
+
+/* ── lang switcher ── */
+const langMap = {
+  zh:    { val:'"zh-CN"', desc:'zh-CN — 简体中文，用于中国大陆网站' },
+  'zh-TW':{ val:'"zh-TW"', desc:'zh-TW — 繁体中文，用于台湾、香港地区网站' },
+  en:    { val:'"en"',    desc:'en — 英语，国际互联网最通用的语言代码' },
+  ja:    { val:'"ja"',    desc:'ja — 日语，用于日本地区网站' },
+  ko:    { val:'"ko"',    desc:'ko — 韩语，用于韩国地区网站' },
+  fr:    { val:'"fr"',    desc:'fr — 法语，用于法国及法语地区网站' },
+};
+
+window.setLang = function(key, btn) {
+  document.querySelectorAll('.pill-group .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const d = langMap[key];
+  document.getElementById('lang-val').textContent = d.val;
+  document.getElementById('lang-desc').textContent = d.desc;
+};
+
+/* ── doc tree elements ── */
+const elemData = {
+  doctype:  { title:'&lt;!DOCTYPE html&gt;', text:'文档类型声明。必须是文件的第一行。告诉浏览器此文档遵循 HTML5 规范，以标准模式渲染，避免怪异模式下的跨浏览器差异。' },
+  html:     { title:'&lt;html&gt; 根元素',   text:'整个 HTML 文档的根容器，包裹所有其他元素。<code>lang="zh-CN"</code> 属性声明页面主要语言为简体中文，帮助搜索引擎和辅助工具正确处理内容。' },
+  head:     { title:'&lt;head&gt; 头部',      text:'包含文档的元数据（meta data），如字符编码、视口设置、页面标题等。这里的内容<strong>不会直接显示</strong>在页面上，但对浏览器和搜索引擎至关重要。' },
+  charset:  { title:'&lt;meta charset&gt;',  text:'声明文档使用 UTF-8 字符编码。UTF-8 覆盖了全球几乎所有语言的字符。<strong>这是防止中文乱码的必要设置。</strong>' },
+  viewport: { title:'&lt;meta viewport&gt;', text:'移动端适配设置。<code>width=device-width</code> 让页面宽度等于设备屏幕宽度；<code>initial-scale=1.0</code> 设置初始缩放为 1:1，使页面在手机上清晰正常显示。' },
+  title:    { title:'&lt;title&gt; 页面标题', text:'设置显示在浏览器标签页上的文字。也是搜索引擎结果（如百度、Google）中的页面标题。一个清晰、有关键词的 title 对 SEO 非常重要。' },
+  body:     { title:'&lt;body&gt; 主体',      text:'包含所有用户<strong>可见的内容</strong>：文字、图片、视频、链接、表格、表单……用户在浏览器窗口里看到的一切都来自 body。' },
+};
+
+window.showElem = function(key) {
+  const d = elemData[key];
+  const popup = document.getElementById('elem-popup');
+  popup.innerHTML = '<strong style="color:var(--vermilion);font-family:var(--serif)">' + d.title + '</strong> — ' + d.text;
+  popup.classList.add('show');
+  document.getElementById('elem-hint').textContent = d.title + ' — 已显示说明';
+};
+</script>
+</body>
+</html>

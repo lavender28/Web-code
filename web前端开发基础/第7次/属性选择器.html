@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>属性选择器</title>
+  <style>
+    [title] {
+      color: red;
+    }
+
+    [title="我是一个段"] {
+      color: blue;
+    }
+
+    [disabled] {
+      color: gray;
+      cursor: not-allowed;
+    }
+
+    [class~="btn"] {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    [lang|="zh"] {
+      color: green;
+    }
+
+    [id^="section"] {
+      color: pink;
+    }
+
+    [id$="footer"] {
+      color: #007bff;
+    }
+
+    [id*="content"] {
+      color: yellow;
+    }
+  </style>
+</head>
+
+<body>
+  <p title="我是一个段落">我是一个段落</p>
+  <p title="我是一个段">我是一个段落</p>
+  <p>我是一个段落</p>
+  <button class="btn btn-primary">我是一个按钮</button>
+  <button disabled>我是一个按钮</button>
+  <button disabled>我是一个按钮</button>
+
+  <p lang="zh">我是一个段落</p>
+  <p lang="zh-CN">我是一个段落</p>
+
+  <p id="section1">我是一个段落</p>
+  <p id="section-header">我是一个段落</p>
+
+  <p id="section-footer">我是一个段落</p>
+  <p id="sectionfooter">我是一个段落</p>
+
+  <p id="section-content">我是一个段落</p>
+  <p id="sectioncontentis">我是一个段落</p>
+</body>
+
+</html>

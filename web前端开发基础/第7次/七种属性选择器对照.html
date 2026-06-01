@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>七种属性选择器展示</title>
+  <style>
+    .as-wrap {
+      font-family: var(--font-sans);
+      color: var(--color-text-primary);
+      padding: 0.5rem 0;
+    }
+
+    .as-section {
+      margin-bottom: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+    }
+
+    .as-title {
+      font-size: 15px;
+      font-weight: 500;
+      margin: 0 0 4px;
+      color: var(--color-text-primary);
+    }
+
+    .as-hint {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin: 0 0 12px;
+      line-height: 1.6;
+    }
+
+    .as-code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--color-background-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--color-text-primary);
+    }
+
+    .selector-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .sel-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      border: 0.5px solid var(--color-border-secondary);
+      background: var(--color-background-primary);
+      border-radius: var(--border-radius-md);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .sel-btn:hover {
+      background: var(--color-background-secondary);
+    }
+
+    .sel-btn.active {
+      background: #CECBF6;
+      color: #26215C;
+      border-color: #7F77DD;
+      font-weight: 500;
+    }
+
+    .current-sel {
+      padding: 10px 12px;
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      margin-bottom: 12px;
+      color: var(--color-text-primary);
+    }
+
+    .sel-desc {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-top: 6px;
+      font-family: var(--font-sans);
+    }
+
+    .demo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .demo-item {
+      padding: 10px 12px;
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all .2s;
+      border-left: 3px solid transparent;
+    }
+
+    .demo-item .attr-info {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+
+    .demo-item.matched {
+      background: #E1F5EE;
+      border-left-color: #1D9E75;
+      color: #04342C;
+    }
+
+    .demo-item.matched .attr-info {
+      color: #0F6E56;
+    }
+
+    .match-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #1D9E75;
+      color: white;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .demo-item.matched .match-badge {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <h2 class="sr-only">进行集中展示七种属性选择器，交互演示，可以实时切换效果对照语法</h2>
+
+  <div class="as-wrap">
+
+    <div class="as-section">
+      <p class="as-title">七种属性选择器对照试验</p>
+      <p class="as-hint">切换下方按钮，看哪些元素被选中（变绿并显示 matched 标签）。</p>
+
+      <div class="selector-tabs" id="sel-tabs">
+        <button class="sel-btn active" data-sel="all">[data-lang]</button>
+        <button class="sel-btn" data-sel="exact">[data-lang="en"]</button>
+        <button class="sel-btn" data-sel="word">[data-tags~="web"]</button>
+        <button class="sel-btn" data-sel="prefix">[data-lang^="en"]</button>
+        <button class="sel-btn" data-sel="suffix">[data-file$=".js"]</button>
+        <button class="sel-btn" data-sel="contains">[data-file*="util"]</button>
+        <button class="sel-btn" data-sel="dashprefix">[data-lang|="en"]</button>
+      </div>
+
+      <div class="current-sel" id="current-sel">
+        [data-lang]
+        <div class="sel-desc">选中所有带 data-lang 属性的元素，不关心值是什么。</div>
+      </div>
+
+      <div class="demo-list" id="demo-list">
+        <div class="demo-item" data-item data-lang="en" data-tags="web frontend" data-file="app.js">
+          <span>项目 A</span>
+          <span class="attr-info">data-lang="en" · data-tags="web frontend" · data-file="app.js"</span>
+          <span class="match-badge">matched</span>
+        </div>
+        <div class="demo-item" data-item data-lang="en-US" data-tags="mobile native" data-file="utils.js">
+          <span>项目 B</span>
+          <span class="attr-info">data-lang="en-US" · data-tags="mobile native" · data-file="utils.js"</span>
+          <span class="match-badge">matched</span>
+        </div>
+        <div class="demo-item" data-item data-lang="zh-CN" data-tags="web backend" data-file="util-helper.ts">
+          <span>项目 C</span>
+          <span class="attr-info">data-lang="zh-CN" · data-tags="web backend" · data-file="util-helper.ts"</span>
+          <span class="match-badge">matched</span>
+        </div>
+        <div class="demo-item" data-item data-lang="fr" data-tags="design" data-file="index.html">
+          <span>项目 D</span>
+          <span class="attr-info">data-lang="fr" · data-tags="design" · data-file="index.html"</span>
+          <span class="match-badge">matched</span>
+        </div>
+        <div class="demo-item" data-item data-lang="english" data-tags="webapp" data-file="script.js">
+          <span>项目 E</span>
+          <span class="attr-info">data-lang="english" · data-tags="webapp" · data-file="script.js"</span>
+          <span class="match-badge">matched</span>
+        </div>
+        <div class="demo-item" data-item data-tags="data" data-file="chart-util.jsx">
+          <span>项目 F（无 lang）</span>
+          <span class="attr-info">data-tags="data" · data-file="chart-util.jsx"</span>
+          <span class="match-badge">matched</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('#sel-tabs .sel-btn');
+    const items = document.querySelectorAll('[data-item]');
+    const currentSel = document.getElementById('current-sel');
+
+    const selectors = {
+      all: { code: '[data-lang]', desc: '选中所有带 data-lang 属性的元素，不关心值是什么。' },
+      exact: { code: '[data-lang="en"]', desc: '属性值必须完全等于 "en"（不包括 en-US、english）。' },
+      word: { code: '[data-tags~="web"]', desc: '属性值按空格分词，其中一个词等于 "web" 即匹配。注意 "webapp" 是整词，不算。' },
+      prefix: { code: '[data-lang^="en"]', desc: '属性值以 "en" 开头（匹配 en、en-US、english）。' },
+      suffix: { code: '[data-file$=".js"]', desc: '属性值以 ".js" 结尾（不匹配 .jsx、.ts）。' },
+      contains: { code: '[data-file*="util"]', desc: '属性值的任意位置包含 "util" 子串。' },
+      dashprefix: { code: '[data-lang|="en"]', desc: '属性值等于 "en" 或以 "en-" 开头，专为语言代码设计。' }
+    };
+
+    function matches(item, mode) {
+      const lang = item.getAttribute('data-lang');
+      const tags = item.getAttribute('data-tags') || '';
+      const file = item.getAttribute('data-file') || '';
+      switch (mode) {
+        case 'all': return item.hasAttribute('data-lang');
+        case 'exact': return lang === 'en';
+        case 'word': return tags.split(/\s+/).includes('web');
+        case 'prefix': return lang && lang.startsWith('en');
+        case 'suffix': return file.endsWith('.js');
+        case 'contains': return file.includes('util');
+        case 'dashprefix': return lang === 'en' || (lang && lang.startsWith('en-'));
+      }
+      return false;
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const mode = tab.dataset.sel;
+        const info = selectors[mode];
+        currentSel.innerHTML = info.code + '<div class="sel-desc">' + info.desc + '</div>';
+        items.forEach(item => {
+          item.classList.toggle('matched', matches(item, mode));
+        });
+      });
+    });
+
+    items.forEach(item => item.classList.add('matched'));
+  </script>
+</body>
+
+</html>

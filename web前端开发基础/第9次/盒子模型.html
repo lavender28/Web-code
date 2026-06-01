@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>盒子模型</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    div {
+      width: 500px;
+      height: 60px;
+      margin-bottom: 20px;
+    }
+
+    #box1 {
+      border-style: double;
+      border-width: 2px;
+      border-color: red;
+    }
+
+    #box2 {
+      /* border-style: solid dashed;
+      border-width: 2px 1px;
+      border-color: red blue; */
+      border: 2px solid red;
+      border-radius: 10px;
+      margin: 40px;
+    }
+
+    #box3 {
+      border-style: solid dashed dotted;
+      border-width: 2px 3px 4px;
+      border-color: red blue green;
+      margin: 40px;
+    }
+
+    #box {
+      width: 400px;
+      border: 5px solid red;
+      padding: 10px 40px 80px 120px;
+      background-color: #e8f4fd;
+      margin-top: -40px
+    }
+  </style>
+</head>
+
+<body>
+  <div id="box1">设置四边的边框样式为双实线</div>
+  <div id="box2">设置上下边框样式为实现，左右边框样式为虚线</div>
+  <div id="box3">设置上边框为单实线，左右边框为虚线，下边框为单点线</div>
+  <div id="box">
+    CSS 将 HTML 页面中的每一个元素看成是一个矩形盒子，
+    占据一定的页面空间。通过设置 padding，这段文字与
+    边框之间有了舒适的间距。
+  </div>
+</body>
+
+</html>

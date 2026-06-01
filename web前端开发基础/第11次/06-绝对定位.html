@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>绝对定位</title>
+  <style>
+    .father {
+      margin: 10px auto;
+      width: 300px;
+      height: 300px;
+      padding: 10px;
+      background-color: #c0c0c0;
+      border: 1px dashed #666;
+      position: relative;   /* 定位上下文，子元素绝对定位的参照物 */
+    }
+    .box1, .box2, .box3 {
+      width: 100px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      background-color: #9F6;
+      margin: 15px 0px;
+      border: 1px solid #999;
+    }
+    .box2 {
+      position: absolute;   /* 绝对定位 */
+      left: 150px;          /* 距离原位置左边线 150px，即向右移动 */
+      top: 100px;           /* 距离原位置顶部边线 100px，即向下移动 */
+    }
+  </style>
+</head>
+<body>
+  <div class="father">
+    <div class="box1">box1</div>
+    <div class="box2">box2</div>
+    <div class="box3">box3</div>
+  </div>
+</body>
+</html>

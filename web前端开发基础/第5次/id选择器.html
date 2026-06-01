@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>ID选择器的使用</title>
+  <style type="text/css">
+    /* 标记选择器：作用于所有p标签 */
+    p {
+      font-size: 14px;
+      color: #333;
+    }
+
+    /* ID选择器：只作用于 id="intro" 的那个元素 */
+    #intro {
+      font-size: 18px;
+      color: #c00;
+      font-weight: bold;
+      background-color: #fff9e6;
+    }
+
+    /* ID选择器：只作用于 id="copyright" 的那个元素 */
+    #copyright {
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <p id="intro">这是文章的引言段落，使用ID选择器单独定义样式。</p>
+  <p>这是普通段落，应用标记选择器的通用样式。</p>
+  <p>这是另一个普通段落，同样应用标记选择器的通用样式。</p>
+  <p id="copyright">版权所有 © 2024 · 保留所有权利</p>
+</body>
+
+</html>

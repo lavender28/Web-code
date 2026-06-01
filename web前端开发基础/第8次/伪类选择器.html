@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>伪类选择器</title>
+  <style>
+    /* 传统做法 */
+    /* .first-letter {
+      color: red;
+      font-size: 24px;
+    } */
+    /* 伪元素做法 */
+    /* p::first-letter {
+      color: red;
+      font-size: 24px;
+    } */
+
+    /* :root {
+      background-color: #f5f5f5;
+    } */
+
+    /* h3:not(.one) {
+      color: red;
+      font-size: 24px;
+    } */
+
+    /* .container :not(p) {
+      color: red;
+    } */
+
+    /* p:only-child {
+      color: red;
+    } */
+
+    /* li:first-child {
+      color: red;
+    } */
+
+    /* li:last-child {
+      color: green;
+    } */
+
+    /* nav a {
+      border-right: 1px solid #ccc;
+    }
+
+    nav a:last-child {
+      border-right: none;
+    } */
+
+    /* nav a:nth-child(odd) {
+      color: red;
+    } */
+
+    /* p:first-of-type {
+      color: red;
+    } */
+
+    p:empty {
+      height: 20px;
+      background-color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <p>
+    <span class="first-letter">H</span>ello, World
+  </p> -->
+  <!-- <p>
+    Hello, World
+  </p> -->
+
+  <!-- <div class="container">
+    <h3>标题一</h3>
+    <h3 class="one">标题二</h3>
+    <h3>标题三</h3>
+    <p>这是一个段落</p>
+  </div> -->
+
+  <!-- <div>
+    <p>我是唯一的子元素</p> 
+  </div>
+
+  <div>
+    <p>我有兄弟</p> 
+    <p>我也有兄弟</p> 
+  </div> -->
+
+  <!-- <ul>
+    <li>苹果</li>
+    <li>香蕉</li>
+    <li>橙子</li>
+    <li>葡萄</li>
+  </ul> -->
+  <!-- <nav>
+    <a href="#">首页</a>
+    <a href="#">关于我们</a>
+    <a href="#">联系我们</a>
+  </nav> -->
+
+  <!-- <div>
+    <h2>标题</h2>
+    <p>第一段</p>
+    <p>第二段</p>
+    <p>第三段</p>
+  </div> -->
+
+  <p>这是有内容的段落</p>
+  <p></p>
+  <p>这也是有内容的段落</p>
+</body>
+
+</html>

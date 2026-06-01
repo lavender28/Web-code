@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS 复合选择器 · 字体文本样式 · 交互教学</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root{
+  --bg:#f5f3ef;--surface:#fff;--ink:#1a1714;--ink-2:#3d3830;--ink-3:#72685e;
+  --red:#d63031;--red-pale:#fdf2f2;
+  --blue:#2563eb;--blue-pale:#eff6ff;
+  --teal:#0d9488;--teal-pale:#f0fdfa;
+  --amber:#d97706;--amber-pale:#fffbeb;
+  --violet:#7c3aed;--violet-pale:#f5f3ff;
+  --border:#e5e1da;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.05);
+  --r:10px;--sans:'Noto Sans SC',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7}
+
+/* ── NAV ── */
+.topnav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 14px;height:52px;
+  overflow-x:auto;scrollbar-width:none;gap:2px;
+}
+.topnav::-webkit-scrollbar{display:none}
+.topnav-brand{
+  font-weight:700;font-size:.85rem;color:var(--red);
+  white-space:nowrap;margin-right:12px;flex-shrink:0;
+  display:flex;align-items:center;gap:5px;
+}
+.nav-tab{
+  flex-shrink:0;padding:5px 11px;border-radius:6px;
+  font-size:.74rem;font-weight:500;color:var(--ink-3);
+  cursor:pointer;border:none;background:none;white-space:nowrap;
+  transition:all .18s;
+}
+.nav-tab:hover{background:var(--red-pale);color:var(--red)}
+.nav-tab.active{background:var(--red);color:#fff}
+
+/* ── PAGES ── */
+.page{display:none;animation:fadeUp .28s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.wrap{max-width:960px;margin:0 auto;padding:26px 16px 60px}
+
+/* ── HEADINGS ── */
+.ch-label{font-size:.64rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:3px}
+.ch-title{font-size:1.32rem;font-weight:700;color:var(--ink);margin-bottom:4px}
+.ch-desc{font-size:.82rem;color:var(--ink-3);margin-bottom:18px;line-height:1.65;max-width:640px}
+.ch-desc b{color:var(--ink-2);font-weight:600}
+
+/* ── CARD ── */
+.card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:13px}
+.card-head{padding:10px 16px;border-bottom:1px solid var(--border);background:#faf9f7;font-size:.72rem;font-weight:700;color:var(--ink-3);letter-spacing:.07em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.card-head .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.card-body{padding:18px}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ── CONTROLS ── */
+.ctrl-row{display:flex;flex-direction:column;gap:9px}
+.ctrl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctrl label{min-width:120px;font-size:.75rem;font-weight:600;color:var(--ink-2)}
+.ctrl input[type=range]{flex:1;min-width:90px;max-width:180px;accent-color:var(--red);cursor:pointer}
+.ctrl .val{min-width:54px;text-align:right;color:var(--red);font-weight:700;font-size:.78rem;font-family:var(--mono)}
+.ctrl select{flex:1;min-width:120px;max-width:220px;padding:4px 8px;border:1.5px solid var(--border);border-radius:5px;font-size:.78rem;font-family:var(--sans);background:white;cursor:pointer;color:var(--ink)}
+.ctrl input[type=color]{width:36px;height:26px;border:none;cursor:pointer;border-radius:4px;background:none;padding:0}
+.divider{height:1px;background:var(--border);margin:9px 0}
+
+/* ── CODE BOX ── */
+.code-box{background:#1c1917;border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:.73rem;line-height:1.75;color:#d6d3d1;margin-top:11px}
+.p{color:#7dd3fc}.v{color:#fca5a5}.s{color:#a3e635}.cm{color:#57534e;font-style:italic}.sel{color:#c084fc}.at{color:#fbbf24}
+
+/* ── CALLOUT ── */
+.callout{border-radius:7px;padding:9px 13px;font-size:.78rem;line-height:1.6;display:flex;gap:8px;align-items:flex-start;margin-top:11px}
+.callout .ico{flex-shrink:0;line-height:1.5}
+.cw{background:var(--amber-pale);border-left:3px solid var(--amber);color:#713f12}
+.ci{background:var(--blue-pale);border-left:3px solid var(--blue);color:#1e3a8a}
+.co{background:var(--teal-pale);border-left:3px solid var(--teal);color:#134e4a}
+.cv{background:var(--violet-pale);border-left:3px solid var(--violet);color:#4c1d95}
+
+/* ── PILLS ── */
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+.pill{padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);font-size:.72rem;font-weight:600;cursor:pointer;background:white;color:var(--ink-2);transition:all .16s;user-select:none}
+.pill:hover{border-color:var(--red);color:var(--red)}
+.pill.on{background:var(--red);border-color:var(--red);color:white}
+
+/* ── BADGE ── */
+.badge{display:inline-block;font-size:.64rem;font-weight:700;padding:2px 7px;border-radius:4px}
+.br{background:var(--red-pale);color:var(--red)}
+.bb{background:var(--blue-pale);color:var(--blue)}
+.bt{background:var(--teal-pale);color:var(--teal)}
+.bv{background:var(--violet-pale);color:var(--violet)}
+.ba{background:var(--amber-pale);color:var(--amber)}
+
+/* ═══════════════════════════════════════
+   PAGE 0 · 复合选择器
+   ═══════════════════════════════════════ */
+
+/* DOM 树可视化 */
+.dom-tree{
+  background:#1c1917;border-radius:9px;padding:18px 20px;
+  font-family:var(--mono);font-size:.76rem;line-height:2;
+  color:#9ca3af;user-select:none;position:relative;
+}
+.dn{color:#d6d3d1;cursor:default;border-radius:3px;padding:0 3px;transition:all .22s}
+.dn.hit{background:rgba(250,204,21,.25);color:#fbbf24;font-weight:700;border:1px solid rgba(250,204,21,.5)}
+.dn.miss{color:#4b5563}
+.dn.ancestor{color:#7dd3fc;font-style:italic}
+.dn span.tag{color:#f87171}
+.dn span.cls{color:#a3e635}
+.dn span.id{color:#c084fc}
+
+/* 选择器对比卡 */
+.sel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+@media(max-width:620px){.sel-grid{grid-template-columns:1fr}}
+.sel-card{
+  border:2px solid var(--border);border-radius:9px;padding:13px;cursor:pointer;
+  transition:all .18s;background:white;
+}
+.sel-card:hover,.sel-card.active{border-color:var(--red);background:var(--red-pale)}
+.sel-card.active .sel-name{color:var(--red)}
+.sel-name{font-weight:700;font-size:.82rem;margin-bottom:3px;color:var(--ink-2)}
+.sel-syntax{font-family:var(--mono);font-size:.72rem;color:var(--blue);background:var(--blue-pale);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:5px}
+.sel-logic{font-size:.72rem;color:var(--ink-3);line-height:1.5}
+
+/* 规则展示 */
+.rule-box{
+  border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;
+  background:#fafaf8;margin-top:12px;
+}
+.rule-title{font-size:.72rem;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.rule-item{display:flex;align-items:baseline;gap:8px;margin-bottom:5px;font-size:.78rem}
+.rule-item:last-child{margin-bottom:0}
+.rule-icon{flex-shrink:0;font-size:.9rem}
+.rule-text{color:var(--ink-3);line-height:1.5}
+.rule-text code{font-family:var(--mono);font-size:.75em;background:#f0ede8;padding:1px 4px;border-radius:3px;color:var(--red)}
+
+/* ═══════════════════════════════════════
+   PAGE 1 · 字体样式
+   ═══════════════════════════════════════ */
+.font-preview{
+  background:#faf9f7;border:1.5px dashed var(--border);border-radius:8px;
+  padding:24px;display:flex;align-items:center;justify-content:center;
+  min-height:120px;text-align:center;
+}
+#fontSample{
+  transition:all .3s;
+  font-size:28px;color:#1a1714;
+  font-family:'Noto Sans SC',sans-serif;
+}
+
+/* font 综合属性解析图 */
+.font-shorthand{
+  display:flex;gap:0;flex-wrap:wrap;
+  font-family:var(--mono);font-size:.78rem;
+  background:#1c1917;border-radius:8px;padding:14px 16px;
+  align-items:center;line-height:2.2;
+}
+.fs-part{
+  padding:2px 7px;border-radius:4px;margin:2px;
+  font-weight:700;white-space:nowrap;
+}
+.fs-style{background:rgba(167,139,250,.2);color:#c4b5fd}
+.fs-weight{background:rgba(251,191,36,.15);color:#fbbf24}
+.fs-size{background:rgba(248,113,113,.2);color:#fca5a5}
+.fs-lh{background:rgba(52,211,153,.15);color:#6ee7b7}
+.fs-family{background:rgba(96,165,250,.15);color:#93c5fd}
+.fs-slash{color:#4b5563;margin:0 2px}
+
+/* ═══════════════════════════════════════
+   PAGE 2 · 文本外观
+   ═══════════════════════════════════════ */
+.text-preview{
+  background:#faf9f7;border:1.5px dashed var(--border);border-radius:8px;
+  padding:22px 24px;min-height:100px;
+}
+#textSample{transition:all .3s;font-size:16px}
+
+/* text-align 可视化 */
+.align-demo{
+  background:#faf9f7;border:1.5px dashed var(--border);border-radius:8px;
+  padding:14px;
+}
+.align-bar{height:10px;background:var(--blue);border-radius:3px;margin-bottom:6px;transition:all .3s}
+
+/* text-decoration 多选 */
+.deco-pills{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ═══════════════════════════════════════
+   PAGE 3 · 文本特效
+   ═══════════════════════════════════════ */
+.shadow-preview{
+  background:#1c1917;border-radius:9px;
+  padding:30px 20px;display:flex;align-items:center;justify-content:center;
+  min-height:120px;
+}
+#shadowSample{
+  font-size:36px;font-weight:700;color:white;
+  text-align:center;transition:all .3s;
+}
+
+/* overflow demo */
+.overflow-wrap{
+  background:#faf9f7;border:1.5px dashed var(--border);border-radius:8px;
+  padding:14px;
+}
+.overflow-box{
+  border:2px solid #93c5fd;background:white;padding:10px 12px;border-radius:5px;
+  font-size:.85rem;line-height:1.6;color:var(--ink-2);
+  transition:all .3s;
+}
+
+/* ═══════════════════════════════════════
+   PAGE 4 · 列表样式
+   ═══════════════════════════════════════ */
+.list-preview{
+  background:#faf9f7;border:1.5px dashed var(--border);border-radius:8px;
+  padding:20px 28px;min-height:180px;
+}
+.list-preview ul,.list-preview ol{
+  font-size:.88rem;color:var(--ink-2);line-height:2;
+  transition:all .3s;
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">✦ CSS教学</div>
+  <button class="nav-tab active" onclick="gotoPage(0,this)">① 复合选择器</button>
+  <button class="nav-tab" onclick="gotoPage(1,this)">② 字体样式</button>
+  <button class="nav-tab" onclick="gotoPage(2,this)">③ 文本外观</button>
+  <button class="nav-tab" onclick="gotoPage(3,this)">④ 文本特效</button>
+  <button class="nav-tab" onclick="gotoPage(4,this)">⑤ 列表样式</button>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     PAGE 0 · 复合选择器
+     ═══════════════════════════════════════ -->
+<div class="page active" id="pg0">
+<div class="wrap">
+  <div class="ch-label">Chapter 01</div>
+  <div class="ch-title">复合选择器</div>
+  <div class="ch-desc">将两个或多个选择器组合，提高选择的<b>精确度</b>。点击下方选择器类型，观察 DOM 树中哪些节点被命中（<span style="color:#fbbf24;font-weight:700">高亮</span>）。</div>
+
+  <!-- 三种选择器切换卡 -->
+  <div class="sel-grid" id="selGrid">
+    <div class="sel-card active" onclick="setSel(0,this)">
+      <div class="sel-name">后代选择器</div>
+      <div class="sel-syntax">.article p</div>
+      <div class="sel-logic">选中 .article <b>内部所有层级</b>的 &lt;p&gt; 元素，不限嵌套深度</div>
+    </div>
+    <div class="sel-card" onclick="setSel(1,this)">
+      <div class="sel-name">交集选择器</div>
+      <div class="sel-syntax">p.highlight</div>
+      <div class="sel-logic">同时满足：<b>是 &lt;p&gt;</b> 且 <b>有 .highlight 类</b>，缺一不可</div>
+    </div>
+    <div class="sel-card" onclick="setSel(2,this)">
+      <div class="sel-name">并集选择器</div>
+      <div class="sel-syntax">h2, .note, #footer</div>
+      <div class="sel-logic">分别命中所有 &lt;h2&gt;、所有 .note、id=footer，<b>满足其一即可</b></div>
+    </div>
+  </div>
+
+  <!-- DOM 树可视化 -->
+  <div class="card">
+    <div class="card-head"><div class="dot" style="background:var(--violet)"></div>DOM 树 — 高亮节点为被选中元素</div>
+    <div class="card-body">
+      <div class="dom-tree" id="domTree">
+        <!-- 动态渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 规则说明 -->
+  <div class="g2">
+    <div class="card">
+      <div class="card-head"><div class="dot" style="background:var(--blue)"></div>书写规则</div>
+      <div class="card-body">
+        <div id="ruleContent"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="dot" style="background:var(--teal)"></div>实时 CSS 代码</div>
+      <div class="card-body">
+        <div class="code-box" id="selCode" style="margin-top:0;font-size:.74rem"></div>
+        <div class="callout ci" style="margin-top:11px"><span class="ico">💡</span><span id="selTip"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 1 · 字体样式
+     ═══════════════════════════════════════ -->
+<div class="page" id="pg1">
+<div class="wrap">
+  <div class="ch-label">Chapter 02</div>
+  <div class="ch-title">字体样式属性</div>
+  <div class="ch-desc">拖动滑块或选择选项，实时预览字体的<b>大小、字族、粗细、风格</b>效果。</div>
+
+  <div class="card">
+    <div class="card-head"><div class="dot" style="background:var(--blue)"></div>实时预览</div>
+    <div class="card-body">
+      <div class="font-preview">
+        <div id="fontSample">CSS 字体样式 · Font Style Preview 123</div>
+      </div>
+      <div class="code-box" id="fontCode" style="font-size:.73rem"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="dot" style="background:var(--red)"></div>控制面板</div>
+    <div class="card-body">
+      <div class="g2" style="gap:20px">
+        <div class="ctrl-row">
+          <div class="ctrl">
+            <label>font-size</label>
+            <input type="range" id="fSize" min="12" max="52" value="28" oninput="fontUpdate()">
+            <span class="val" id="fSizeV">28px</span>
+          </div>
+          <div class="ctrl">
+            <label>font-weight</label>
+            <select id="fWeight" onchange="fontUpdate()">
+              <option value="300">300 — lighter</option>
+              <option value="400" selected>400 — normal</option>
+              <option value="700">700 — bold</option>
+              <option value="900">900 — black</option>
+            </select>
+          </div>
+          <div class="ctrl">
+            <label>font-style</label>
+            <select id="fStyle" onchange="fontUpdate()">
+              <option value="normal" selected>normal（正体）</option>
+              <option value="italic">italic（斜体）</option>
+              <option value="oblique">oblique（倾斜）</option>
+            </select>
+          </div>
+          <div class="ctrl">
+            <label>font-variant</label>
+            <select id="fVariant" onchange="fontUpdate()">
+              <option value="normal" selected>normal</option>
+              <option value="small-caps">small-caps（小型大写）</option>
+            </select>
+          </div>
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl">
+            <label>font-family</label>
+            <select id="fFamily" onchange="fontUpdate()">
+              <option value="'Noto Sans SC',sans-serif" selected>Noto Sans SC（黑体系）</option>
+              <option value="'Noto Serif SC',serif">Noto Serif SC（宋体系）</option>
+              <option value="Georgia,serif">Georgia（衬线）</option>
+              <option value="'Courier New',monospace">Courier New（等宽）</option>
+              <option value="Arial,sans-serif">Arial</option>
+            </select>
+          </div>
+          <div class="ctrl">
+            <label>line-height</label>
+            <input type="range" id="fLH" min="1" max="3" step="0.1" value="1.4" oninput="fontUpdate()">
+            <span class="val" id="fLHV">1.4</span>
+          </div>
+          <div class="ctrl">
+            <label>color</label>
+            <input type="color" id="fColor" value="#1a1714" oninput="fontUpdate()">
+            <span class="val" id="fColorV">#1a1714</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- font 综合属性解析 -->
+  <div class="card">
+    <div class="card-head"><div class="dot" style="background:var(--amber)"></div>font 综合属性 — 书写顺序解析</div>
+    <div class="card-body">
+      <div class="font-shorthand">
+        <span class="fs-part fs-style" id="fsh-style">italic</span>
+        <span style="color:#4b5563;margin:0 3px">·</span>
+        <span class="fs-part fs-weight" id="fsh-weight">bold</span>
+        <span style="color:#4b5563;margin:0 3px">·</span>
+        <span class="fs-part fs-size" id="fsh-size">16px</span>
+        <span class="fs-slash">/</span>
+        <span class="fs-part fs-lh" id="fsh-lh">1.8</span>
+        <span style="color:#4b5563;margin:0 3px">·</span>
+        <span class="fs-part fs-family" id="fsh-family">"微软雅黑"</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:9px;font-size:.72rem">
+        <span style="display:flex;align-items:center;gap:4px"><span class="badge bv" style="background:rgba(167,139,250,.2);color:#c4b5fd;border-radius:3px">■</span>font-style</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="badge ba" style="background:rgba(251,191,36,.15);color:#fbbf24;border-radius:3px">■</span>font-weight</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="badge br" style="border-radius:3px">■</span>font-size</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="badge bt" style="background:rgba(52,211,153,.15);color:#059669;border-radius:3px">■</span>line-height</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="badge bb" style="border-radius:3px">■</span>font-family</span>
+      </div>
+      <div class="callout cw" style="margin-top:10px"><span class="ico">⚠️</span><span><b>顺序不能变</b>，font-size 和 font-family 必填，其余可省略。</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 2 · 文本外观
+     ═══════════════════════════════════════ -->
+<div class="page" id="pg2">
+<div class="wrap">
+  <div class="ch-label">Chapter 03</div>
+  <div class="ch-title">文本外观属性</div>
+  <div class="ch-desc">调节颜色、间距、对齐、缩进、装饰线等属性，实时观察文本外观变化。</div>
+
+  <div class="card">
+    <div class="card-head"><div class="dot" style="background:var(--teal)"></div>文本预览区</div>
+    <div class="card-body">
+      <div class="text-preview">
+        <div id="textSample">
+          CSS 是层叠样式表（Cascading Style Sheets）的简称，是一种用于描述 HTML 文档外观的样式语言。通过 CSS，开发者可以精确控制字体、颜色、布局等视觉效果。<br><br>
+          CSS provides a wide range of text properties to control the visual appearance of text content.
+        </div>
+      </div>
+      <div class="code-box" id="textCode" style="font-size:.73rem"></div>
+    </div>
+  </div>
+
+  <!-- 控制面板 -->
+  <div class="g2" style="gap:14px">
+    <div class="card">
+      <div class="card-head"><div class="dot" style="background:var(--red)"></div>颜色 &amp; 间距</div>
+      <div class="card-body">
+        <div class="ctrl-row">
+          <div class="ctrl">
+            <label>color（颜色）</label>
+            <input type="color" id="tColor" value="#1a1714" oninput="textUpdate()">
+            <span class="val" id="tColorV">#1a1714</span>
+          </div>
+          <div class="ctrl">
+            <label>letter-spacing</label>
+            <input type="range" id="tLS" min="-3" max="12" value="0" oninput="textUpdate()">
+            <span class="val" id="tLSV">0px</span>
+          </div>
+          <div class="ctrl">
+            <label>word-spacing</label>
+            <input type="range" id="tWS" min="-5" max="20" value="0" oninput="textUpdate()">
+            <span class="val" id="tWSV">0px</span>
+          </div>
+          <div class="ctrl">
+            <label>line-height</label>
+            <input type="range" id="tLH" min="1" max="4" step="0.1" value="1.7" oninput="textUpdate()">
+            <span class="val" id="tLHV">1.7</span>
+          </div>
+          <div class="ctrl">
+            <label>font-size</label>
+            <input type="range" id="tFS" min="12" max="28" value="15" oninput="textUpdate()">
+            <span class="val" id="tFSV">15px</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="dot" style="background:var(--blue)"></div>对齐 &amp; 装饰</div>
+      <div class="card-body">
+        <div class="ctrl-row">
+          <div class="ctrl">
+            <label>text-align</label>
+            <select id="tAlign" onchange="textUpdate()">
+              <option value="left" selected>left（左对齐）</option>
+              <option value="center">center（居中）</option>
+              <option value="right">right（右对齐）</option>
+            </select>
+          </div>
+          <div class="ctrl">
+            <label>text-indent</label>
+            <input type="range" id="tIndent" min="0" max="5" step="0.5" value="0" oninput="textUpdate()">
+            <span class="val" id="tIndentV">0em</span>
+          </div>
+          <div class="ctrl" style="align-items:flex-start">
+            <label style="margin-top:3px">text-decoration</label>
+            <div class="deco-pills" id="decoPills">
+              <div class="pill" onclick="toggleDeco('none',this)">none</div>
+              <div class="pill" onclick="toggleDeco('underline',this)">underline</div>
+              <div class="pill" onclick="toggleDeco('overline',this)">overline</div>
+              <div class="pill" onclick="toggleDeco('line-through',this)">line-through</div>
+            </div>
+          </div>
+          <div class="ctrl">
+            <label>text-transform</label>
+            <select id="tTransform" onchange="textUpdate()">
+              <option value="none" selected>none</option>
+              <option value="capitalize">capitalize（首字母大写）</option>
+              <option value="uppercase">uppercase（全大写）</option>
+              <option value="lowercase">lowercase（全小写）</option>
+            </select>
+          </div>
+        </div>
+        <div class="callout ci" style="margin-top:10px"><span class="ico">ℹ️</span><span>text-transform 对<b>英文</b>有效，text-indent 推荐使用 <b>em 单位</b>（2em=两个汉字宽度）。</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 3 · 文本特效
+     ═══════════════════════════════════════ -->
+<div class="page" id="pg3">
+<div class="wrap">
+  <div class="ch-label">Chapter 04</div>
+  <div class="ch-title">文本特效属性（CSS3）</div>
+  <div class="ch-desc">text-shadow、text-overflow、white-space、word-wrap 等 CSS3 增强属性。</div>
+
+  <!-- text-shadow -->
+  <div class="card">
+    <div class="card-head"><div class="dot" style="background:var(--violet)"></div>text-shadow — 文字阴影</div>
+    <div class="card-body">
+      <div class="g2" style="gap:20px">
+        <div>
+          <div class="shadow-preview">
+            <div id="shadowSample">CSS 文字阴影效果</div>
+          </div>
+          <div class="code-box" id="shadowCode" style="font-size:.74rem"></div>
+        </div>
+        <div>
+          <div class="ctrl-row">
+            <div class="ctrl">
+              <label>h-shadow（水平）</label>
+              <input type="range" id="shX" min="-20" max="20" value="2" oninput="shadowUpdate()">
+              <span class="val" id="shXV">2px</span>
+            </div>
+            <div class="ctrl">
+              <label>v-shadow（垂直）</label>
+              <input type="range" id="shY" min="-20" max="20" value="2" oninput="shadowUpdate()">
+              <span class="val" id="shYV">2px</span>
+            </div>
+            <div class="ctrl">
+              <label>blur（模糊）</label>
+              <input type="range" id="shB" min="0" max="30" value="4" oninput="shadowUpdate()">
+              <span class="val" id="shBV">4px</span>
+            </div>
+            <div class="ctrl">
+              <label>color（颜色）</label>
+              <input type="color" id="shC" value="#888888" oninput="shadowUpdate()">
+              <span class="val" id="shCV">#888888</span>
+            </div>
+            <div class="ctrl">
+              <label>字体颜色</label>
+              <input type="color" id="shFC" value="#ffffff" oninput="shadowUpdate()">
+              <span class="val" id="shFCV">#ffffff</span>
+            </div>
+            <div class="ctrl">
+              <label>字体大小</label>
+              <input type="range" id="shFS" min="16" max="56" value="36" oninput="shadowUpdate()">
+              <span class="val" id="shFSV">36px</span>
+            </div>
+          </div>
+          <!-- 预设效果 -->
+          <div style="margin-top:12px">
+            <div style="font-size:.7rem;font-weight:700;color:var(--ink-3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em">快速预设</div>
+            <div class="pills">
+              <div class="pill" onclick="shadowPreset('basic')">基础阴影</div>
+              <div class="pill" onclick="shadowPreset('glow')">发光效果</div>
+              <div class="pill" onclick="shadowPreset('neon')">霓虹灯</div>
+              <div class="pill" onclick="shadowPreset('sharp')">硬边阴影</div>
+              <div class="pill" onclick="shadowPreset('multi')">多重阴影</div>
+            </div>
+          </div>
+          <div class="callout cw"><span class="ico">⚠️</span><span>blur（模糊半径）<b>只能为正值</b>，值越大阴影越柔和。</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- text-overflow & white-space -->
+  <div class="card">
+    <div class="card-head"><div class="dot" style="background:var(--teal)"></div>text-overflow — 溢出文本处理</div>
+    <div class="card-body">
+      <div class="g2" style="gap:20px">
+        <div>
+          <div style="font-size:.72rem;color:var(--ink-3);margin-bottom:8px">拖动宽度滑块，观察文本溢出时的不同处理方式：</div>
+          <div class="overflow-wrap">
+            <div style="font-size:.72rem;color:var(--ink-3);margin-bottom:6px">width: <span id="ovWidthLabel" style="color:var(--blue);font-family:var(--mono);font-weight:700">300px</span></div>
+            <div class="overflow-box" id="ovBox" style="width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+              这是一段很长的文本内容，用于演示文本溢出省略的效果。This is a long text content for text-overflow demo.
+            </div>
+          </div>
+          <div class="ctrl" style="margin-top:12px">
+            <label>容器宽度</label>
+            <input type="range" id="ovWidth" min="80" max="500" value="300" oninput="ovUpdate()">
+            <span class="val" id="ovWidthV">300px</span>
+          </div>
+          <div class="code-box" id="ovCode" style="font-size:.74rem"></div>
+        </div>
+        <div>
+          <div style="font-size:.72rem;font-weight:700;color:var(--ink-3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em">text-overflow</div>
+          <div class="pills" id="ovPills">
+            <div class="pill on" onclick="setOvMode('ellipsis',this)">ellipsis（省略号）</div>
+            <div class="pill" onclick="setOvMode('clip',this)">clip（直接截断）</div>
+          </div>
+          <div class="callout co" style="margin-top:10px"><span class="ico">💡</span>
+            <span>ellipsis 必须配合：<br>
+              <code style="font-family:var(--mono);font-size:.85em;background:#f0ede8;padding:1px 4px;border-radius:3px">white-space: nowrap</code><br>
+              <code style="font-family:var(--mono);font-size:.85em;background:#f0ede8;padding:1px 4px;border-radius:3px">overflow: hidden</code><br>
+              三者缺一不可。
+            </span>
+          </div>
+
+          <div style="margin-top:14px">
+            <div style="font-size:.72rem;font-weight:700;color:var(--ink-3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em">white-space</div>
+            <div class="pills" id="wsPills">
+              <div class="pill on" onclick="setWsMode('nowrap',this)">nowrap</div>
+              <div class="pill" onclick="setWsMode('normal',this)">normal</div>
+              <div class="pill" onclick="setWsMode('pre',this)">pre</div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px">
+            <div style="font-size:.72rem;font-weight:700;color:var(--ink-3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em">word-wrap 演示</div>
+            <div style="border:2px solid #93c5fd;background:white;border-radius:5px;padding:10px;width:160px">
+              <div id="wwBox" style="font-size:.78rem;color:var(--ink-2);word-wrap:break-word;transition:all .3s">https://www.example.com/very/long/url/path</div>
+            </div>
+            <div class="pills" style="margin-top:8px" id="wwPills">
+              <div class="pill on" onclick="setWW('break-word',this)">break-word</div>
+              <div class="pill" onclick="setWW('normal',this)">normal（溢出）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 4 · 列表样式
+     ═══════════════════════════════════════ -->
+<div class="page" id="pg4">
+<div class="wrap">
+  <div class="ch-label">Chapter 05</div>
+  <div class="ch-title">列表样式属性</div>
+  <div class="ch-desc">控制列表项目符号的<b>类型、位置</b>，以及综合属性 list-style 的用法。</div>
+
+  <div class="g2" style="gap:14px">
+
+    <!-- 无序列表 -->
+    <div class="card">
+      <div class="card-head"><div class="dot" style="background:var(--red)"></div>无序列表（ul）</div>
+      <div class="card-body">
+        <div style="font-size:.72rem;font-weight:700;color:var(--ink-3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em">list-style-type</div>
+        <div class="pills" id="ulTypePills">
+          <div class="pill on" onclick="setULType('disc',this)">disc（实心圆）</div>
+          <div class="pill" onclick="setULType('circle',this)">circle（空心圆）</div>
+          <div class="pill" onclick="setULType('square',this)">square（方块）</div>
+          <div class="pill" onclick="setULType('none',this)">none（无符号）</div>
+        </div>
+        <div class="divider"></div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--ink-3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em">list-style-position</div>
+        <div class="pills" id="ulPosPills">
+          <div class="pill on" onclick="setULPos('outside',this)">outside（外侧）</div>
+          <div class="pill" onclick="setULPos('inside',this)">inside（内侧）</div>
+        </div>
+        <div class="list-preview" id="ulPreview" style="margin-top:12px">
+          <ul id="ulList" style="list-style-type:disc;list-style-position:outside;padding-left:22px">
+            <li>前端开发：HTML 构建页面结构</li>
+            <li>CSS 控制视觉样式表现</li>
+            <li>JavaScript 实现交互行为逻辑</li>
+            <li>这是一段较长的列表项文本，用于演示 list-style-position 中 inside 和 outside 的区别效果</li>
+          </ul>
+        </div>
+        <div class="code-box" id="ulCode" style="font-size:.74rem"></div>
+      </div>
+    </div>
+
+    <!-- 有序列表 -->
+    <div class="card">
+      <div class="card-head"><div class="dot" style="background:var(--blue)"></div>有序列表（ol）</div>
+      <div class="card-body">
+        <div style="font-size:.72rem;font-weight:700;color:var(--ink-3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em">list-style-type</div>
+        <div class="pills" id="olTypePills" style="flex-wrap:wrap">
+          <div class="pill on" onclick="setOLType('decimal',this)">decimal</div>
+          <div class="pill" onclick="setOLType('decimal-leading-zero',this)">leading-zero</div>
+          <div class="pill" onclick="setOLType('upper-alpha',this)">A B C</div>
+          <div class="pill" onclick="setOLType('lower-alpha',this)">a b c</div>
+          <div class="pill" onclick="setOLType('upper-roman',this)">I II III</div>
+          <div class="pill" onclick="setOLType('lower-roman',this)">i ii iii</div>
+          <div class="pill" onclick="setOLType('none',this)">none</div>
+        </div>
+        <div class="list-preview" id="olPreview" style="margin-top:12px">
+          <ol id="olList" style="list-style-type:decimal;padding-left:22px">
+            <li>第一步：分析需求，制定方案</li>
+            <li>第二步：搭建 HTML 基础结构</li>
+            <li>第三步：编写 CSS 样式代码</li>
+            <li>第四步：测试与浏览器兼容</li>
+          </ol>
+        </div>
+        <div class="code-box" id="olCode" style="font-size:.74rem"></div>
+
+        <div class="callout cw" style="margin-top:10px"><span class="ico">⚠️</span><span>实际开发中推荐：先 <code>list-style: none</code> 清除符号，再通过 <b>background-image</b> 设置自定义图标，控制更精确。</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- list-style 综合属性 -->
+  <div class="card">
+    <div class="card-head"><div class="dot" style="background:var(--amber)"></div>list-style 综合属性 — 一行搞定</div>
+    <div class="card-body">
+      <div class="g2" style="gap:20px">
+        <div>
+          <div class="code-box" style="margin-top:0;font-size:.76rem">
+<span class="cm">/* 逐一写法（不推荐，冗余） */</span><br>
+<span class="sel">ul</span> {<br>
+&nbsp;&nbsp;<span class="p">list-style-type</span>: <span class="v">square</span>;<br>
+&nbsp;&nbsp;<span class="p">list-style-position</span>: <span class="v">inside</span>;<br>
+}<br><br>
+<span class="cm">/* 综合写法（推荐，简洁） */</span><br>
+<span class="sel">ul</span> {<br>
+&nbsp;&nbsp;<span class="p">list-style</span>: <span class="v">square inside</span>;<br>
+}<br><br>
+<span class="cm">/* 最常用写法：清除所有项目符号 */</span><br>
+<span class="sel">ul, ol</span> {<br>
+&nbsp;&nbsp;<span class="p">list-style</span>: <span class="v">none</span>;<br>
+}
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.82rem;color:var(--ink-2);font-weight:600;margin-bottom:8px">实际开发最佳实践：自定义图标列表</div>
+          <div class="code-box" style="margin-top:0;font-size:.74rem">
+<span class="cm">/* 第1步：清除默认符号 */</span><br>
+<span class="sel">ul</span> {<br>
+&nbsp;&nbsp;<span class="p">list-style</span>: <span class="v">none</span>;<br>
+}<br><br>
+<span class="cm">/* 第2步：腾出图标空间 */</span><br>
+<span class="sel">li</span> {<br>
+&nbsp;&nbsp;<span class="p">padding-left</span>: <span class="v">20px</span>;<br>
+}<br><br>
+<span class="cm">/* 第3步：设置自定义图标 */</span><br>
+<span class="sel">li</span> {<br>
+&nbsp;&nbsp;<span class="p">background-image</span>: <span class="v">url("bullet.png")</span>;<br>
+&nbsp;&nbsp;<span class="p">background-repeat</span>: <span class="v">no-repeat</span>;<br>
+&nbsp;&nbsp;<span class="p">background-position</span>: <span class="v">left center</span>;<br>
+}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════ -->
+<script>
+/* ── utility ── */
+function $id(x){ return document.getElementById(x); }
+
+/* ── PAGE SWITCH ── */
+function gotoPage(n, btn) {
+  document.querySelectorAll('.page').forEach(function(p, i) {
+    p.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.nav-tab').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  btn.classList.add('active');
+}
+
+/* ═══════════════════════
+   PAGE 0 · 复合选择器
+   ═══════════════════════ */
+var selMode = 0; // 0=后代 1=交集 2=并集
+
+/* DOM 树数据 — 节点列表，用缩进模拟层级 */
+var DOM_NODES = [
+  { indent:0, html:'<span class="tag">&lt;body&gt;</span>', id:'body', classes:[], isP:false, isH2:false },
+  { indent:1, html:'<span class="tag">&lt;div</span> <span class="cls">class="article"</span><span class="tag">&gt;</span>', id:'', classes:['article'], isP:false, isH2:false },
+  { indent:2, html:'<span class="tag">&lt;h2&gt;</span>文章标题<span class="tag">&lt;/h2&gt;</span>', id:'', classes:[], isP:false, isH2:true },
+  { indent:2, html:'<span class="tag">&lt;p</span> <span class="cls">class="highlight"</span><span class="tag">&gt;</span>段落一（第一层p）<span class="tag">&lt;/p&gt;</span>', id:'', classes:['highlight'], isP:true, isH2:false },
+  { indent:2, html:'<span class="tag">&lt;section&gt;</span>', id:'', classes:[], isP:false, isH2:false },
+  { indent:3, html:'<span class="tag">&lt;p</span> <span class="cls">class="note highlight"</span><span class="tag">&gt;</span>段落二（嵌套在section中）<span class="tag">&lt;/p&gt;</span>', id:'', classes:['note','highlight'], isP:true, isH2:false },
+  { indent:3, html:'<span class="tag">&lt;div&gt;</span>', id:'', classes:[], isP:false, isH2:false },
+  { indent:4, html:'<span class="tag">&lt;p&gt;</span>段落三（深度嵌套）<span class="tag">&lt;/p&gt;</span>', id:'', classes:[], isP:true, isH2:false },
+  { indent:3, html:'<span class="tag">&lt;/div&gt;</span>', id:'', classes:[], isP:false, isH2:false, closer:true },
+  { indent:2, html:'<span class="tag">&lt;/section&gt;</span>', id:'', classes:[], isP:false, isH2:false, closer:true },
+  { indent:1, html:'<span class="tag">&lt;/div&gt;</span>', id:'', classes:[], isP:false, isH2:false, closer:true },
+  { indent:1, html:'<span class="tag">&lt;h2</span> <span class="cls">class="note"</span><span class="tag">&gt;</span>侧边栏标题<span class="tag">&lt;/h2&gt;</span>', id:'', classes:['note'], isP:false, isH2:true },
+  { indent:1, html:'<span class="tag">&lt;p</span> <span class="cls">class="note"</span><span class="tag">&gt;</span>外部段落（.note 类）<span class="tag">&lt;/p&gt;</span>', id:'', classes:['note'], isP:true, isH2:false },
+  { indent:1, html:'<span class="tag">&lt;div</span> <span class="id">id="footer"</span><span class="tag">&gt;</span>页脚<span class="tag">&lt;/div&gt;</span>', id:'footer', classes:[], isP:false, isH2:false },
+  { indent:0, html:'<span class="tag">&lt;/body&gt;</span>', id:'', classes:[], isP:false, isH2:false, closer:true },
+];
+
+/* 判断某节点是否被各选择器命中 */
+function isHit(node, mode) {
+  if (node.closer) return false;
+  if (mode === 0) {
+    /* 后代选择器 .article p：是 p 且（.article的后代，即index 2-9之间） */
+    var inArticle = (DOM_NODES.indexOf(node) >= 2 && DOM_NODES.indexOf(node) <= 9);
+    return node.isP && inArticle;
+  }
+  if (mode === 1) {
+    /* 交集选择器 p.highlight：是p且有highlight类 */
+    return node.isP && node.classes.indexOf('highlight') !== -1;
+  }
+  if (mode === 2) {
+    /* 并集选择器 h2, .note, #footer */
+    return node.isH2 || node.classes.indexOf('note') !== -1 || node.id === 'footer';
+  }
+  return false;
+}
+
+/* 渲染DOM树 */
+function renderDomTree() {
+  var html = '';
+  DOM_NODES.forEach(function(node, i) {
+    var hit = isHit(node, selMode);
+    /* 判断是否是祖先/容器节点（高亮祖先以蓝色标注） */
+    var isAncestor = false;
+    if (selMode === 0 && !node.closer) {
+      isAncestor = node.classes.indexOf('article') !== -1;
+    }
+    var cls = 'dn';
+    if (node.closer) { cls += ' miss'; }
+    else if (hit) { cls += ' hit'; }
+    else if (isAncestor) { cls += ' ancestor'; }
+    else { cls += ''; }
+
+    var pad = '';
+    for (var j = 0; j < node.indent; j++) pad += '&nbsp;&nbsp;&nbsp;';
+    var marker = hit ? ' ✦' : '';
+    html += '<div class="' + cls + '">' + pad + node.html + (hit ? '<span style="color:#fbbf24;font-size:.7rem;margin-left:6px">← 被选中</span>' : '') + '</div>';
+  });
+  $id('domTree').innerHTML = html;
+}
+
+var SEL_DATA = [
+  {
+    css: '<span class="sel">.article</span> <span class="sel">p</span> {\n  color: steelblue;\n  font-size: 16px;\n}',
+    tip: '后代选择器：选中 .article 内部所有层级的 &lt;p&gt; 元素，不论嵌套多深。',
+    rules: [
+      { icon: '✅', text: '不区分嵌套层级，只要处于祖先元素"管辖范围"即可命中' },
+      { icon: '✅', text: '可连写多级：<code>.nav ul a</code> — 三个条件叠加缩小范围' },
+      { icon: '⚠️', text: '建议不超过 3 层，过深影响渲染性能和代码可维护性' },
+      { icon: '🔵', text: '浅蓝色节点为"祖先元素"（.article），橙色为被命中的后代' }
+    ]
+  },
+  {
+    css: '<span class="sel">p</span><span class="sel">.highlight</span> {\n  background-color: #ff0;\n  color: blue;\n}',
+    tip: '交集选择器：同时是 &lt;p&gt; 且有 .highlight 类才被选中，缺少任意条件均不命中。',
+    rules: [
+      { icon: '✅', text: '标签名必须写在最前面：<code>p.highlight</code>，不能写成 <code>.highlightp</code>' },
+      { icon: '❌', text: '绝对不能有空格！<code>p.highlight</code>（交集）≠ <code>p .highlight</code>（后代）' },
+      { icon: '✅', text: '逻辑是 AND（且）：所有条件都要满足才命中' },
+      { icon: '💡', text: '可以叠加三个及以上条件：<code>p.highlight.active</code>' }
+    ]
+  },
+  {
+    css: '<span class="sel">h2</span>,\n<span class="sel">.note</span>,\n<span class="sel">#footer</span> {\n  font-weight: 700;\n  color: #1a1a2e;\n}',
+    tip: '并集选择器：分别命中 h2、.note 元素、#footer，满足其中任意一个即可。逻辑是 OR（或）。',
+    rules: [
+      { icon: '✅', text: '逻辑是 OR（或）：满足任意一个选择器就命中' },
+      { icon: '✅', text: '推荐每个选择器独占一行，提高可读性，便于版本控制' },
+      { icon: '✅', text: '可以混合标签、类、ID、后代等任意类型的选择器' },
+      { icon: '💡', text: 'CSS Reset 中大量使用并集选择器：<code>h1,h2,h3,p{margin:0}</code>' }
+    ]
+  }
+];
+
+function setSel(n, el) {
+  selMode = n;
+  document.querySelectorAll('.sel-card').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+  renderDomTree();
+  var d = SEL_DATA[n];
+  $id('selCode').innerHTML = d.css;
+  $id('selTip').innerHTML = d.tip;
+  var html = '<div class="rule-title">书写规则与注意事项</div>';
+  d.rules.forEach(function(r) {
+    html += '<div class="rule-item"><span class="rule-icon">' + r.icon + '</span><span class="rule-text">' + r.text + '</span></div>';
+  });
+  $id('ruleContent').innerHTML = html;
+}
+/* 初始化 */
+setSel(0, document.querySelector('.sel-card'));
+
+/* ═══════════════════════
+   PAGE 1 · 字体样式
+   ═══════════════════════ */
+function fontUpdate() {
+  var size    = $id('fSize').value;
+  var weight  = $id('fWeight').value;
+  var style   = $id('fStyle').value;
+  var variant = $id('fVariant').value;
+  var family  = $id('fFamily').value;
+  var lh      = $id('fLH').value;
+  var color   = $id('fColor').value;
+
+  $id('fSizeV').textContent  = size + 'px';
+  $id('fLHV').textContent    = lh;
+  $id('fColorV').textContent = color;
+
+  var el = $id('fontSample');
+  el.style.fontSize   = size + 'px';
+  el.style.fontWeight = weight;
+  el.style.fontStyle  = style;
+  el.style.fontVariant = variant;
+  el.style.fontFamily = family;
+  el.style.lineHeight = lh;
+  el.style.color      = color;
+
+  /* 更新综合属性解析器 */
+  $id('fsh-style').textContent  = (style !== 'normal') ? style : 'normal';
+  $id('fsh-weight').textContent = weight;
+  $id('fsh-size').textContent   = size + 'px';
+  $id('fsh-lh').textContent     = lh;
+  var famLabel = family.split(',')[0].replace(/'/g,'');
+  $id('fsh-family').textContent = '"' + famLabel + '"';
+
+  var styleStr = (style !== 'normal') ? style + ' ' : '';
+  var varStr   = (variant !== 'normal') ? variant + ' ' : '';
+  $id('fontCode').innerHTML =
+    '<span class="sel">p</span> {<br>' +
+    (styleStr ? '&nbsp;&nbsp;<span class="p">font-style</span>: <span class="v">' + style + '</span>;<br>' : '') +
+    (varStr ? '&nbsp;&nbsp;<span class="p">font-variant</span>: <span class="v">' + variant + '</span>;<br>' : '') +
+    '&nbsp;&nbsp;<span class="p">font</span>: <span class="v">' + styleStr + weight + ' ' + size + 'px/' + lh + ' ' + family + '</span>;<br>' +
+    '&nbsp;&nbsp;<span class="p">color</span>: <span class="v">' + color + '</span>;<br>}';
+}
+fontUpdate();
+
+/* ═══════════════════════
+   PAGE 2 · 文本外观
+   ═══════════════════════ */
+var decoSet = new Set();
+
+function toggleDeco(val, el) {
+  if (val === 'none') {
+    decoSet.clear();
+    document.querySelectorAll('#decoPills .pill').forEach(function(p) { p.classList.remove('on'); });
+    el.classList.add('on');
+  } else {
+    /* 移除 none */
+    document.querySelector('#decoPills .pill').classList.remove('on');
+    if (decoSet.has(val)) {
+      decoSet.delete(val);
+      el.classList.remove('on');
+    } else {
+      decoSet.add(val);
+      el.classList.add('on');
+    }
+  }
+  textUpdate();
+}
+
+function textUpdate() {
+  var color   = $id('tColor').value;
+  var ls      = +$id('tLS').value;
+  var ws      = +$id('tWS').value;
+  var lh      = +$id('tLH').value;
+  var fs      = +$id('tFS').value;
+  var align   = $id('tAlign').value;
+  var indent  = +$id('tIndent').value;
+  var trans   = $id('tTransform').value;
+  var deco    = decoSet.size > 0 ? Array.from(decoSet).join(' ') : 'none';
+
+  $id('tColorV').textContent  = color;
+  $id('tLSV').textContent     = ls + 'px';
+  $id('tWSV').textContent     = ws + 'px';
+  $id('tLHV').textContent     = lh;
+  $id('tFSV').textContent     = fs + 'px';
+  $id('tIndentV').textContent = indent + 'em';
+
+  var el = $id('textSample');
+  el.style.color          = color;
+  el.style.letterSpacing  = ls + 'px';
+  el.style.wordSpacing    = ws + 'px';
+  el.style.lineHeight     = lh;
+  el.style.fontSize       = fs + 'px';
+  el.style.textAlign      = align;
+  el.style.textIndent     = indent + 'em';
+  el.style.textDecoration = deco;
+  el.style.textTransform  = trans;
+
+  $id('textCode').innerHTML =
+    '<span class="sel">p</span> {<br>' +
+    '&nbsp;&nbsp;<span class="p">color</span>: <span class="v">' + color + '</span>;<br>' +
+    (ls !== 0 ? '&nbsp;&nbsp;<span class="p">letter-spacing</span>: <span class="v">' + ls + 'px</span>;<br>' : '') +
+    (ws !== 0 ? '&nbsp;&nbsp;<span class="p">word-spacing</span>: <span class="v">' + ws + 'px</span>;<br>' : '') +
+    '&nbsp;&nbsp;<span class="p">line-height</span>: <span class="v">' + lh + '</span>;<br>' +
+    '&nbsp;&nbsp;<span class="p">font-size</span>: <span class="v">' + fs + 'px</span>;<br>' +
+    '&nbsp;&nbsp;<span class="p">text-align</span>: <span class="v">' + align + '</span>;<br>' +
+    (indent > 0 ? '&nbsp;&nbsp;<span class="p">text-indent</span>: <span class="v">' + indent + 'em</span>;<br>' : '') +
+    (deco !== 'none' ? '&nbsp;&nbsp;<span class="p">text-decoration</span>: <span class="v">' + deco + '</span>;<br>' : '') +
+    (trans !== 'none' ? '&nbsp;&nbsp;<span class="p">text-transform</span>: <span class="v">' + trans + '</span>;<br>' : '') +
+    '}';
+}
+textUpdate();
+
+/* ═══════════════════════
+   PAGE 3 · 文本特效
+   ═══════════════════════ */
+var shadowExtra = ''; // 霓虹/多重阴影的额外css字符串
+
+function shadowUpdate() {
+  var x = +$id('shX').value, y = +$id('shY').value;
+  var b = +$id('shB').value, c = $id('shC').value;
+  var fc = $id('shFC').value, fs = +$id('shFS').value;
+  $id('shXV').textContent  = x + 'px';
+  $id('shYV').textContent  = y + 'px';
+  $id('shBV').textContent  = b + 'px';
+  $id('shCV').textContent  = c;
+  $id('shFCV').textContent = fc;
+  $id('shFSV').textContent = fs + 'px';
+  var shadow = x + 'px ' + y + 'px ' + b + 'px ' + c;
+  var fullShadow = shadowExtra || shadow;
+  var el = $id('shadowSample');
+  el.style.textShadow = fullShadow;
+  el.style.color      = fc;
+  el.style.fontSize   = fs + 'px';
+  $id('shadowCode').innerHTML =
+    '<span class="sel">h1</span> {<br>' +
+    '&nbsp;&nbsp;<span class="p">color</span>: <span class="v">' + fc + '</span>;<br>' +
+    '&nbsp;&nbsp;<span class="p">font-size</span>: <span class="v">' + fs + 'px</span>;<br>' +
+    '&nbsp;&nbsp;<span class="p">text-shadow</span>: <span class="v">' + fullShadow + '</span>;<br>}';
+}
+shadowUpdate();
+
+function shadowPreset(type) {
+  shadowExtra = '';
+  var el = $id('shadowSample');
+  if (type === 'basic') {
+    el.style.color = '#ffffff'; $id('shFC').value = '#ffffff';
+    shadowExtra = '2px 2px 4px #888888';
+  } else if (type === 'glow') {
+    el.style.color = '#ffffff'; $id('shFC').value = '#ffffff';
+    shadowExtra = '0 0 10px rgba(0,150,255,0.8)';
+  } else if (type === 'neon') {
+    el.style.color = '#ffffff'; $id('shFC').value = '#ffffff';
+    shadowExtra = '0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 40px #0ff';
+  } else if (type === 'sharp') {
+    el.style.color = '#ffffff'; $id('shFC').value = '#ffffff';
+    shadowExtra = '3px 3px 0 #000';
+  } else if (type === 'multi') {
+    el.style.color = '#ffffff'; $id('shFC').value = '#ffffff';
+    shadowExtra = '10px 10px 10px red, 20px 20px 20px green';
+  }
+  el.style.textShadow = shadowExtra;
+  $id('shadowCode').innerHTML =
+    '<span class="sel">h1</span> {<br>' +
+    '&nbsp;&nbsp;<span class="p">text-shadow</span>: <span class="v">' + shadowExtra + '</span>;<br>}';
+}
+
+/* text-overflow */
+var ovMode = 'ellipsis', wsMode = 'nowrap';
+
+function ovUpdate() {
+  var w = +$id('ovWidth').value;
+  $id('ovWidthV').textContent    = w + 'px';
+  $id('ovWidthLabel').textContent = w + 'px';
+  var el = $id('ovBox');
+  el.style.width        = w + 'px';
+  el.style.whiteSpace   = wsMode;
+  el.style.overflow     = 'hidden';
+  el.style.textOverflow = ovMode;
+  updateOvCode();
+}
+
+function updateOvCode() {
+  var w = $id('ovWidth').value;
+  $id('ovCode').innerHTML =
+    '<span class="sel">.title</span> {<br>' +
+    '&nbsp;&nbsp;<span class="p">width</span>: <span class="v">' + w + 'px</span>;<br>' +
+    '&nbsp;&nbsp;<span class="p">white-space</span>: <span class="v">' + wsMode + '</span>;<br>' +
+    '&nbsp;&nbsp;<span class="p">overflow</span>: <span class="v">hidden</span>;<br>' +
+    '&nbsp;&nbsp;<span class="p">text-overflow</span>: <span class="v">' + ovMode + '</span>;<br>}';
+}
+
+function setOvMode(v, el) {
+  ovMode = v;
+  document.querySelectorAll('#ovPills .pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on');
+  ovUpdate();
+}
+
+function setWsMode(v, el) {
+  wsMode = v;
+  document.querySelectorAll('#wsPills .pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on');
+  ovUpdate();
+}
+
+function setWW(v, el) {
+  $id('wwBox').style.wordWrap = v;
+  document.querySelectorAll('#wwPills .pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on');
+}
+ovUpdate();
+
+/* ═══════════════════════
+   PAGE 4 · 列表样式
+   ═══════════════════════ */
+var ulType = 'disc', ulPos = 'outside';
+var olType = 'decimal';
+
+function setULType(v, el) {
+  ulType = v;
+  document.querySelectorAll('#ulTypePills .pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on');
+  listUpdate();
+}
+function setULPos(v, el) {
+  ulPos = v;
+  document.querySelectorAll('#ulPosPills .pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on');
+  listUpdate();
+}
+function setOLType(v, el) {
+  olType = v;
+  document.querySelectorAll('#olTypePills .pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on');
+  listUpdate();
+}
+
+function listUpdate() {
+  var ul = $id('ulList');
+  ul.style.listStyleType     = ulType;
+  ul.style.listStylePosition = ulPos;
+  ul.style.paddingLeft       = ulPos === 'inside' ? '0' : '22px';
+
+  var ol = $id('olList');
+  ol.style.listStyleType = olType;
+
+  $id('ulCode').innerHTML =
+    '<span class="sel">ul</span> {<br>' +
+    '&nbsp;&nbsp;<span class="p">list-style-type</span>: <span class="v">' + ulType + '</span>;<br>' +
+    '&nbsp;&nbsp;<span class="p">list-style-position</span>: <span class="v">' + ulPos + '</span>;<br>' +
+    '&nbsp;&nbsp;<span class="cm">/* 综合写法 */</span><br>' +
+    '&nbsp;&nbsp;<span class="p">list-style</span>: <span class="v">' + ulType + ' ' + ulPos + '</span>;<br>}';
+
+  $id('olCode').innerHTML =
+    '<span class="sel">ol</span> {<br>' +
+    '&nbsp;&nbsp;<span class="p">list-style-type</span>: <span class="v">' + olType + '</span>;<br>}';
+}
+listUpdate();
+</script>
+</body>
+</html>

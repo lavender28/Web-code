@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>盒子模型及应用 · 教学讲义</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ============================================================
+   CSS CUSTOM PROPERTIES
+   ============================================================ */
+    :root {
+      --paper: #faf7f2;
+      --paper-warm: #f5f0e8;
+      --paper-deep: #ede7d9;
+      --ink: #1e1a16;
+      --ink-mid: #4a4238;
+      --ink-light: #7a6e62;
+      --ink-faint: #b5a898;
+      --red: #c0392b;
+      --red-deep: #922b21;
+      --red-pale: #f5e6e4;
+      --red-line: rgba(192, 57, 43, 0.18);
+      --teal: #1a7a6e;
+      --teal-pale: #e4f0ee;
+      --amber: #b7791f;
+      --amber-pale: #fef3e2;
+      --code-bg: #1e1c18;
+      --code-border: #2e2b24;
+      --sidebar-w: 260px;
+      --content-max: 820px;
+      --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+      --font-sans: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Consolas', monospace;
+      --radius: 6px;
+      --shadow-sm: 0 1px 3px rgba(30, 26, 22, 0.08), 0 1px 2px rgba(30, 26, 22, 0.04);
+      --shadow-md: 0 4px 12px rgba(30, 26, 22, 0.10), 0 2px 4px rgba(30, 26, 22, 0.06);
+    }
+
+    /* ============================================================
+   RESET & BASE
+   ============================================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font-serif);
+      background: var(--paper-warm);
+      color: var(--ink);
+      line-height: 1.85;
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+   LAYOUT: SIDEBAR + MAIN
+   ============================================================ */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ---- SIDEBAR ---- */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--ink);
+      color: var(--paper-warm);
+      overflow-y: auto;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: thin;
+      scrollbar-color: #3a3630 transparent;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: #3a3630;
+      border-radius: 2px;
+    }
+
+    .sidebar-header {
+      padding: 28px 20px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      flex-shrink: 0;
+    }
+
+    .sidebar-course {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .sidebar-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #f0ebe0;
+      line-height: 1.4;
+    }
+
+    .sidebar-nav {
+      padding: 16px 0 24px;
+      flex: 1;
+    }
+
+    .nav-section {
+      margin-bottom: 4px;
+    }
+
+    .nav-section-label {
+      padding: 6px 20px 4px;
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(240, 235, 224, 0.3);
+      font-weight: 500;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      color: rgba(240, 235, 224, 0.65);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border-left: 2px solid transparent;
+      line-height: 1.4;
+    }
+
+    .nav-link:hover {
+      color: #f0ebe0;
+      background: rgba(255, 255, 255, 0.04);
+      border-left-color: rgba(192, 57, 43, 0.5);
+    }
+
+    .nav-link.active {
+      color: #f0ebe0;
+      background: rgba(192, 57, 43, 0.12);
+      border-left-color: var(--red);
+    }
+
+    .nav-link .nav-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: rgba(240, 235, 224, 0.25);
+      flex-shrink: 0;
+      width: 20px;
+      text-align: right;
+    }
+
+    .nav-sub {
+      padding: 5px 20px 5px 40px;
+      font-size: 12px;
+      color: rgba(240, 235, 224, 0.45);
+    }
+
+    .nav-sub:hover {
+      color: rgba(240, 235, 224, 0.75);
+      background: rgba(255, 255, 255, 0.03);
+      border-left-color: transparent;
+    }
+
+    /* progress indicator */
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--red);
+      z-index: 200;
+      transition: width 0.1s linear;
+    }
+
+    /* ---- MAIN CONTENT ---- */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 0 40px 80px;
+    }
+
+    /* ============================================================
+   PAGE HEADER
+   ============================================================ */
+    .page-header {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: 52px 0 40px;
+      border-bottom: 1px solid var(--paper-deep);
+      position: relative;
+    }
+
+    .page-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 60px;
+      height: 2px;
+      background: var(--red);
+    }
+
+    .header-title {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+
+    .header-title span {
+      color: var(--red);
+    }
+
+    .header-meta-grid {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    /* ============================================================
+   CONTENT AREA
+   ============================================================ */
+    .content {
+      max-width: var(--content-max);
+      margin: 0 auto;
+    }
+
+    /* ---- Section headers ---- */
+    .chapter {
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid var(--paper-deep);
+    }
+
+    .chapter:first-child {
+      margin-top: 44px;
+      border-top: none;
+    }
+
+    .chapter-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .chapter-num {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      background: var(--red);
+      color: white;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    .chapter-title-wrap h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .chapter-title-wrap p {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--ink-faint);
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Sub-section */
+    .section {
+      margin-top: 36px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--paper-deep);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 16px;
+      background: var(--red);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .sub-section {
+      margin-top: 24px;
+    }
+
+    .sub-title {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink-mid);
+      margin-bottom: 10px;
+      font-family: var(--font-sans);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sub-title-tag {
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--red-pale);
+      color: var(--red);
+      padding: 1px 7px;
+      border-radius: 3px;
+      border: 1px solid var(--red-line);
+    }
+
+    /* ============================================================
+   TEXT ELEMENTS
+   ============================================================ */
+    p {
+      font-size: 15px;
+      color: var(--ink-mid);
+      line-height: 1.9;
+      margin-bottom: 14px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: var(--paper-deep);
+      border: 1px solid rgba(30, 26, 22, 0.1);
+      border-radius: 3px;
+      padding: 0.1em 0.4em;
+      color: var(--red-deep);
+      word-break: break-all;
+    }
+
+    a {
+      color: var(--red);
+      text-decoration: none;
+      border-bottom: 1px solid var(--red-line);
+      transition: border-color 0.2s;
+    }
+
+    a:hover {
+      border-bottom-color: var(--red);
+    }
+
+    ul,
+    ol {
+      padding-left: 0;
+      list-style: none;
+      margin-bottom: 14px;
+    }
+
+    li {
+      position: relative;
+      padding-left: 1.4em;
+      margin-bottom: 6px;
+      font-size: 15px;
+      color: var(--ink-mid);
+      line-height: 1.8;
+    }
+
+    ul li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--red);
+      font-size: 0.8em;
+      top: 0.2em;
+    }
+
+    ol {
+      counter-reset: list-counter;
+    }
+
+    ol li::before {
+      counter-increment: list-counter;
+      content: counter(list-counter) '.';
+      position: absolute;
+      left: 0;
+      color: var(--red);
+      font-weight: 600;
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      top: 0.15em;
+    }
+
+    /* ============================================================
+   CALLOUT / BLOCKQUOTE
+   ============================================================ */
+    .callout {
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin: 18px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .callout-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      line-height: 1.8;
+    }
+
+    .callout-body {
+      flex: 1;
+      font-size: 14px;
+      line-height: 1.8;
+      font-family: var(--font-sans);
+    }
+
+    .callout-warn {
+      background: var(--amber-pale);
+      border-left: 3px solid var(--amber);
+    }
+
+    .callout-warn .callout-body {
+      color: #6b4c0f;
+    }
+
+    .callout-warn .callout-body strong {
+      color: #4a3208;
+    }
+
+    .callout-info {
+      background: var(--teal-pale);
+      border-left: 3px solid var(--teal);
+    }
+
+    .callout-info .callout-body {
+      color: #14574e;
+    }
+
+    .callout-info .callout-body strong {
+      color: #0d3d37;
+    }
+
+    .callout-red {
+      background: var(--red-pale);
+      border-left: 3px solid var(--red);
+    }
+
+    .callout-red .callout-body {
+      color: #7a1a13;
+    }
+
+    .callout-red .callout-body strong {
+      color: #5c0f0a;
+    }
+
+    blockquote {
+      border-left: 3px solid var(--red);
+      background: var(--red-pale);
+      padding: 12px 18px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 16px 0;
+      font-size: 14px;
+      color: #7a1a13;
+      font-family: var(--font-sans);
+      line-height: 1.8;
+    }
+
+    blockquote p {
+      color: inherit;
+      font-size: inherit;
+      margin-bottom: 6px;
+    }
+
+    blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    blockquote strong {
+      color: #5c0f0a;
+    }
+
+    /* ============================================================
+   CODE BLOCKS
+   ============================================================ */
+    .code-wrap {
+      margin: 18px 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--code-border);
+    }
+
+    .code-header {
+      background: #2a2720;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .code-lang {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: rgba(240, 235, 224, 0.4);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .code-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .code-dot:nth-child(1) {
+      background: #ff5f57;
+    }
+
+    .code-dot:nth-child(2) {
+      background: #febc2e;
+    }
+
+    .code-dot:nth-child(3) {
+      background: #28c840;
+    }
+
+    pre {
+      background: var(--code-bg);
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.7;
+      color: #d4cfc5;
+      tab-size: 4;
+    }
+
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: inherit;
+      font-size: inherit;
+      border-radius: 0;
+      word-break: normal;
+    }
+
+    /* Syntax highlight tokens */
+    .tok-kw {
+      color: #c792ea;
+    }
+
+    /* keyword / selector */
+    .tok-prop {
+      color: #82aaff;
+    }
+
+    /* property */
+    .tok-val {
+      color: #f78c6c;
+    }
+
+    /* value / number */
+    .tok-str {
+      color: #c3e88d;
+    }
+
+    /* string */
+    .tok-cmt {
+      color: #546e7a;
+      font-style: italic;
+    }
+
+    /* comment */
+    .tok-tag {
+      color: #f07178;
+    }
+
+    /* html tag */
+    .tok-attr {
+      color: #ffcb6b;
+    }
+
+    /* html attribute */
+    .tok-id {
+      color: #80cbc4;
+    }
+
+    /* id */
+
+    /* Inline formula box */
+    .formula-box {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-left: 3px solid var(--amber);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #e8c07a;
+      line-height: 1.8;
+    }
+
+    /* ============================================================
+   TABLES
+   ============================================================ */
+    .table-wrap {
+      margin: 18px 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--paper-deep);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+    }
+
+    thead tr {
+      background: var(--paper-deep);
+    }
+
+    thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--ink-mid);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--paper-deep);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 9px 14px;
+      color: var(--ink-mid);
+      border-bottom: 1px solid var(--paper-warm);
+      vertical-align: top;
+      line-height: 1.7;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(245, 240, 232, 0.5);
+    }
+
+    tbody td:first-child {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--red-deep);
+      white-space: nowrap;
+    }
+
+    /* override for non-code first column tables */
+    .table-plain td:first-child {
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      color: var(--ink-mid);
+    }
+
+    /* ============================================================
+   BOX MODEL DIAGRAM
+   ============================================================ */
+    .diagram-wrap {
+      margin: 24px 0;
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .box-model-viz {
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bm-layer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .bm-margin {
+      width: 260px;
+      height: 220px;
+      border: 2px dashed rgba(183, 121, 31, 0.45);
+      background: rgba(183, 121, 31, 0.04);
+    }
+
+    .bm-border {
+      width: 210px;
+      height: 175px;
+      border: 8px solid rgba(192, 57, 43, 0.55);
+      background: rgba(192, 57, 43, 0.04);
+    }
+
+    .bm-padding {
+      width: 170px;
+      height: 140px;
+      border: 2px dashed rgba(26, 122, 110, 0.45);
+      background: rgba(26, 122, 110, 0.04);
+    }
+
+    .bm-content {
+      width: 116px;
+      height: 90px;
+      background: rgba(192, 57, 43, 0.12);
+      border: 2px solid rgba(192, 57, 43, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bm-label {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .bm-label-margin {
+      top: 3px;
+      left: 6px;
+      color: var(--amber);
+      background: rgba(183, 121, 31, 0.08);
+    }
+
+    .bm-label-border {
+      top: -8px;
+      left: 6px;
+      color: var(--red-deep);
+      background: var(--red-pale);
+    }
+
+    .bm-label-padding {
+      bottom: -8px;
+      right: 6px;
+      color: var(--teal);
+      background: var(--teal-pale);
+    }
+
+    .bm-content-text {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red-deep);
+    }
+
+    .diagram-legend {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    .legend-text {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.7;
+    }
+
+    .legend-text strong {
+      color: var(--ink);
+      display: block;
+      font-size: 13.5px;
+      margin-bottom: 1px;
+    }
+
+    /* ============================================================
+   VALUE COPY RULE DEMO
+   ============================================================ */
+    .value-rule-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .value-rule-card {
+      background: var(--paper);
+      border: 1px solid var(--paper-deep);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .value-rule-card .count {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .value-rule-card .rule-code {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--red-deep);
+      margin-bottom: 5px;
+    }
+
+    .value-rule-card .rule-desc {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--ink-light);
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+   COMPARISON TABLE (padding vs margin)
+   ============================================================ */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .compare-card {
+      background: var(--paper);
+      border: 1px solid var(--paper-deep);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .compare-card-header {
+      padding: 10px 14px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .compare-card-header .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .compare-card-body {
+      padding: 10px 14px;
+    }
+
+    .compare-card-body ul {
+      margin-bottom: 0;
+    }
+
+    .compare-card-body li {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    /* ============================================================
+   MARGIN COLLAPSE VISUALIZATION
+   ============================================================ */
+    .collapse-viz {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .collapse-column {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .collapse-column-title {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .collapse-box {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      padding: 12px;
+      border-radius: 4px;
+      color: white;
+    }
+
+    .collapse-box-1 {
+      background: #2980b9;
+    }
+
+    .collapse-box-2 {
+      background: #e67e22;
+    }
+
+    .collapse-space {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      padding: 4px;
+      color: var(--ink-faint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .collapse-space-bar {
+      flex: 1;
+      height: 1px;
+      background: var(--paper-deep);
+    }
+
+    .collapse-result {
+      font-size: 12px;
+      text-align: center;
+      margin-top: 8px;
+      font-family: var(--font-sans);
+      padding: 6px 10px;
+      border-radius: 4px;
+    }
+
+    .collapse-result-wrong {
+      background: #fde8e8;
+      color: #c0392b;
+      text-decoration: line-through;
+    }
+
+    .collapse-result-right {
+      background: var(--teal-pale);
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    /* ============================================================
+   CIRCLE DEMOS
+   ============================================================ */
+    .shapes-demo {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 16px 0;
+      padding: 20px;
+      background: var(--paper);
+      border: 1px solid var(--paper-deep);
+      border-radius: var(--radius);
+    }
+
+    .shape-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .shape-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+    }
+
+    .shape-circle {
+      width: 70px;
+      height: 70px;
+      border: 3px solid var(--red);
+      border-radius: 50%;
+      background: var(--red-pale);
+    }
+
+    .shape-pill {
+      width: 120px;
+      height: 40px;
+      border: 2px solid var(--teal);
+      border-radius: 999px;
+      background: var(--teal-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--teal);
+    }
+
+    .shape-card {
+      width: 90px;
+      height: 60px;
+      border: 2px solid var(--amber);
+      border-radius: 10px;
+      background: var(--amber-pale);
+    }
+
+    .shape-rect {
+      width: 90px;
+      height: 60px;
+      border: 2px solid var(--ink-faint);
+      background: var(--paper);
+    }
+
+    /* ============================================================
+   KNOWLEDGE CARD GRID (summary)
+   ============================================================ */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    .summary-card {
+      background: var(--paper);
+      border: 1px solid var(--paper-deep);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+
+    .summary-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+
+    .summary-card.c-red::before {
+      background: var(--red);
+    }
+
+    .summary-card.c-teal::before {
+      background: var(--teal);
+    }
+
+    .summary-card.c-amber::before {
+      background: var(--amber);
+    }
+
+    .summary-card-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+      margin-bottom: 4px;
+      letter-spacing: 0.1em;
+    }
+
+    .summary-card-title {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .summary-card-body {
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      color: var(--ink-light);
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+   SCROLL TO TOP
+   ============================================================ */
+    .scroll-top {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(192, 57, 43, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+      z-index: 150;
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .scroll-top:hover {
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+   RESPONSIVE
+   ============================================================ */
+    @media (max-width: 860px) {
+      :root {
+        --sidebar-w: 0px;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 0 20px 60px;
+      }
+
+      .compare-grid,
+      .value-rule-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .diagram-wrap {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .collapse-viz {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- ============================================================
+     SIDEBAR NAVIGATION
+     ============================================================ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-course">CSS3</div>
+      <div class="sidebar-title">盒子模型及应用</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-label">目录</div>
+        <a href="#ch1" class="nav-link">
+          <span class="nav-num">01</span>认识盒子模型
+        </a>
+        <a href="#ch1-concept" class="nav-link nav-sub">什么是盒子模型</a>
+        <a href="#ch1-structure" class="nav-link nav-sub">基本结构</a>
+        <a href="#ch1-size" class="nav-link nav-sub">尺寸计算</a>
+        <a href="#ch1-div" class="nav-link nav-sub">&lt;div&gt; 标签</a>
+        <a href="#ch2" class="nav-link">
+          <span class="nav-num">02</span>边框的设置
+        </a>
+        <a href="#ch2-style" class="nav-link nav-sub">border-style</a>
+        <a href="#ch2-width" class="nav-link nav-sub">border-width</a>
+        <a href="#ch2-color" class="nav-link nav-sub">border-color</a>
+        <a href="#ch2-short" class="nav-link nav-sub">综合设置 border</a>
+        <a href="#ch2-radius" class="nav-link nav-sub">圆角 border-radius</a>
+        <a href="#ch2-image" class="nav-link nav-sub">图片边框</a>
+        <a href="#ch3" class="nav-link">
+          <span class="nav-num">03</span>内边距 padding
+        </a>
+        <a href="#ch4" class="nav-link">
+          <span class="nav-num">04</span>外边距 margin
+        </a>
+        <a href="#ch4-collapse" class="nav-link nav-sub">外边距合并</a>
+        <a href="#ch4-center" class="nav-link nav-sub">水平居中技巧</a>
+        <a href="#ch5" class="nav-link">
+          <span class="nav-num">05</span>width / height
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+  <main class="main">
+    <div class="page-header">
+      <h1 class="header-title">盒子模型<span>及应用</span></h1>
+    </div>
+
+    <div class="content">
+
+      <!-- ======================================================
+         CHAPTER 1：认识盒子模型
+         ====================================================== -->
+      <div class="chapter" id="ch1">
+        <div class="chapter-header">
+          <div class="chapter-num">01</div>
+          <div class="chapter-title-wrap">
+            <h2>认识盒子模型</h2>
+            <p>Box Model — The Foundation of CSS Layout</p>
+          </div>
+        </div>
+
+        <!-- 1.1 什么是盒子模型 -->
+        <div class="section" id="ch1-concept">
+          <h3 class="section-title">什么是盒子模型？</h3>
+          <p>在日常浏览网站时，我们会发现页面中的内容总是被整整齐齐地划分在一个个区域内——有的区域显示导航菜单，有的显示文章正文，有的显示图片或广告。这些区域并不是随意堆放的，而是由 CSS
+            的<strong>盒子模型</strong>来精确控制和管理的。</p>
+          <p><strong>盒子模型（Box Model）</strong>是 CSS 布局的基础理论。它规定了 CSS 将 HTML
+            页面中的<strong>每一个元素</strong>都看作一个<strong>矩形盒子</strong>（无论这个元素看上去是什么形状），每个盒子都占据一定的页面空间。一个完整的 HTML
+            页面，实际上就是由无数个这样的矩形盒子按照一定规则排列、堆叠、嵌套而成的。</p>
+          <p>正因如此，学习网页布局的核心任务就是两件事：</p>
+          <ul>
+            <li><strong>理解一个独立盒子的内部结构</strong>：一个盒子由哪些部分组成，每个部分如何设置。</li>
+            <li><strong>掌握多个盒子之间的相互关系</strong>：盒子与盒子之间的距离如何控制，多个盒子如何排列成我们想要的版式。</li>
+          </ul>
+          <blockquote>
+            在 HTML 中，<code>&lt;div&gt;&lt;/div&gt;</code>
+            标签是最常用来表示一个"盒子"的元素。它本身没有任何默认样式，是一块纯粹的、可以自由定义大小、颜色、位置的矩形区域，是网页布局最基础的容器元素。
+          </blockquote>
+        </div>
+
+        <!-- 1.2 基本结构 -->
+        <div class="section" id="ch1-structure">
+          <h3 class="section-title">盒子模型的基本结构</h3>
+          <p>一个独立的盒子模型由以下 <strong>4 个层次</strong>组成，从内到外依次是：</p>
+
+          <div class="diagram-wrap">
+            <div class="box-model-viz">
+              <div class="bm-layer bm-margin">
+                <span class="bm-label bm-label-margin">margin（外边距）</span>
+                <div class="bm-layer bm-border">
+                  <span class="bm-label bm-label-border">border（边框）</span>
+                  <div class="bm-layer bm-padding">
+                    <span class="bm-label bm-label-padding">padding（内边距）</span>
+                    <div class="bm-layer bm-content">
+                      <span class="bm-content-text">content</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="diagram-legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background:rgba(192,57,43,0.45);border:2px solid var(--red);"></div>
+                <div class="legend-text"><strong>content（内容）</strong>盒子里承载的实际内容，如文字、图片、视频等，由 <code>width</code> 和
+                  <code>height</code> 控制大小。
+                </div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="border:2px dashed var(--teal);background:rgba(26,122,110,0.1);"></div>
+                <div class="legend-text"><strong>padding（内边距）</strong>内容与边框之间的透明区域，撑开距离，背景色会延伸到此区域。</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:rgba(192,57,43,0.2);border:4px solid rgba(192,57,43,0.55);">
+                </div>
+                <div class="legend-text"><strong>border（边框）</strong>围绕在内边距和内容外的可见线框，可设置粗细、样式、颜色。</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="border:2px dashed var(--amber);background:rgba(183,121,31,0.08);"></div>
+                <div class="legend-text"><strong>margin（外边距）</strong>边框以外的透明区域，控制盒子与外部其他元素之间的间距。</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout-info">
+            <span class="callout-icon">📦</span>
+            <div class="callout-body">
+              <strong>生活类比——以手机包装盒为例：</strong><br>
+              <strong>content</strong> = 手机本身 &nbsp;|&nbsp;
+              <strong>padding</strong> = 泡沫填充物 &nbsp;|&nbsp;
+              <strong>border</strong> = 纸盒厚度 &nbsp;|&nbsp;
+              <strong>margin</strong> = 货架上盒子间的间隔
+            </div>
+          </div>
+          <blockquote>
+            <strong>注意</strong>：虽然盒子模型拥有这 4 部分，但并不要求每个元素都必须定义所有属性。例如，<code>&lt;p&gt;</code> 标签可以只设置 <code>margin</code>
+            和 <code>padding</code>，不设置 <code>border</code>，这完全是合法的。
+          </blockquote>
+        </div>
+
+        <!-- 1.3 尺寸计算 -->
+        <div class="section" id="ch1-size">
+          <h3 class="section-title">盒子尺寸的计算</h3>
+          <p>这是初学者最容易出错的地方，务必牢记以下规则：</p>
+
+          <div class="callout callout-warn">
+            <span class="callout-icon">⚠️</span>
+            <div class="callout-body">
+              <strong>重要公式</strong>：CSS 中 <code>width</code> 和 <code>height</code>
+              属性<strong>仅指内容区域（content）</strong>的宽高，并不代表盒子在页面上实际占据的空间大小。
+            </div>
+          </div>
+
+          <div class="formula-box">
+            盒子的实际宽度 = width + padding（左+右）+ border（左+右）+ margin（左+右）<br>
+            盒子的实际高度 = height + padding（上+下）+ border（上+下）+ margin（上+下）
+          </div>
+
+          <p><strong>示例计算——手把手演示：</strong></p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <span class="code-lang">CSS</span>
+            </div>
+            <pre><code><span class="tok-kw">div</span> {
+    <span class="tok-prop">width</span>:   <span class="tok-val">200px</span>;        <span class="tok-cmt">/* 内容宽度 */</span>
+    <span class="tok-prop">height</span>:  <span class="tok-val">100px</span>;
+    <span class="tok-prop">padding</span>: <span class="tok-val">10px</span>;         <span class="tok-cmt">/* 四边各10px */</span>
+    <span class="tok-prop">border</span>:  <span class="tok-val">2px solid red</span>; <span class="tok-cmt">/* 四边各2px */</span>
+    <span class="tok-prop">margin</span>:  <span class="tok-val">20px</span>;         <span class="tok-cmt">/* 四边各20px */</span>
+}</code></pre>
+          </div>
+
+          <ul>
+            <li>实际宽度 = 200 + 10×2 + 2×2 + 20×2 = <strong>264px</strong></li>
+            <li>实际高度 = 100 + 10×2 + 2×2 + 20×2 = <strong>164px</strong></li>
+          </ul>
+
+          <div class="callout callout-red">
+            <span class="callout-icon">💡</span>
+            <div class="callout-body">
+              <strong>为什么要理解这个计算？</strong> 做三列等宽布局时，直接设置 <code>width: 33%</code> 再加上 <code>padding</code> 和
+              <code>border</code>，三列总宽度会超过 100%，导致第三列被挤到下一行。理解尺寸计算规则，可以避免这类布局"崩坏"问题。
+            </div>
+          </div>
+
+          <blockquote><code>width</code> 和 <code>height</code> 仅适用于<strong>块元素</strong>，对行内元素（如
+            <code>&lt;span&gt;</code>、<code>&lt;a&gt;</code>）无效。但 <code>&lt;img&gt;</code> 和 <code>&lt;input&gt;</code>
+            虽然是行内元素，却可以设置宽高，是特殊例外。
+          </blockquote>
+        </div>
+
+        <!-- 1.4 div 标签 -->
+        <div class="section" id="ch1-div">
+          <h3 class="section-title">&lt;div&gt; 标签——网页布局的基石</h3>
+          <p><code>&lt;div&gt;</code> 是 HTML 中最基础的<strong>块级容器标签</strong>，全称为 Division（分区）。它通常用于将网站页面划分为不同的区域，配合 CSS
+            完成网站页面的整体布局。</p>
+
+          <p><code>&lt;div&gt;</code> 标签有以下几个核心特点：</p>
+
+          <div class="sub-section">
+            <div class="sub-title">① 可设置完整的盒子模型属性</div>
+            <p><code>&lt;div&gt;</code> 支持设置
+              <code>width</code>、<code>height</code>、<code>padding</code>、<code>border</code>、<code>margin</code>
+              等所有盒子属性，是最灵活的布局容器。
+            </p>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">② 强大的嵌套能力</div>
+            <p><code>&lt;div&gt;</code> 内部可以嵌套绝大多数的 HTML 标签，包括嵌套多层 <code>&lt;div&gt;</code>，从而形成复杂的页面结构。</p>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">HTML</span>
+              </div>
+              <pre><code><span class="tok-tag">&lt;div</span> <span class="tok-attr">id</span>=<span class="tok-str">"main"</span><span class="tok-tag">&gt;</span>         <span class="tok-cmt">&lt;!-- 主内容区 --&gt;</span>
+  <span class="tok-tag">&lt;div</span> <span class="tok-attr">id</span>=<span class="tok-str">"article"</span><span class="tok-tag">&gt;</span>    <span class="tok-cmt">&lt;!-- 左侧文章 --&gt;</span>
+    <span class="tok-tag">&lt;p&gt;</span>文章内容...<span class="tok-tag">&lt;/p&gt;</span>
+  <span class="tok-tag">&lt;/div&gt;</span>
+  <span class="tok-tag">&lt;div</span> <span class="tok-attr">id</span>=<span class="tok-str">"sidebar"</span><span class="tok-tag">&gt;</span>    <span class="tok-cmt">&lt;!-- 右侧侧边栏 --&gt;</span>
+    <span class="tok-tag">&lt;p&gt;</span>侧边栏内容...<span class="tok-tag">&lt;/p&gt;</span>
+  <span class="tok-tag">&lt;/div&gt;</span>
+<span class="tok-tag">&lt;/div&gt;</span></code></pre>
+            </div>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">③ 与 id、class 属性配合使用</div>
+            <p>单独的 <code>&lt;div&gt;</code> 标签没有任何视觉效果，必须结合 CSS 的 <code>id</code> 或 <code>class</code> 选择器才能发挥作用。</p>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">HTML</span>
+              </div>
+              <pre><code><span class="tok-cmt">&lt;!-- 用 id 定义唯一区域 --&gt;</span>
+<span class="tok-tag">&lt;div</span> <span class="tok-attr">id</span>=<span class="tok-str">"header"</span><span class="tok-tag">&gt;</span>网页头部（每页只有一个）<span class="tok-tag">&lt;/div&gt;</span>
+
+<span class="tok-cmt">&lt;!-- 用 class 定义可复用的区域 --&gt;</span>
+<span class="tok-tag">&lt;div</span> <span class="tok-attr">class</span>=<span class="tok-str">"card"</span><span class="tok-tag">&gt;</span>可复用的卡片区块<span class="tok-tag">&lt;/div&gt;</span>
+<span class="tok-tag">&lt;div</span> <span class="tok-attr">class</span>=<span class="tok-str">"card"</span><span class="tok-tag">&gt;</span>可复用的卡片区块<span class="tok-tag">&lt;/div&gt;</span></code></pre>
+            </div>
+          </div>
+
+          <div class="callout callout-info">
+            <span class="callout-icon">📌</span>
+            <div class="callout-body"><strong>语义区别（重要提示）</strong>：<code>&lt;div&gt;</code>
+              标签本身没有任何语义含义。实际工作中的规范做法：<strong>优先使用有语义的 HTML5 标签</strong>（如
+              <code>&lt;header&gt;</code>、<code>&lt;main&gt;</code>、<code>&lt;footer&gt;</code>、<code>&lt;article&gt;</code>），再用
+              <code>&lt;div&gt;</code> 辅助划分更细的布局结构。这样有助于搜索引擎优化（SEO）和屏幕阅读器的识别。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+         CHAPTER 2：边框的设置
+         ====================================================== -->
+      <div class="chapter" id="ch2">
+        <div class="chapter-header">
+          <div class="chapter-num">02</div>
+          <div class="chapter-title-wrap">
+            <h2>边框的设置</h2>
+            <p>Border Properties</p>
+          </div>
+        </div>
+
+        <p>边框是盒子模型中最直观、最易感知的视觉元素，它像一条"线"围绕在元素的内容和内边距之外，将盒子的范围清晰地标出来。</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>样式属性</th>
+                <th>说明</th>
+                <th>常用属性值</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>border-style</td>
+                <td>边框样式</td>
+                <td>none、solid、dashed、dotted、double</td>
+              </tr>
+              <tr>
+                <td>border-width</td>
+                <td>边框宽度</td>
+                <td>像素值（px）</td>
+              </tr>
+              <tr>
+                <td>border-color</td>
+                <td>边框颜色</td>
+                <td>颜色英文单词、十六进制、rgb()</td>
+              </tr>
+              <tr>
+                <td>border</td>
+                <td>综合设置（复合属性）</td>
+                <td>宽度 样式 颜色</td>
+              </tr>
+              <tr>
+                <td>border-radius</td>
+                <td>圆角边框</td>
+                <td>像素值或百分比</td>
+              </tr>
+              <tr>
+                <td>border-image</td>
+                <td>图片边框</td>
+                <td>复合属性取值</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 2.1 border-style -->
+        <div class="section" id="ch2-style">
+          <h3 class="section-title">边框样式（border-style）</h3>
+          <p><code>border-style</code> 属性用于设置边框线条的<strong>视觉样式</strong>，这是边框的最核心属性。如果不设置 <code>border-style</code>（或将其设为
+            <code>none</code>），则无论怎么设置边框宽度和颜色，边框都不会显示出来。也就是说，<strong>边框样式是显示边框的前提条件</strong>。
+          </p>
+
+          <div class="sub-section">
+            <div class="sub-title">语法格式</div>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">CSS</span>
+              </div>
+              <pre><code><span class="tok-prop">border-style</span>: 上边 [右边 下边 左边];</code></pre>
+            </div>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">常用属性值</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>属性值</th>
+                    <th>效果描述</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>none</td>
+                    <td>无边框（默认值），边框不显示，宽度为 0</td>
+                  </tr>
+                  <tr>
+                    <td>solid</td>
+                    <td><strong>单实线</strong>，最常用的边框样式，一条连续的实线</td>
+                  </tr>
+                  <tr>
+                    <td>dashed</td>
+                    <td><strong>虚线</strong>，由一段段短横线组成，常用于分隔线或强调区域</td>
+                  </tr>
+                  <tr>
+                    <td>dotted</td>
+                    <td><strong>点线</strong>，由一个个小圆点或方点组成</td>
+                  </tr>
+                  <tr>
+                    <td>double</td>
+                    <td><strong>双实线</strong>，两条平行实线，线宽是 border-width 值的三分之一</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">值复制原则 <span class="sub-title-tag">重点</span></div>
+            <p>CSS 中许多支持多方向设置的属性都遵循"<strong>值复制原则</strong>"，当相邻方向的值相同时，可以省略不写：</p>
+            <div class="value-rule-grid">
+              <div class="value-rule-card">
+                <div class="count">1 个值</div>
+                <div class="rule-code">border-style: solid;</div>
+                <div class="rule-desc">四边全部相同</div>
+              </div>
+              <div class="value-rule-card">
+                <div class="count">2 个值</div>
+                <div class="rule-code">border-style: solid dashed;</div>
+                <div class="rule-desc">第1个 = 上边+下边，第2个 = 左边+右边</div>
+              </div>
+              <div class="value-rule-card">
+                <div class="count">3 个值</div>
+                <div class="rule-code">border-style: solid dashed dotted;</div>
+                <div class="rule-desc">第1个 = 上边，第2个 = 左右，第3个 = 下边</div>
+              </div>
+              <div class="value-rule-card">
+                <div class="count">4 个值</div>
+                <div class="rule-code">border-style: solid dashed dotted double;</div>
+                <div class="rule-desc">依次为上、右、下、左（顺时针方向）</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">代码示例</div>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">CSS</span>
+              </div>
+              <pre><code><span class="tok-cmt">/* 单边属性——分别设置各边样式 */</span>
+<span class="tok-prop">border-top-style</span>:    <span class="tok-val">solid</span>;   <span class="tok-cmt">/* 上边框为单实线 */</span>
+<span class="tok-prop">border-right-style</span>:  <span class="tok-val">dashed</span>;  <span class="tok-cmt">/* 右边框为虚线 */</span>
+<span class="tok-prop">border-bottom-style</span>: <span class="tok-val">dotted</span>;  <span class="tok-cmt">/* 下边框为点线 */</span>
+<span class="tok-prop">border-left-style</span>:   <span class="tok-val">double</span>;  <span class="tok-cmt">/* 左边框为双实线 */</span></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.2 border-width -->
+        <div class="section" id="ch2-width">
+          <h3 class="section-title">边框宽度（border-width）</h3>
+          <p><code>border-width</code> 属性用于设置边框线条的<strong>粗细程度</strong>，单位通常为像素（px）。设置边框宽度之前，必须先设置
+            <code>border-style</code>，否则边框宽度的设置不会生效。
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>粗细</th>
+                  <th>参考值</th>
+                  <th>适用场景</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>细边框</td>
+                  <td>1px</td>
+                  <td>表格线、输入框、分隔线</td>
+                </tr>
+                <tr>
+                  <td>中等边框</td>
+                  <td>2px ~ 3px</td>
+                  <td>卡片、按钮、强调区域</td>
+                </tr>
+                <tr>
+                  <td>粗边框</td>
+                  <td>4px 及以上</td>
+                  <td>装饰性粗边框、引用块左侧竖线</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout callout-warn">
+            <span class="callout-icon">⚠️</span>
+            <div class="callout-body">常见误区：只设置 <code>border-width</code> 而忘记设置
+              <code>border-style</code>，导致页面上看不到边框。<strong>样式（style）是边框的开关，只有打开开关，宽度和颜色才有意义。</strong>
+            </div>
+          </div>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <span class="code-lang">CSS</span>
+            </div>
+            <pre><code><span class="tok-prop">border-width</span>: <span class="tok-val">1px</span>;           <span class="tok-cmt">/* 四边均为1px */</span>
+<span class="tok-prop">border-width</span>: <span class="tok-val">2px 1px</span>;       <span class="tok-cmt">/* 上下2px，左右1px */</span>
+<span class="tok-prop">border-width</span>: <span class="tok-val">2px 3px 4px</span>;   <span class="tok-cmt">/* 上2px，左右3px，下4px */</span>
+
+<span class="tok-cmt">/* 单边属性 */</span>
+<span class="tok-prop">border-top-width</span>:    <span class="tok-val">2px</span>;
+<span class="tok-prop">border-right-width</span>:  <span class="tok-val">3px</span>;
+<span class="tok-prop">border-bottom-width</span>: <span class="tok-val">4px</span>;
+<span class="tok-prop">border-left-width</span>:   <span class="tok-val">1px</span>;</code></pre>
+          </div>
+        </div>
+
+        <!-- 2.3 border-color -->
+        <div class="section" id="ch2-color">
+          <h3 class="section-title">边框颜色（border-color）</h3>
+          <p><code>border-color</code> 属性用于设置边框线条的<strong>颜色</strong>，同样遵循值复制原则，支持多种颜色表示方式。</p>
+
+          <div class="table-wrap">
+            <table class="table-plain">
+              <thead>
+                <tr>
+                  <th>表示方式</th>
+                  <th>示例</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>颜色英文单词</td>
+                  <td><code>red</code>、<code>blue</code>、<code>green</code></td>
+                  <td>简单直观，但只支持有限的颜色名称</td>
+                </tr>
+                <tr>
+                  <td>十六进制</td>
+                  <td><code>#f00</code>、<code>#FF0000</code></td>
+                  <td>最常用，精确表示任意颜色，<code>#f00</code> 是 <code>#FF0000</code> 的简写</td>
+                </tr>
+                <tr>
+                  <td>RGB 模式</td>
+                  <td><code>rgb(255, 0, 0)</code></td>
+                  <td>分别表示红、绿、蓝三通道的值（0~255）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">十六进制简写规则</div>
+            <p>当十六进制颜色码的每两位都相同时，可以简写为一位：</p>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">CSS</span>
+              </div>
+              <pre><code><span class="tok-val">#FF0000</span> → <span class="tok-val">#f00</span>   <span class="tok-cmt">/* 红色 */</span>
+<span class="tok-val">#00FF00</span> → <span class="tok-val">#0f0</span>   <span class="tok-cmt">/* 绿色 */</span>
+<span class="tok-val">#0000FF</span> → <span class="tok-val">#00f</span>   <span class="tok-cmt">/* 蓝色 */</span>
+<span class="tok-val">#FFFFFF</span> → <span class="tok-val">#fff</span>   <span class="tok-cmt">/* 白色 */</span>
+<span class="tok-val">#000000</span> → <span class="tok-val">#000</span>   <span class="tok-cmt">/* 黑色 */</span></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.4 综合设置 border -->
+        <div class="section" id="ch2-short">
+          <h3 class="section-title">综合设置边框（border）</h3>
+          <p>CSS 提供了<strong>复合属性</strong> <code>border</code>，允许在一行代码内同时设置样式、宽度、颜色三个值，更简洁高效。</p>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <span class="code-lang">CSS</span>
+            </div>
+            <pre><code><span class="tok-cmt">/* 语法：border: 宽度 样式 颜色;（顺序不分先后）*/</span>
+<span class="tok-prop">border</span>: <span class="tok-val">3px solid #00f</span>;      <span class="tok-cmt">/* 四边：3px 单实线 蓝色 */</span>
+
+<span class="tok-cmt">/* 单侧综合属性 */</span>
+<span class="tok-prop">border-top</span>:    <span class="tok-val">2px solid #f00</span>;    <span class="tok-cmt">/* 上：2px 单实线 红色 */</span>
+<span class="tok-prop">border-right</span>:  <span class="tok-val">3px double #F90</span>;   <span class="tok-cmt">/* 右：3px 双实线 橙色 */</span>
+<span class="tok-prop">border-bottom</span>: <span class="tok-val">2px dotted #C0F</span>;   <span class="tok-cmt">/* 下：2px 点线 紫色 */</span>
+<span class="tok-prop">border-left</span>:   <span class="tok-val">3px double #F90</span>;   <span class="tok-cmt">/* 左：3px 双实线 橙色 */</span></code></pre>
+          </div>
+
+          <div class="callout callout-warn">
+            <span class="callout-icon">⚠️</span>
+            <div class="callout-body"><strong>边框样式（style）不能省略</strong>：如果省略样式，边框将不会显示（<code>style</code> 的默认值是
+              <code>none</code>）。三个属性值的顺序可以任意，浏览器能自动识别每个值代表什么。
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.5 border-radius -->
+        <div class="section" id="ch2-radius">
+          <h3 class="section-title">圆角边框（border-radius）</h3>
+          <p>CSS3 提供了 <code>border-radius</code> 属性，可以将矩形边框的直角"磨圆"，实现圆角效果。其工作原理是：在元素的每个角落，用一段圆弧来替代原来的直角，圆弧所在圆的半径即为
+            <code>border-radius</code> 的值。
+          </p>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <span class="code-lang">CSS</span>
+            </div>
+            <pre><code><span class="tok-cmt">/* 语法：border-radius: 参数1 / 参数2;
+   参数1 = 水平半径（必填），参数2 = 垂直半径（可省略）*/</span>
+<span class="tok-prop">border-radius</span>: <span class="tok-val">50px</span>;                <span class="tok-cmt">/* 四角相同，正圆弧 */</span>
+<span class="tok-prop">border-radius</span>: <span class="tok-val">50px / 30px</span>;         <span class="tok-cmt">/* 水平50px，垂直30px，椭圆弧 */</span>
+<span class="tok-prop">border-radius</span>: <span class="tok-val">50px 20px 40px 15px / 30px 10px 60px 25px</span>;
+<span class="tok-cmt">/* 左上 右上 右下 左下（顺时针）/ 各自的垂直半径 */</span></code></pre>
+          </div>
+
+          <div class="shapes-demo">
+            <div class="shape-item">
+              <div class="shape-rect"></div>
+              <div class="shape-label">border-radius: 0</div>
+            </div>
+            <div class="shape-item">
+              <div class="shape-card"></div>
+              <div class="shape-label">border-radius: 10px</div>
+            </div>
+            <div class="shape-item">
+              <div class="shape-circle"></div>
+              <div class="shape-label">border-radius: 50%</div>
+            </div>
+            <div class="shape-item">
+              <div class="shape-pill">胶囊按钮</div>
+              <div class="shape-label">border-radius: 999px</div>
+            </div>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">实用技巧一——制作正圆 <span class="sub-title-tag">常用</span></div>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">CSS</span>
+              </div>
+              <pre><code><span class="tok-kw">.avatar</span> {
+    <span class="tok-prop">width</span>:         <span class="tok-val">100px</span>;
+    <span class="tok-prop">height</span>:        <span class="tok-val">100px</span>;         <span class="tok-cmt">/* 宽高必须相等 */</span>
+    <span class="tok-prop">border</span>:        <span class="tok-val">2px solid #aaa</span>;
+    <span class="tok-prop">border-radius</span>: <span class="tok-val">50%</span>;            <span class="tok-cmt">/* 50% → 正圆 */</span>
+    <span class="tok-prop">overflow</span>:      <span class="tok-val">hidden</span>;         <span class="tok-cmt">/* 图片超出圆形时裁掉 */</span>
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">实用技巧二——制作"胶囊"形按钮 <span class="sub-title-tag">常用</span></div>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">CSS</span>
+              </div>
+              <pre><code><span class="tok-kw">.btn</span> {
+    <span class="tok-prop">height</span>:        <span class="tok-val">40px</span>;
+    <span class="tok-prop">border-radius</span>: <span class="tok-val">20px</span>;    <span class="tok-cmt">/* 等于高度的一半 */</span>
+    <span class="tok-prop">padding</span>:       <span class="tok-val">0 20px</span>;
+    <span class="tok-prop">border</span>:        <span class="tok-val">2px solid #007BFF</span>;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.6 border-image -->
+        <div class="section" id="ch2-image">
+          <h3 class="section-title">图片边框（border-image）</h3>
+          <p>CSS3 的 <code>border-image</code> 属性允许使用<strong>自定义图像</strong>作为边框，而不再局限于纯色线条。</p>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <span class="code-lang">CSS</span>
+            </div>
+            <pre><code><span class="tok-cmt">/* 语法：border-image: source slice / width / outset repeat; */</span>
+<span class="tok-prop">border-image-source</span>: <span class="tok-val">url(border.png)</span>;  <span class="tok-cmt">/* 图像路径 */</span>
+<span class="tok-prop">border-image-slice</span>:  <span class="tok-val">30%</span>;             <span class="tok-cmt">/* 裁切位置，切成9宫格 */</span>
+<span class="tok-prop">border-image-width</span>:  <span class="tok-val">10px</span>;            <span class="tok-cmt">/* 边框图像宽度 */</span>
+<span class="tok-prop">border-image-repeat</span>: <span class="tok-val">repeat</span>;          <span class="tok-cmt">/* 平铺方式 */</span></code></pre>
+          </div>
+
+          <blockquote><code>border-image</code> 在实际项目中使用场景相对有限，了解其概念即可，重点掌握前面的
+            <code>border</code>、<code>border-radius</code> 等核心属性。
+          </blockquote>
+        </div>
+      </div>
+
+      <!-- ======================================================
+         CHAPTER 3：内边距 padding
+         ====================================================== -->
+      <div class="chapter" id="ch3">
+        <div class="chapter-header">
+          <div class="chapter-num">03</div>
+          <div class="chapter-title-wrap">
+            <h2>内边距的设置（padding）</h2>
+            <p>Padding — Space Between Content and Border</p>
+          </div>
+        </div>
+
+        <p>
+          <strong>内边距（padding）</strong>，又称内填充，是指<strong>元素内容区域（content）与边框（border）之间的透明空间</strong>。它的作用是让内容不紧贴着边框，给内容一定的"呼吸空间"，从而使页面看起来更加美观、舒适。
+        </p>
+
+        <p>
+          想象一下，如果一段文字直接紧贴着边框，读起来会非常压抑。加上适当的内边距后，文字与边框之间有了空隙，整个阅读体验就会好很多。这在现代网页设计中几乎是必不可少的处理方式，无论是按钮、卡片、输入框还是导航栏，都需要通过内边距来保证良好的视觉比例。
+        </p>
+
+        <p><strong>内边距的两个关键特性：</strong></p>
+        <ol>
+          <li><strong>内边距区域继承背景色</strong>：<code>background-color</code> 的颜色覆盖范围包括 <code>content</code> 区域和
+            <code>padding</code> 区域。
+          </li>
+          <li><strong>内边距会撑大盒子</strong>：添加内边距会增加盒子的实际占用空间，在计算盒子尺寸时必须把内边距计算在内。</li>
+        </ol>
+
+        <div class="table-wrap">
+          <table class="table-plain">
+            <thead>
+              <tr>
+                <th>值类型</th>
+                <th>说明</th>
+                <th>示例</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>像素值（px）</td>
+                <td>最常用，固定大小</td>
+                <td><code>padding: 10px</code></td>
+              </tr>
+              <tr>
+                <td>百分比（%）</td>
+                <td>相对于<strong>父元素的宽度（width）</strong>计算</td>
+                <td><code>padding: 5%</code></td>
+              </tr>
+              <tr>
+                <td>auto</td>
+                <td>默认值，浏览器自动计算（通常为 0）</td>
+                <td><code>padding: auto</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-warn">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>重要规则：</strong><code>padding</code> 属性值<strong>不能为负值</strong>。另外，无论是哪个方向的百分比
+            padding，其基准都是<strong>父元素的宽度（width）</strong>，而非各自方向的高度——这是 CSS 中一个反直觉的设计，需要特别记忆。
+          </div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-dots">
+              <div class="code-dot"></div>
+              <div class="code-dot"></div>
+              <div class="code-dot"></div>
+            </div>
+            <span class="code-lang">CSS</span>
+          </div>
+          <pre><code><span class="tok-cmt">/* 值复制原则 */</span>
+<span class="tok-prop">padding</span>: <span class="tok-val">10px</span>;                  <span class="tok-cmt">/* 四边均为10px */</span>
+<span class="tok-prop">padding</span>: <span class="tok-val">10px 20px</span>;            <span class="tok-cmt">/* 上下10px，左右20px */</span>
+<span class="tok-prop">padding</span>: <span class="tok-val">10px 20px 30px</span>;      <span class="tok-cmt">/* 上10px，左右20px，下30px */</span>
+<span class="tok-prop">padding</span>: <span class="tok-val">10px 20px 30px 40px</span>; <span class="tok-cmt">/* 上10，右20，下30，左40 */</span>
+
+<span class="tok-cmt">/* 单边属性 */</span>
+<span class="tok-prop">padding-top</span>:    <span class="tok-val">10px</span>;
+<span class="tok-prop">padding-right</span>:  <span class="tok-val">20px</span>;
+<span class="tok-prop">padding-bottom</span>: <span class="tok-val">30px</span>;
+<span class="tok-prop">padding-left</span>:   <span class="tok-val">40px</span>;</code></pre>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">代码示例——背景色延伸到内边距区域</div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <span class="code-lang">CSS</span>
+            </div>
+            <pre><code><span class="tok-kw">#box</span> {
+    <span class="tok-prop">width</span>:            <span class="tok-val">400px</span>;
+    <span class="tok-prop">border</span>:           <span class="tok-val">5px solid red</span>;
+    <span class="tok-prop">padding</span>:          <span class="tok-val">10px 40px 80px 120px</span>;
+    <span class="tok-cmt">/* 上10px，右40px，下80px，左120px */</span>
+    <span class="tok-prop">background-color</span>: <span class="tok-val">#e8f4fd</span>; <span class="tok-cmt">/* 背景色延伸到内边距区域 */</span>
+}</code></pre>
+          </div>
+          <p>运行后会发现：文字和边框之间有明显的空白区域，上方最窄（10px），左方最宽（120px），而且整个内边距区域都显示了浅蓝色背景色，这正说明背景色延伸到了内边距区域。</p>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">内边距对盒子尺寸的影响</div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <span class="code-lang">CSS</span>
+            </div>
+            <pre><code><span class="tok-cmt">/* 原始宽度：400px */</span>
+<span class="tok-kw">#box</span> {
+    <span class="tok-prop">width</span>:   <span class="tok-val">400px</span>;
+    <span class="tok-prop">padding</span>: <span class="tok-val">20px</span>;      <span class="tok-cmt">/* 左右各加20px */</span>
+    <span class="tok-prop">border</span>:  <span class="tok-val">5px solid</span>; <span class="tok-cmt">/* 左右各加5px */</span>
+}
+<span class="tok-cmt">/* 盒子实际宽度 = 400 + 20×2 + 5×2 = 450px */</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+         CHAPTER 4：外边距 margin
+         ====================================================== -->
+      <div class="chapter" id="ch4">
+        <div class="chapter-header">
+          <div class="chapter-num">04</div>
+          <div class="chapter-title-wrap">
+            <h2>外边距的设置（margin）</h2>
+            <p>Margin — Space Outside the Border</p>
+          </div>
+        </div>
+
+        <p>
+          <strong>外边距（margin）</strong>，是指<strong>边框（border）以外、与相邻元素之间的透明空间</strong>。它的作用是控制盒子与盒子之间、或盒子与父容器边缘之间的距离，相当于在盒子周围"划定一个禁止进入的缓冲区"。
+        </p>
+
+        <p><strong>外边距与内边距的区别（重点区分）：</strong></p>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <div class="compare-card-header" style="background: var(--teal-pale); color: var(--teal);">
+              <div class="dot" style="background: var(--teal);"></div>内边距（padding）
+            </div>
+            <div class="compare-card-body">
+              <ul>
+                <li>位于边框<strong>内侧</strong>（内容与边框之间）</li>
+                <li><strong>会</strong>显示元素的背景色</li>
+                <li><strong>不允许</strong>设置负值</li>
+                <li>不会发生合并</li>
+              </ul>
+            </div>
+          </div>
+          <div class="compare-card">
+            <div class="compare-card-header" style="background: var(--amber-pale); color: var(--amber);">
+              <div class="dot" style="background: var(--amber);"></div>外边距（margin）
+            </div>
+            <div class="compare-card-body">
+              <ul>
+                <li>位于边框<strong>外侧</strong>（盒子与外界之间）</li>
+                <li><strong>不会</strong>显示背景色，始终透明</li>
+                <li><strong>允许</strong>设置负值，可制造重叠效果</li>
+                <li>上下方向会发生"合并"（见下文）</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-dots">
+              <div class="code-dot"></div>
+              <div class="code-dot"></div>
+              <div class="code-dot"></div>
+            </div>
+            <span class="code-lang">CSS</span>
+          </div>
+          <pre><code><span class="tok-cmt">/* 值复制原则（与 padding 完全相同）*/</span>
+<span class="tok-prop">margin</span>: <span class="tok-val">20px</span>;                  <span class="tok-cmt">/* 四边均为20px */</span>
+<span class="tok-prop">margin</span>: <span class="tok-val">10px 20px</span>;            <span class="tok-cmt">/* 上下10px，左右20px */</span>
+<span class="tok-prop">margin</span>: <span class="tok-val">10px 20px 30px 40px</span>; <span class="tok-cmt">/* 上右下左（顺时针）*/</span>
+
+<span class="tok-cmt">/* 单边属性 */</span>
+<span class="tok-prop">margin-top</span>:    <span class="tok-val">10px</span>;
+<span class="tok-prop">margin-right</span>:  <span class="tok-val">20px</span>;
+<span class="tok-prop">margin-bottom</span>: <span class="tok-val">30px</span>;
+<span class="tok-prop">margin-left</span>:   <span class="tok-val">40px</span>;</code></pre>
+        </div>
+
+        <!-- 4.1 外边距合并 -->
+        <div class="section" id="ch4-collapse">
+          <h3 class="section-title">重要特性——上下外边距合并（外边距塌陷）</h3>
+          <p>这是 CSS 中最容易让初学者困惑的特性之一，务必深入理解。</p>
+
+          <div class="callout callout-red">
+            <span class="callout-icon">⚠️</span>
+            <div class="callout-body">
+              <strong>规则：</strong>当两个垂直相邻的块元素各自设置了上下方向的外边距时，这两个外边距<strong>不会叠加</strong>，而是会<strong>合并为一个</strong>，合并后的外边距值取两者中的<strong>较大值</strong>。
+            </div>
+          </div>
+
+          <div class="collapse-viz">
+            <div class="collapse-column">
+              <div class="collapse-column-title">直觉上以为</div>
+              <div class="collapse-box collapse-box-1">box1<br><small>margin-bottom: 50px</small></div>
+              <div class="collapse-space" style="height: 80px; flex-direction: column;">
+                <div class="collapse-space-bar" style="width: 100%; height: 1px; background: var(--paper-deep);"></div>
+                <span style="font-size: 11px; color: var(--ink-faint);">50 + 30 = ?</span>
+                <div class="collapse-space-bar" style="width: 100%; height: 1px; background: var(--paper-deep);"></div>
+              </div>
+              <div class="collapse-box collapse-box-2">box2<br><small>margin-top: 30px</small></div>
+              <div class="collapse-result collapse-result-wrong">间距 = 80px ✗</div>
+            </div>
+            <div class="collapse-column">
+              <div class="collapse-column-title">实际结果</div>
+              <div class="collapse-box collapse-box-1">box1<br><small>margin-bottom: 50px</small></div>
+              <div class="collapse-space" style="height: 50px; flex-direction: column;">
+                <div class="collapse-space-bar" style="width: 100%; height: 1px; background: var(--paper-deep);"></div>
+                <span style="font-size: 11px; color: var(--teal);">max(50, 30)</span>
+                <div class="collapse-space-bar" style="width: 100%; height: 1px; background: var(--paper-deep);"></div>
+              </div>
+              <div class="collapse-box collapse-box-2">box2<br><small>margin-top: 30px</small></div>
+              <div class="collapse-result collapse-result-right">间距 = 50px ✓</div>
+            </div>
+          </div>
+
+          <p><strong>为什么会有这个"奇怪"的规则？</strong> 这是 CSS
+            的历史设计决策，最初是为了解决文章段落排版的问题——当多个段落叠放时，如果上下外边距累加，段落间距会越来越大，反而不自然。通过外边距合并，可以保证相邻段落之间始终保持一个合理的固定间距。</p>
+
+          <div class="sub-section">
+            <div class="sub-title">外边距合并的触发情况</div>
+            <ol>
+              <li><strong>垂直方向</strong>的相邻块元素之间（水平方向的左右外边距<strong>不会合并</strong>，而是累加）</li>
+              <li><strong>父子元素</strong>之间（父元素没有边框或内边距时，子元素的上外边距会"穿透"到父元素外面）</li>
+            </ol>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">如何避免外边距合并？（实用方案）</div>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">CSS</span>
+              </div>
+              <pre><code><span class="tok-cmt">/* 方案1：给父元素添加边框（隔断合并）*/</span>
+<span class="tok-kw">.parent</span> { <span class="tok-prop">border</span>: <span class="tok-val">1px solid transparent</span>; }
+
+<span class="tok-cmt">/* 方案2：给父元素添加内边距（隔断合并）*/</span>
+<span class="tok-kw">.parent</span> { <span class="tok-prop">padding-top</span>: <span class="tok-val">1px</span>; }
+
+<span class="tok-cmt">/* 方案3：触发 BFC（块格式化上下文），最推荐 */</span>
+<span class="tok-kw">.parent</span> { <span class="tok-prop">overflow</span>: <span class="tok-val">hidden</span>; }</code></pre>
+            </div>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">外边距可以为负值 <span class="sub-title-tag">进阶</span></div>
+            <p>与内边距不同，外边距可以设置<strong>负值</strong>。当外边距为负值时，元素会向反方向移动，与相邻元素发生<strong>重叠</strong>。</p>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">CSS</span>
+              </div>
+              <pre><code><span class="tok-kw">#box2</span> {
+    <span class="tok-prop">margin-top</span>: <span class="tok-val">-20px</span>; <span class="tok-cmt">/* 向上移动20px，与上方元素重叠 */</span>
+}</code></pre>
+            </div>
+            <blockquote>负外边距是一种高级技巧，初学阶段不建议频繁使用，避免造成布局混乱。</blockquote>
+          </div>
+        </div>
+
+        <!-- 4.2 水平居中 -->
+        <div class="section" id="ch4-center">
+          <h3 class="section-title">水平居中技巧（margin: 0 auto）</h3>
+          <p>这是实际工作中非常常用的居中方法。当对<strong>块元素</strong>设置了固定宽度（<code>width</code>）后，将<strong>左右外边距都设为
+              <code>auto</code></strong>，浏览器会自动将剩余空间平均分配给左右两侧，从而实现水平居中。</p>
+
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <span class="code-lang">CSS</span>
+            </div>
+            <pre><code><span class="tok-kw">.container</span> {
+    <span class="tok-prop">width</span>:  <span class="tok-val">960px</span>;
+    <span class="tok-prop">margin</span>: <span class="tok-val">0 auto</span>;
+    <span class="tok-cmt">/* 等价于：margin-left: auto; margin-right: auto; */</span>
+}</code></pre>
+          </div>
+
+          <div class="callout callout-info">
+            <span class="callout-icon">💡</span>
+            <div class="callout-body"><strong>为什么 auto 能居中？</strong> <code>auto</code> 意为"让浏览器自动计算"。当左右外边距都设为
+              <code>auto</code> 时，浏览器将父元素的剩余宽度平均分配给两侧，因此两侧相等，元素自然居中。注意：此方法仅对<strong>块元素</strong>有效。
+            </div>
+          </div>
+
+          <div class="sub-section">
+            <div class="sub-title">清除默认内外边距（重置样式）<span class="sub-title-tag">必备</span></div>
+            <p>浏览器对很多 HTML 标签（如
+              <code>&lt;body&gt;</code>、<code>&lt;h1&gt;~&lt;h6&gt;</code>、<code>&lt;p&gt;</code>、<code>&lt;ul&gt;</code>）设置了各自的默认内外边距，不同浏览器的默认值往往不同。因此，在项目开始时通常先清零：
+            </p>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-dots">
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                  <div class="code-dot"></div>
+                </div>
+                <span class="code-lang">CSS</span>
+              </div>
+              <pre><code><span class="tok-kw">*</span> {
+    <span class="tok-prop">padding</span>: <span class="tok-val">0</span>; <span class="tok-cmt">/* 清除所有元素的默认内边距 */</span>
+    <span class="tok-prop">margin</span>:  <span class="tok-val">0</span>; <span class="tok-cmt">/* 清除所有元素的默认外边距 */</span>
+}</code></pre>
+            </div>
+            <blockquote>进阶说明：大型项目通常使用专业的 CSS Reset 文件（如 Eric Meyer's Reset CSS）或 Normalize.css
+              来做更精细的默认样式控制，而不是简单粗暴地全部清零。</blockquote>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+         CHAPTER 5：width / height
+         ====================================================== -->
+      <div class="chapter" id="ch5">
+        <div class="chapter-header">
+          <div class="chapter-num">05</div>
+          <div class="chapter-title-wrap">
+            <h2>宽度与高度属性（width / height）</h2>
+            <p>Width &amp; Height — Content Area Dimensions</p>
+          </div>
+        </div>
+
+        <p>在 CSS 中，使用 <code>width</code> 和 <code>height</code> 属性可以精确控制盒子内容区域的大小：</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-dots">
+              <div class="code-dot"></div>
+              <div class="code-dot"></div>
+              <div class="code-dot"></div>
+            </div>
+            <span class="code-lang">CSS</span>
+          </div>
+          <pre><code><span class="tok-kw">div</span> {
+    <span class="tok-prop">width</span>:  <span class="tok-val">500px</span>;   <span class="tok-cmt">/* 像素值：固定大小 */</span>
+    <span class="tok-prop">height</span>: <span class="tok-val">200px</span>;   <span class="tok-cmt">/* 像素值 */</span>
+
+    <span class="tok-prop">width</span>:  <span class="tok-val">50%</span>;     <span class="tok-cmt">/* 百分比：相对父元素的内容宽度 */</span>
+    <span class="tok-prop">width</span>:  <span class="tok-val">auto</span>;    <span class="tok-cmt">/* 默认值：块元素自动填满父元素 */</span>
+}</code></pre>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">注意事项</h3>
+          <ol>
+            <li><strong>width 和 height 仅定义内容区域的大小</strong>：设置 <code>width: 300px</code> 时，这 300px 只是内容区域的宽度，不包含
+              <code>padding</code> 和 <code>border</code>，实际盒子占用的空间还要加上这两者。
+            </li>
+            <li><strong>仅对块元素有效</strong>：<code>width</code> 和 <code>height</code> 仅适用于块级元素（如
+              <code>&lt;div&gt;</code>、<code>&lt;p&gt;</code>、<code>&lt;h1&gt;</code> 等）。对于行内元素（如
+              <code>&lt;span&gt;</code>、<code>&lt;a&gt;</code>、<code>&lt;strong&gt;</code>），设置宽高无效。但
+              <code>&lt;img&gt;</code> 和 <code>&lt;input&gt;</code> 例外，可以设置宽高。
+            </li>
+            <li><strong>百分比宽度的参照对象</strong>：<code>width: 50%</code> 表示宽度为父元素<strong>内容区域宽度</strong>的
+              50%，不是整个浏览器窗口的宽度（除非父元素就是 <code>&lt;body&gt;</code>）。</li>
+          </ol>
+        </div>
+
+        <!-- 知识总结 -->
+        <div class="section">
+          <h3 class="section-title">知识总结</h3>
+          <div class="summary-grid">
+            <div class="summary-card c-red">
+              <div class="summary-card-num">01 · BOX MODEL</div>
+              <div class="summary-card-title">盒子模型概念</div>
+              <div class="summary-card-body">content + padding + border + margin 四层结构；实际尺寸计算公式必须掌握。</div>
+            </div>
+            <div class="summary-card c-teal">
+              <div class="summary-card-num">02 · BORDER</div>
+              <div class="summary-card-title">边框的设置</div>
+              <div class="summary-card-body">style / width / color 三要素；border 综合属性；border-radius 圆角；值复制原则。</div>
+            </div>
+            <div class="summary-card c-amber">
+              <div class="summary-card-num">03 · PADDING</div>
+              <div class="summary-card-title">内边距 padding</div>
+              <div class="summary-card-body">内容与边框距离；不能为负值；背景色延伸到此区域；百分比基准是父元素宽度。</div>
+            </div>
+            <div class="summary-card c-red">
+              <div class="summary-card-num">04 · MARGIN</div>
+              <div class="summary-card-title">外边距 margin</div>
+              <div class="summary-card-body">盒子与外界距离；可为负值；上下方向会合并取较大值；0 auto 实现水平居中。</div>
+            </div>
+            <div class="summary-card c-teal">
+              <div class="summary-card-num">05 · DIMENSIONS</div>
+              <div class="summary-card-title">width / height</div>
+              <div class="summary-card-body">仅指内容区域大小；仅对块元素有效；百分比参照父元素内容宽度。</div>
+            </div>
+            <div class="summary-card c-amber">
+              <div class="summary-card-num">06 · TIPS</div>
+              <div class="summary-card-title">实践建议</div>
+              <div class="summary-card-body">按 F12 打开开发者工具，在 Computed 面板查看盒子模型示意图，是学习调试的最佳方式。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main><!-- /main -->
+
+  <button class="scroll-top" id="scrollTop" title="回到顶部" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+  <script>
+    // ============================================================
+    //  SIDEBAR ACTIVE LINK
+    // ============================================================
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = [];
+
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const el = document.getElementById(href.slice(1));
+        if (el) sections.push({ el, link });
+      }
+    });
+
+    function updateActiveNav() {
+      const scrollY = window.scrollY + 100;
+      let active = null;
+      for (const { el } of sections) {
+        if (el.offsetTop <= scrollY) active = el;
+      }
+      navLinks.forEach(l => l.classList.remove('active'));
+      if (active) {
+        const found = sections.find(s => s.el === active);
+        if (found) found.link.classList.add('active');
+      }
+    }
+
+    // ============================================================
+    //  READING PROGRESS BAR
+    // ============================================================
+    const progressBar = document.getElementById('readingProgress');
+    function updateProgress() {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+      progressBar.style.width = pct + '%';
+    }
+
+    // ============================================================
+    //  SCROLL TO TOP BUTTON
+    // ============================================================
+    const scrollTopBtn = document.getElementById('scrollTop');
+    function updateScrollTop() {
+      scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+    }
+
+    // ============================================================
+    //  SCROLL EVENT
+    // ============================================================
+    window.addEventListener('scroll', () => {
+      updateActiveNav();
+      updateProgress();
+      updateScrollTop();
+    }, { passive: true });
+
+    // Initial run
+    updateActiveNav();
+    updateProgress();
+  </script>
+</body>
+
+</html>

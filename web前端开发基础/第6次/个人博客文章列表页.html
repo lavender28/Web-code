@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的博客</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ① 并集选择器：统一所有标题的字体和加粗
+   说明：h1、h2、h3 共享相同的字体和字重，避免分开写三次重复代码。
+   font-weight: bold 等同于 font-weight: 700。 */
+    h1,
+    h2,
+    h3 {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      font-weight: bold;
+    }
+
+    /* ② 并集选择器 + 后代选择器：页头 h1 与页脚 p 文本居中
+   说明：每个选择器本身是"后代选择器"（.site-header h1、.site-footer p），
+   两者之间用逗号连接，组成"并集"，表示同时选中这两处元素。
+   这是两种选择器的组合写法，在实际开发中非常常见。
+   页头标题和页脚版权信息都需要居中，样式相同但位置不同，
+   合并为一条规则，避免重复书写两次 text-align: center。 */
+    .site-header h1,
+    .site-footer p {
+      text-align: center;
+    }
+
+    /* ③ 后代选择器：卡片内所有 <p> 的行高和颜色
+   说明：.post-card p 只命中卡片内部的段落，
+   不会影响页头、页脚等其他区域的 <p> 元素，做到样式隔离。
+   行高 1.8 让正文更舒展，适合阅读类内容。 */
+    .post-card p {
+      line-height: 1.8;
+      color: #444;
+    }
+
+    /* ④ 后代选择器：卡片内 .meta 段落的特殊文字样式
+   说明：.post-card .meta 在 ③ 的基础上进一步细化，
+   单独为发布时间这一行设置更小的字号、更浅的颜色和斜体，
+   与正文摘要形成视觉层次区分。 */
+    .post-card .meta {
+      font-style: italic;
+      font-size: 13px;
+      color: #999;
+    }
+
+    /* ⑤ 交集选择器：精选卡片（.featured）内 h2 的标题样式
+   说明：.post-card.featured h2 结合了交集和后代两种写法——
+   先用交集 .post-card.featured 锁定"既是卡片又是精选"的元素，
+   再用后代 h2 进一步定位到其内部标题。
+   颜色改为深金色，字号略大，突出"精选"的视觉权重。 */
+    .post-card.featured h2 {
+      color: #a07000;
+      font-size: 22px;
+    }
+
+    /* ⑥ 交集选择器：草稿卡片（.draft）整体文字颜色 + h2 删除线
+   说明：.post-card.draft 选中草稿卡片，整体文字变灰，
+   传达"内容未完成、不可用"的视觉暗示。
+   .post-card.draft h2 在此基础上额外为标题加删除线，
+   进一步强调该文章处于草稿状态，尚不应被正式阅读。 */
+    .post-card.draft {
+      color: #999;
+    }
+
+    .post-card.draft h2 {
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <h1>我的技术博客</h1>
+    <p>记录前端学习的点滴与感悟</p>
+  </header>
+
+  <main class="post-list">
+
+    <!-- 普通文章卡片 -->
+    <article class="post-card">
+      <h2>深入理解 CSS 盒模型</h2>
+      <p class="meta">发布于 2024-03-10 · 阅读约 8 分钟</p>
+      <p class="excerpt">盒模型是 CSS 布局的基础，每一个 HTML 元素在渲染时都会被当作一个矩形盒子来处理。理解盒模型的组成部分，是掌握页面布局的第一步……</p>
+      <ul class="tags">
+        <li>CSS</li>
+        <li>布局</li>
+        <li>基础</li>
+      </ul>
+    </article>
+
+    <!-- 精选文章卡片 -->
+    <article class="post-card featured">
+      <h2>Flexbox 完全指南</h2>
+      <p class="meta">发布于 2024-03-18 · 阅读约 15 分钟</p>
+      <p class="excerpt">Flexbox 是现代 CSS 中最强大的布局工具之一，它让我们可以轻松实现各种过去需要 hack 才能完成的布局效果。本文将全面介绍 Flexbox 的所有属性……</p>
+      <ul class="tags">
+        <li>CSS</li>
+        <li>Flexbox</li>
+        <li>布局</li>
+        <li>进阶</li>
+      </ul>
+    </article>
+
+    <!-- 草稿状态文章卡片 -->
+    <article class="post-card draft">
+      <h2>CSS Grid 网格布局入门</h2>
+      <p class="meta">草稿 · 尚未发布</p>
+      <p class="excerpt">Grid 布局是 CSS 中另一种强大的二维布局方案，与 Flexbox 的一维布局形成互补。本文将从基础概念出发，逐步介绍 Grid 的核心用法……</p>
+      <ul class="tags">
+        <li>CSS</li>
+        <li>Grid</li>
+        <li>草稿</li>
+      </ul>
+    </article>
+
+    <!-- 普通文章卡片 -->
+    <article class="post-card">
+      <h2>JavaScript 闭包详解</h2>
+      <p class="meta">发布于 2024-03-25 · 阅读约 12 分钟</p>
+      <p class="excerpt">闭包是 JavaScript 中最具特色也最令初学者困惑的概念之一。一旦真正理解了闭包，你会发现它在函数式编程和模块化设计中无处不在……</p>
+      <ul class="tags">
+        <li>JavaScript</li>
+        <li>闭包</li>
+        <li>进阶</li>
+      </ul>
+    </article>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2024 我的技术博客 · 保留所有权利</p>
+    <p>联系方式：example@email.com</p>
+  </footer>
+
+</body>
+
+</html>

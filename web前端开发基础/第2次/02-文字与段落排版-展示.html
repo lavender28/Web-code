@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML5 · 文字与段落排版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --paper:       #f5f0e8;
+  --paper-dark:  #ede7d9;
+  --paper-mid:   #e8e1d3;
+  --vermilion:   #c0392b;
+  --verm-light:  #f5e6e4;
+  --verm-mid:    #e8b4af;
+  --verm-dark:   #922b21;
+  --ink:         #1a1208;
+  --ink-2:       #3d2e1a;
+  --ink-3:       #6b5740;
+  --ink-4:       #9a8470;
+  --ink-5:       #c4b49e;
+  --rule:        #d4c8b4;
+  --rule-dark:   #b8a990;
+  --code-bg:     #1c1917;
+  --code-line:   #292524;
+  --teal:        #0d6e6e;
+  --teal-light:  #e0f0f0;
+  --amber:       #92400e;
+  --amber-light: #fef3c7;
+  --green:       #166534;
+  --green-light: #dcfce7;
+  --sidebar-w:   272px;
+  --serif: 'Noto Serif SC', 'SimSun', 'STSong', Georgia, serif;
+  --mono:  'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--serif);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15.5px;
+  line-height: 1.85;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  position: fixed; top: 0; left: 0; bottom: 0;
+  background: var(--paper-dark);
+  border-right: 2px solid var(--rule-dark);
+  display: flex; flex-direction: column;
+  z-index: 200; overflow-y: auto;
+}
+.sidebar-header {
+  padding: 1.75rem 1.5rem 1.4rem;
+  border-bottom: 1px solid var(--rule-dark);
+  background: var(--paper-mid);
+}
+.sidebar-title { font-size: 15px; font-weight: 700; color: var(--vermilion); line-height: 1.4; font-family: var(--serif); }
+.sidebar-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; font-style: italic; }
+
+.sidebar-nav { padding: 0.9rem 0; flex: 1; }
+.nav-group { margin-bottom: 0.35rem; }
+.nav-group-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; color: var(--ink-5); text-transform: uppercase; padding: 5px 18px 3px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 14px; border-radius: 3px; cursor: pointer;
+  color: var(--ink-3); font-family: var(--serif); font-size: 13px; line-height: 1.35;
+  transition: all 0.16s; border-left: 3px solid transparent; text-decoration: none;
+}
+.nav-item:hover { background: var(--paper-mid); color: var(--ink-2); border-left-color: var(--verm-mid); }
+.nav-item.active { background: var(--verm-light); color: var(--vermilion); border-left-color: var(--vermilion); font-weight: 600; }
+.nav-num { font-family: var(--mono); font-size: 10px; color: var(--ink-5); min-width: 20px; font-weight: 500; }
+.nav-item.active .nav-num { color: var(--vermilion); opacity: 0.65; }
+.sidebar-footer { padding: 0.9rem 1.5rem; border-top: 1px solid var(--rule); font-size: 11px; color: var(--ink-5); font-style: italic; }
+
+/* ══ MAIN ══ */
+.main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; }
+
+.page-header {
+  background: var(--ink-2); color: var(--paper);
+  padding: 3rem 4rem 2.25rem; position: relative; overflow: hidden;
+  border-bottom: 4px solid var(--vermilion);
+}
+.page-header::before { content:''; position:absolute; top:-40px; right:-40px; width:260px; height:260px; border:38px solid rgba(192,57,43,0.1); border-radius:50%; }
+.page-header::after  { content:''; position:absolute; bottom:-20px; right:80px; width:140px; height:140px; border:2px solid rgba(192,57,43,0.16); border-radius:50%; }
+.page-header h1 { font-size:2.2rem; font-weight:700; color:#f5f0e8; letter-spacing:0.04em; line-height:1.2; margin-bottom:0.5rem; position:relative; font-family:var(--serif); }
+.header-desc { font-size:13.5px; color:var(--ink-5); font-style:italic; position:relative; }
+.header-meta { display:flex; gap:1.5rem; margin-top:1rem; flex-wrap:wrap; }
+.header-meta-item { font-family:var(--mono); font-size:11px; color:var(--ink-5); display:flex; align-items:center; gap:5px; }
+.header-meta-item::before { content:''; width:6px; height:6px; background:var(--vermilion); border-radius:50%; display:inline-block; opacity:0.7; }
+
+.content-wrap { max-width: 800px; padding: 2.75rem 4rem 5rem; }
+
+/* ══ CHAPTER ══ */
+.chapter { margin-bottom: 3.5rem; scroll-margin-top: 20px; }
+.chapter-header { display:flex; align-items:baseline; gap:14px; margin-bottom:1.6rem; padding-bottom:0.8rem; border-bottom:2px solid var(--rule-dark); position:relative; }
+.chapter-header::after { content:''; position:absolute; bottom:-2px; left:0; width:52px; height:2px; background:var(--vermilion); }
+.ch-num { font-family:var(--mono); font-size:12.5px; font-weight:500; color:var(--vermilion); letter-spacing:0.05em; opacity:0.8; }
+.ch-title { font-family:var(--serif); font-size:1.3rem; font-weight:700; color:var(--ink); letter-spacing:0.06em; }
+.ch-hint { font-size:11.5px; color:var(--ink-4); font-style:italic; margin-left:auto; }
+
+.sub-section { margin-bottom: 2.1rem; scroll-margin-top: 20px; }
+.sub-header { display:flex; align-items:center; gap:10px; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--rule); }
+.sub-badge { font-family:var(--mono); font-size:10px; background:var(--paper-mid); color:var(--ink-4); border:1px solid var(--rule-dark); padding:2px 7px; border-radius:2px; letter-spacing:0.06em; }
+.sub-title { font-family:var(--serif); font-size:1.05rem; font-weight:600; color:var(--ink); letter-spacing:0.05em; }
+
+.body-text { color:var(--ink-2); margin-bottom:1.1rem; text-indent:2em; }
+.body-text.no-indent { text-indent:0; }
+code { font-family:var(--mono); font-size:0.86em; background:var(--verm-light); color:var(--verm-dark); padding:1px 5px; border-radius:3px; border:1px solid var(--verm-mid); }
+strong { font-weight:600; color:var(--ink); }
+
+.def-block { background:var(--paper-dark); border-left:3px solid var(--vermilion); padding:0.9rem 1.2rem; margin:1.1rem 0; border-radius:0 4px 4px 0; }
+.def-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.18em; color:var(--vermilion); text-transform:uppercase; margin-bottom:4px; font-weight:500; }
+.def-text { font-size:14.5px; color:var(--ink-2); line-height:1.7; }
+
+.note-box { display:flex; gap:11px; padding:0.8rem 1.05rem; border-radius:4px; margin:1.1rem 0; font-size:13.5px; line-height:1.6; }
+.note-box.warning { background:var(--amber-light); border:1px solid #d97706; color:var(--amber); }
+.note-box.info    { background:var(--teal-light);  border:1px solid #0d9488; color:var(--teal); }
+.note-box.success { background:var(--green-light); border:1px solid #16a34a; color:var(--green); }
+.note-box.accent  { background:var(--verm-light);  border:1px solid var(--verm-mid); color:var(--verm-dark); }
+.note-icon { font-size:15px; margin-top:1px; flex-shrink:0; }
+
+.data-table { width:100%; border-collapse:collapse; font-size:13.5px; margin:1.1rem 0; }
+.data-table th { background:var(--paper-mid); padding:8px 13px; text-align:left; font-family:var(--serif); font-weight:600; color:var(--ink-2); border-bottom:2px solid var(--rule-dark); border-top:1px solid var(--rule-dark); letter-spacing:0.04em; }
+.data-table td { padding:8px 13px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink-2); }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:rgba(192,57,43,0.03); }
+.data-table code { font-size:11.5px; }
+.rec { color:#166534; font-weight:600; font-size:11px; }
+.dep { color:#922b21; font-style:italic; font-size:11px; }
+
+.code-block { background:var(--code-bg); border-radius:6px; margin:1.1rem 0; box-shadow:0 6px 24px rgba(26,18,8,0.22),0 2px 8px rgba(26,18,8,0.12); overflow:hidden; }
+.code-header { background:var(--code-line); padding:7px 15px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #3c3532; }
+.code-dots { display:flex; gap:5px; }
+.code-dots span { width:10px; height:10px; border-radius:50%; }
+.code-dots .d1{background:#ff5f57}.code-dots .d2{background:#febc2e}.code-dots .d3{background:#28c840}
+.code-lang { font-family:var(--mono); font-size:10.5px; color:#6b6563; letter-spacing:0.08em; margin-left:3px; }
+.code-copy { margin-left:auto; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); color:#9a8e88; font-family:var(--mono); font-size:10.5px; padding:3px 9px; border-radius:3px; cursor:pointer; transition:all 0.16s; }
+.code-copy:hover { background:rgba(255,255,255,0.15); color:#d4c8b4; }
+.code-body { padding:1.1rem 1.4rem; font-family:var(--mono); font-size:12.5px; line-height:1.9; color:#d4c8b4; overflow-x:auto; tab-size:2; white-space:pre; }
+.kw{color:#93c5fd}.prop{color:#86efac}.val{color:#fca5a5}.cmt{color:#6b6360;font-style:italic}
+.htag{color:#c4b5fd}.attr{color:#fde68a}.str{color:#6ee7b7}
+
+.sec-divider { display:flex; align-items:center; gap:10px; margin:1.8rem 0 1.1rem; }
+.sec-divider-line { flex:1; height:1px; background:var(--rule); }
+.sec-divider-text { font-family:var(--serif); font-size:12.5px; font-weight:600; color:var(--ink-3); letter-spacing:0.1em; white-space:nowrap; }
+
+.feat-list { list-style:none; margin:0.6rem 0; }
+.feat-list li { display:flex; align-items:flex-start; gap:9px; padding:6px 0; font-size:14.5px; color:var(--ink-2); border-bottom:1px solid var(--rule); }
+.feat-list li:last-child { border-bottom:none; }
+.feat-mark { font-family:var(--mono); font-size:12px; min-width:18px; margin-top:2px; font-weight:600; }
+.feat-mark.yes{color:#166534}.feat-mark.no{color:#922b21}.feat-mark.neu{color:var(--amber)}
+
+/* ══ DEMOS ══ */
+.demo-wrap { background:var(--paper-dark); border:1px solid var(--rule-dark); border-radius:6px; padding:1.4rem; margin:1.1rem 0; }
+.demo-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.2em; color:var(--ink-4); text-transform:uppercase; margin-bottom:1rem; display:flex; align-items:center; gap:8px; }
+.demo-label::after { content:''; flex:1; height:1px; background:var(--rule); }
+.stage-desc { margin-top:0.7rem; font-family:var(--mono); font-size:11.5px; color:var(--ink-4); padding:7px 10px; background:var(--paper-mid); border-radius:3px; border-left:2px solid var(--vermilion); }
+
+.pill-group { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:1rem; }
+.pill { font-family:var(--mono); font-size:11.5px; padding:5px 13px; border-radius:2px; border:1px solid var(--rule-dark); background:var(--paper); color:var(--ink-3); cursor:pointer; transition:all 0.16s; }
+.pill:hover { border-color:var(--vermilion); color:var(--verm-dark); }
+.pill.on { background:var(--vermilion); border-color:var(--verm-dark); color:#f5f0e8; }
+
+/* ── heading level visualiser ── */
+.heading-vis { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1rem 1.25rem; }
+.hv-row { display:flex; align-items:center; gap:12px; padding:4px 0; border-bottom:1px solid var(--rule); cursor:pointer; transition:background 0.16s; border-radius:3px; padding:6px 8px; }
+.hv-row:last-child { border-bottom:none; }
+.hv-row:hover { background:var(--verm-light); }
+.hv-tag { font-family:var(--mono); font-size:11px; color:var(--vermilion); min-width:24px; font-weight:600; }
+.hv-bar { background:var(--vermilion); border-radius:2px; height:6px; transition:width 0.4s cubic-bezier(0.34,1.3,0.64,1); }
+.hv-text { font-family:var(--serif); font-weight:700; color:var(--ink); transition:font-size 0.3s; }
+.hv-weight { font-family:var(--mono); font-size:10px; color:var(--ink-4); margin-left:auto; }
+
+/* ── tag relationship diagram ── */
+.tree-diagram { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1.1rem 1.4rem; font-family:var(--mono); font-size:12.5px; color:var(--ink-3); line-height:2.1; }
+.td-tag { color:var(--vermilion); font-weight:600; }
+.td-comment { color:#6b6360; font-style:italic; font-size:11px; }
+.td-indent { display:inline-block; }
+.td-arrow { color:var(--ink-5); }
+.td-nest { border-left:2px solid var(--verm-mid); margin-left:14px; padding-left:12px; }
+.td-sib { display:flex; flex-direction:column; gap:0; }
+.td-sib-bracket { border-left:2px solid var(--teal); margin-left:14px; padding-left:12px; }
+
+/* ── text effect preview ── */
+.text-preview { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1.1rem 1.4rem; display:flex; flex-wrap:wrap; gap:10px; }
+.tp-item { display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px 14px; border:1px solid var(--rule); border-radius:4px; min-width:90px; background:var(--paper-dark); cursor:pointer; transition:all 0.16s; }
+.tp-item:hover { border-color:var(--vermilion); background:var(--verm-light); }
+.tp-item.on { border-color:var(--vermilion); background:var(--verm-light); }
+.tp-demo { font-size:16px; color:var(--ink); min-height:24px; }
+.tp-tag { font-family:var(--mono); font-size:10px; color:var(--ink-4); }
+.tp-sem { font-family:var(--mono); font-size:9px; padding:2px 5px; border-radius:2px; }
+.tp-sem.yes { background:var(--green-light); color:var(--green); }
+.tp-sem.no  { background:var(--amber-light); color:var(--amber); }
+
+/* ── block vs inline visual ── */
+.layout-vis { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1rem; }
+.lv-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.lv-block { background:rgba(192,57,43,0.12); border:1.5px solid var(--vermilion); border-radius:3px; padding:6px 12px; font-family:var(--serif); font-size:13px; color:var(--verm-dark); font-weight:600; width:100%; text-align:center; }
+.lv-inline { background:rgba(13,110,110,0.1); border:1.5px solid var(--teal); border-radius:3px; padding:4px 10px; font-family:var(--serif); font-size:13px; color:var(--teal); display:inline-block; }
+.lv-label { font-family:var(--mono); font-size:10px; color:var(--ink-4); min-width:40px; text-align:right; }
+
+/* ── list demo ── */
+.list-demo { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1rem 1.25rem; }
+.list-demo ul, .list-demo ol { padding-left:1.5rem; font-size:14px; color:var(--ink-2); }
+.list-demo ul { list-style-type:disc; }
+.list-demo ol { list-style-type:decimal; }
+.list-demo dl { font-size:14px; color:var(--ink-2); }
+.list-demo dt { font-weight:700; color:var(--ink); margin-top:6px; }
+.list-demo dd { margin-left:1.5rem; color:var(--ink-3); }
+.list-demo li { padding:3px 0; }
+.list-toggle { display:none; }
+.list-toggle.show { display:block; animation:fadeUp 0.22s ease; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── poem demo ── */
+.poem-box { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1.25rem; text-align:center; font-size:15px; color:var(--ink-2); line-height:2.2; }
+.poem-title { font-size:18px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+.poem-divider { border:none; border-top:2px solid var(--vermilion); width:80px; margin:6px auto 10px; }
+.poem-author { font-size:13px; color:var(--ink-4); margin-bottom:10px; }
+
+/* quick ref */
+.quick-table { width:100%; border-collapse:collapse; font-size:13px; margin:0.8rem 0; }
+.quick-table th { background:var(--ink-2); color:var(--paper); padding:7px 12px; text-align:left; font-family:var(--serif); font-weight:600; letter-spacing:0.04em; }
+.quick-table td { padding:7px 12px; border-bottom:1px solid var(--rule); color:var(--ink-2); }
+.quick-table tr:last-child td { border-bottom:none; }
+.quick-table tr:nth-child(even) td { background:rgba(192,57,43,0.025); }
+.quick-table code { font-size:11px; }
+
+/* comment demo */
+.comment-reveal { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1rem 1.25rem; }
+.cr-visible { font-size:14px; color:var(--ink-2); }
+.cr-hidden { font-size:13px; color:var(--ink-5); font-style:italic; padding:6px 10px; background:var(--paper-mid); border-radius:3px; margin-top:8px; display:flex; align-items:center; gap:8px; }
+.cr-eye { font-size:18px; }
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--paper-dark)}
+::-webkit-scrollbar-thumb{background:var(--rule-dark);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-5)}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">文字与段落排版</div>
+    <div class="sidebar-sub">HTML5 + CSS3 前端基础</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">标签基础</div>
+      <a class="nav-item active" onclick="window.goTo('s1')"><span class="nav-num">§1</span>标签关系</a>
+      <a class="nav-item" onclick="window.goTo('s2')"><span class="nav-num">§2</span>标签属性</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">标题与段落</div>
+      <a class="nav-item" onclick="window.goTo('s3')"><span class="nav-num">§3</span>标题标签 h1~h6</a>
+      <a class="nav-item" onclick="window.goTo('s4')"><span class="nav-num">§4</span>段落标签 p</a>
+      <a class="nav-item" onclick="window.goTo('s5')"><span class="nav-num">§5</span>块级元素与内联元素</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">文本格式化</div>
+      <a class="nav-item" onclick="window.goTo('s6')"><span class="nav-num">§6</span>强调与重要性标签</a>
+      <a class="nav-item" onclick="window.goTo('s7')"><span class="nav-num">§7</span>注释标签</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">列表</div>
+      <a class="nav-item" onclick="window.goTo('s8')"><span class="nav-num">§8</span>无序列表 ul</a>
+      <a class="nav-item" onclick="window.goTo('s9')"><span class="nav-num">§9</span>有序列表 ol</a>
+      <a class="nav-item" onclick="window.goTo('s10')"><span class="nav-num">§10</span>描述列表 dl</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">附录</div>
+      <a class="nav-item" onclick="window.goTo('s11')"><span class="nav-num">总结</span>标签速查表</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">点击目录项跳转对应章节</div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <header class="page-header">
+    <h1>文字与段落排版</h1>
+    <div class="header-desc">标签关系 · 标题段落 · 文本格式化 · 三种列表标签</div>
+    <div class="header-meta">
+      <span class="header-meta-item">嵌套关系 · 并列关系</span>
+      <span class="header-meta-item">h1~h6 · p · 语义化</span>
+      <span class="header-meta-item">ul · ol · dl</span>
+    </div>
+  </header>
+
+  <div class="content-wrap">
+
+    <!-- ══ §1 标签关系 ══ -->
+    <section class="chapter" id="s1">
+      <div class="chapter-header">
+        <span class="ch-num">§ 01</span>
+        <span class="ch-title">标签关系</span>
+        <span class="ch-hint">Father and son or brothers</span>
+      </div>
+
+      <p class="body-text">HTML 标签之间存在两种基本关系：<strong>嵌套关系</strong>（父子关系）和<strong>并列关系</strong>（兄弟关系）。理解这两种关系是读懂 HTML 结构、解决布局 bug 的基础。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 点击标签查看关系说明</div>
+        <div class="tree-diagram" id="tag-tree">
+          <div style="margin-bottom:4px"><span class="td-tag">&lt;body&gt;</span> <span class="td-comment">← 父元素</span></div>
+          <div class="td-nest">
+            <div><span class="td-tag">&lt;h1&gt;</span>文章标题<span class="td-tag">&lt;/h1&gt;</span> <span class="td-comment">← body 的子元素；与 &lt;p&gt;、&lt;ul&gt; 是兄弟关系</span></div>
+            <div style="margin:2px 0"><span class="td-tag">&lt;p&gt;</span>段落内容<span class="td-tag">&lt;/p&gt;</span></div>
+            <div><span class="td-tag">&lt;ul&gt;</span> <span class="td-comment">← ul 与 li 是父子关系</span></div>
+            <div class="td-nest">
+              <div><span class="td-tag">&lt;li&gt;</span>列表项一<span class="td-tag">&lt;/li&gt;</span> <span class="td-comment">← 兄弟关系</span></div>
+              <div><span class="td-tag">&lt;li&gt;</span>列表项二<span class="td-tag">&lt;/li&gt;</span></div>
+            </div>
+            <div><span class="td-tag">&lt;/ul&gt;</span></div>
+          </div>
+          <div><span class="td-tag">&lt;/body&gt;</span></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.1rem 0">
+        <div class="def-block">
+          <div class="def-label">嵌套关系（父子关系）</div>
+          <div class="def-text">一个标签<strong>包含在</strong>另一个标签内部。外层称为<strong>父元素</strong>，内层称为<strong>子元素</strong>。<br><br>示例：<code>&lt;ul&gt;</code> 是 <code>&lt;li&gt;</code> 的父元素</div>
+        </div>
+        <div class="def-block" style="border-left-color:var(--teal)">
+          <div class="def-label" style="color:var(--teal)">并列关系（兄弟关系）</div>
+          <div class="def-text">两个标签处于<strong>同一层级</strong>，有共同的父元素。<br><br>示例：<code>&lt;h1&gt;</code> 和 <code>&lt;p&gt;</code> 都是 <code>&lt;body&gt;</code> 的子元素，它们互为兄弟</div>
+        </div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <span>实际开发中多层嵌套最容易出问题。可利用编辑器的代码折叠、缩进高亮，或 AI 工具帮助理清标签的层次关系。</span>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">练手思考</div><div class="sec-divider-line"></div></div>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <div>
+          <strong>思考题：</strong><br>
+          1. 对于 <code>&lt;li&gt;</code> 标签来说，谁是它的直接父元素？<br>
+          2. <code>&lt;h1&gt;</code> 和 <code>&lt;ul&gt;</code> 之间是什么关系？
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §2 标签属性 ══ -->
+    <section class="chapter" id="s2">
+      <div class="chapter-header">
+        <span class="ch-num">§ 02</span>
+        <span class="ch-title">标签属性</span>
+      </div>
+
+      <p class="body-text">属性（Attribute）是写在 HTML 标签开始标签内的附加信息，用来为标签提供额外的配置或描述。属性以<strong>键值对</strong>的形式书写。</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 属性语法格式</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">&lt;!-- 语法格式：属性名="属性值" --&gt;</span>
+<span class="htag">&lt;标签名</span> <span class="attr">属性名</span>=<span class="str">"属性值"</span><span class="htag">&gt;</span>内容<span class="htag">&lt;/标签名&gt;</span>
+
+<span class="cmt">&lt;!-- 示例：为 h3 设置居中对齐 --&gt;</span>
+<span class="htag">&lt;h3</span> <span class="attr">align</span>=<span class="str">"center"</span><span class="htag">&gt;</span>静夜思<span class="htag">&lt;/h3&gt;</span>
+
+<span class="cmt">&lt;!-- 多个属性之间用空格分隔 --&gt;</span>
+<span class="htag">&lt;hr</span> <span class="attr">align</span>=<span class="str">"center"</span> <span class="attr">width</span>=<span class="str">"100px"</span> <span class="attr">color</span>=<span class="str">"red"</span><span class="htag">&gt;</span></div>
+      </div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark neu">①</span><div>属性写在<strong>开始标签</strong>内，标签名后面</div></li>
+        <li><span class="feat-mark neu">②</span><div>属性名与属性值之间用<strong>等号 <code>=</code></strong> 分隔</div></li>
+        <li><span class="feat-mark neu">③</span><div>属性值用<strong>双引号</strong>包裹（也可以是单引号，统一即可）</div></li>
+        <li><span class="feat-mark neu">④</span><div>多个属性之间用<strong>空格</strong>分隔，顺序一般无关紧要</div></li>
+      </ul>
+    </section>
+
+    <!-- ══ §3 标题标签 ══ -->
+    <section class="chapter" id="s3">
+      <div class="chapter-header">
+        <span class="ch-num">§ 03</span>
+        <span class="ch-title">标题标签 h1 ~ h6</span>
+        <span class="ch-hint">点击标题行查看字号</span>
+      </div>
+
+      <p class="body-text">在新闻和文章页面中，都离不开标题来突出显示文章主题。HTML 提供了六级标题标签，从 <code>&lt;h1&gt;</code>（最重要）到 <code>&lt;h6&gt;</code>（最次要），标题文字会<strong>加粗显示</strong>，且每行只显示一个（块级元素）。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 点击各级标题查看视觉权重</div>
+        <div class="heading-vis">
+          <div class="hv-row" onclick="window.showHeading(1)">
+            <span class="hv-tag">h1</span>
+            <div class="hv-bar" style="width:100%"></div>
+            <span class="hv-text" style="font-size:28px">一级标题</span>
+            <span class="hv-weight">2rem / bold</span>
+          </div>
+          <div class="hv-row" onclick="window.showHeading(2)">
+            <span class="hv-tag">h2</span>
+            <div class="hv-bar" style="width:82%"></div>
+            <span class="hv-text" style="font-size:22px">二级标题</span>
+            <span class="hv-weight">1.5rem / bold</span>
+          </div>
+          <div class="hv-row" onclick="window.showHeading(3)">
+            <span class="hv-tag">h3</span>
+            <div class="hv-bar" style="width:64%"></div>
+            <span class="hv-text" style="font-size:18px">三级标题</span>
+            <span class="hv-weight">1.17rem / bold</span>
+          </div>
+          <div class="hv-row" onclick="window.showHeading(4)">
+            <span class="hv-tag">h4</span>
+            <div class="hv-bar" style="width:48%"></div>
+            <span class="hv-text" style="font-size:16px">四级标题</span>
+            <span class="hv-weight">1rem / bold</span>
+          </div>
+          <div class="hv-row" onclick="window.showHeading(5)">
+            <span class="hv-tag">h5</span>
+            <div class="hv-bar" style="width:35%"></div>
+            <span class="hv-text" style="font-size:13px">五级标题</span>
+            <span class="hv-weight">0.83rem / bold</span>
+          </div>
+          <div class="hv-row" onclick="window.showHeading(6)">
+            <span class="hv-tag">h6</span>
+            <div class="hv-bar" style="width:24%"></div>
+            <span class="hv-text" style="font-size:11px">六级标题</span>
+            <span class="hv-weight">0.67rem / bold</span>
+          </div>
+        </div>
+        <div class="stage-desc" id="heading-desc">点击任意一行标题，查看其语义说明</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 标题标签语法</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;h1&gt;</span>一级标题（最重要）<span class="htag">&lt;/h1&gt;</span>
+<span class="htag">&lt;h2&gt;</span>二级标题<span class="htag">&lt;/h2&gt;</span>
+<span class="htag">&lt;h3&gt;</span>三级标题<span class="htag">&lt;/h3&gt;</span>
+<span class="cmt">&lt;!-- h4、h5、h6 以此类推 --&gt;</span></div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">使用规范</div><div class="sec-divider-line"></div></div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark no">★</span><div><strong>h1 唯一性：</strong>每个页面最好只使用一次 <code>&lt;h1&gt;</code>，用于页面的顶级标题，如新闻标题、网页 Logo 区域</div></li>
+        <li><span class="feat-mark neu">—</span><div><strong>层次性：</strong>在现有的六个层次中，除非有必要，否则每页使用不超过<strong>三个</strong>层级，避免层级混乱</div></li>
+      </ul>
+    </section>
+
+    <!-- ══ §4 段落标签 p ══ -->
+    <section class="chapter" id="s4">
+      <div class="chapter-header">
+        <span class="ch-num">§ 04</span>
+        <span class="ch-title">段落标签 p</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text"><code>&lt;p&gt;</code> 元素表示文本的一个段落（Paragraph）。每行只显示一个，文字显示不开会自动换行。段落的样式（字体、行距、颜色等）请用 CSS 设置。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 段落标签语法</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;p&gt;</span>这是第一段文字内容，文字过多时会自动换行。<span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;p&gt;</span>这是第二段文字内容，段落之间有默认间距。<span class="htag">&lt;/p&gt;</span>
+
+<span class="cmt">&lt;!-- 强制换行使用 &lt;br&gt; --&gt;</span>
+<span class="htag">&lt;p&gt;</span>
+  床前明月光，<span class="htag">&lt;br&gt;</span>
+  疑是地上霜。<span class="htag">&lt;br&gt;</span>
+<span class="htag">&lt;/p&gt;</span></div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">为什么需要结构化（语义化）？</div><div class="sec-divider-line"></div></div>
+
+      <ul class="feat-list">
+        <li><span class="feat-mark yes">✓</span><div><strong>更清晰的代码结构</strong>：开发者和维护者能快速理解页面各区域的用途</div></li>
+        <li><span class="feat-mark yes">✓</span><div><strong>对搜索引擎更友好</strong>：爬虫可以准确识别标题、段落等内容的权重，有助于 SEO</div></li>
+        <li><span class="feat-mark yes">✓</span><div><strong>更好的可访问性</strong>：屏幕阅读器依赖语义标签帮助视障用户理解网页内容</div></li>
+      </ul>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">综合实践：静夜思</div><div class="sec-divider-line"></div></div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">效果预览 · 唐诗排版</div>
+        <div class="poem-box">
+          <div class="poem-title">静夜思</div>
+          <hr class="poem-divider">
+          <div class="poem-author">作者：李白</div>
+          <div>床前明月光，</div>
+          <div>疑是地上霜。</div>
+          <div>举头望明月，</div>
+          <div>低头思故乡。</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 静夜思完整代码</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;body&gt;</span>
+  <span class="htag">&lt;h3</span> <span class="attr">align</span>=<span class="str">"center"</span><span class="htag">&gt;</span>静夜思<span class="htag">&lt;/h3&gt;</span>
+  <span class="htag">&lt;hr</span> <span class="attr">align</span>=<span class="str">"center"</span> <span class="attr">width</span>=<span class="str">"100px"</span> <span class="attr">size</span>=<span class="str">"3px"</span> <span class="attr">color</span>=<span class="str">"red"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;p</span> <span class="attr">align</span>=<span class="str">"center"</span><span class="htag">&gt;</span>作者：李白<span class="htag">&lt;/p&gt;</span>
+  <span class="htag">&lt;p</span> <span class="attr">align</span>=<span class="str">"center"</span><span class="htag">&gt;</span>
+    床前明月光，<span class="htag">&lt;br&gt;</span>
+    疑是地上霜。<span class="htag">&lt;br&gt;</span>
+    举头望明月，<span class="htag">&lt;br&gt;</span>
+    低头思故乡。<span class="htag">&lt;br&gt;</span>
+  <span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;/body&gt;</span></div>
+      </div>
+    </section>
+
+    <!-- ══ §5 块级与内联 ══ -->
+    <section class="chapter" id="s5">
+      <div class="chapter-header">
+        <span class="ch-num">§ 05</span>
+        <span class="ch-title">块级元素与内联元素</span>
+        <span class="ch-hint">Kuai or n</span>
+      </div>
+
+      <p class="body-text">在 HTML 中，所有元素按显示方式分为两大类：<strong>块级元素</strong>和<strong>内联元素</strong>。分类不同决定了展示形式不一样。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">可视化对比 · 块级 vs 内联元素布局</div>
+        <div class="layout-vis">
+          <div style="margin-bottom:8px;font-family:var(--mono);font-size:10.5px;color:var(--ink-4)">块级元素（block）— 独占一行：</div>
+          <div class="lv-row"><div class="lv-block">&lt;p&gt; 段落（独占整行）</div></div>
+          <div class="lv-row"><div class="lv-block">&lt;h2&gt; 二级标题（独占整行）</div></div>
+          <div class="lv-row"><div class="lv-block">&lt;div&gt; 容器（独占整行）</div></div>
+          <div style="margin:10px 0 6px;font-family:var(--mono);font-size:10.5px;color:var(--ink-4)">内联元素（inline）— 可以一行多个：</div>
+          <div class="lv-row" style="flex-wrap:wrap;gap:6px">
+            <span class="lv-inline">&lt;strong&gt; 加粗</span>
+            <span class="lv-inline">&lt;em&gt; 斜体</span>
+            <span class="lv-inline">&lt;a&gt; 链接</span>
+            <span class="lv-inline">&lt;span&gt; 通用</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.1rem 0">
+        <div class="def-block">
+          <div class="def-label">块级元素</div>
+          <div class="def-text">
+            • 独占一行<br>
+            • 可以嵌套其他元素<br>
+            • 常见：<code>p</code>、<code>h1~h6</code>、<code>div</code>、<code>ul</code>、<code>ol</code>
+          </div>
+        </div>
+        <div class="def-block" style="border-left-color:var(--teal)">
+          <div class="def-label" style="color:var(--teal)">内联元素</div>
+          <div class="def-text">
+            • 可以一行放多个<br>
+            • 不能嵌套块级元素<br>
+            • 常见：<code>strong</code>、<code>em</code>、<code>a</code>、<code>span</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div>
+          <strong>注意事项：</strong><br>
+          • <code>&lt;p&gt;</code> 标签里面<strong>不要放</strong>其他块级元素，里面主要放文字相关内容（内联元素）<br>
+          • 元素分类不是不可更改的，CSS 中的 <code>display</code> 属性可以改变元素的显示模式
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §6 文本格式化标签 ══ -->
+    <section class="chapter" id="s6">
+      <div class="chapter-header">
+        <span class="ch-num">§ 06</span>
+        <span class="ch-title">强调与重要性标签</span>
+        <span class="ch-hint">点击效果卡片查看推荐用法</span>
+      </div>
+
+      <p class="body-text">HTML 提供了相应的标签，使文字具有<strong>加粗、倾斜、下划线、删除线</strong>等效果，来着重强调某些文字。标签分为两类：有语义的（推荐使用）和无语义的（不推荐）。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 点击卡片查看用法说明</div>
+        <div class="text-preview">
+          <div class="tp-item" onclick="window.showTag('strong')">
+            <div class="tp-demo"><strong>重要</strong></div>
+            <div class="tp-tag">&lt;strong&gt;</div>
+            <div class="tp-sem yes">语义化 ✓</div>
+          </div>
+          <div class="tp-item" onclick="window.showTag('b')">
+            <div class="tp-demo"><b>加粗</b></div>
+            <div class="tp-tag">&lt;b&gt;</div>
+            <div class="tp-sem no">无语义</div>
+          </div>
+          <div class="tp-item" onclick="window.showTag('em')">
+            <div class="tp-demo"><em>强调</em></div>
+            <div class="tp-tag">&lt;em&gt;</div>
+            <div class="tp-sem yes">语义化 ✓</div>
+          </div>
+          <div class="tp-item" onclick="window.showTag('i')">
+            <div class="tp-demo"><i>倾斜</i></div>
+            <div class="tp-tag">&lt;i&gt;</div>
+            <div class="tp-sem no">无语义</div>
+          </div>
+          <div class="tp-item" onclick="window.showTag('ins')">
+            <div class="tp-demo"><ins>下划线</ins></div>
+            <div class="tp-tag">&lt;ins&gt;</div>
+            <div class="tp-sem yes">语义化 ✓</div>
+          </div>
+          <div class="tp-item" onclick="window.showTag('u')">
+            <div class="tp-demo"><u>下划线</u></div>
+            <div class="tp-tag">&lt;u&gt;</div>
+            <div class="tp-sem no">无语义</div>
+          </div>
+          <div class="tp-item" onclick="window.showTag('del')">
+            <div class="tp-demo"><del>删除线</del></div>
+            <div class="tp-tag">&lt;del&gt;</div>
+            <div class="tp-sem yes">语义化 ✓</div>
+          </div>
+          <div class="tp-item" onclick="window.showTag('s')">
+            <div class="tp-demo"><s>删除线</s></div>
+            <div class="tp-tag">&lt;s&gt;</div>
+            <div class="tp-sem no">无语义</div>
+          </div>
+          <div class="tp-item" onclick="window.showTag('sup')">
+            <div class="tp-demo">x<sup>2</sup></div>
+            <div class="tp-tag">&lt;sup&gt;</div>
+            <div class="tp-sem yes">语义化 ✓</div>
+          </div>
+          <div class="tp-item" onclick="window.showTag('sub')">
+            <div class="tp-demo">H<sub>2</sub>O</div>
+            <div class="tp-tag">&lt;sub&gt;</div>
+            <div class="tp-sem yes">语义化 ✓</div>
+          </div>
+        </div>
+        <div id="tag-detail" class="stage-desc">点击上方卡片查看该标签的详细说明与使用建议</div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>视觉效果</th><th>推荐（有语义）</th><th>不推荐（无语义）</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>加粗</td><td><code>&lt;strong&gt;</code> <span class="rec">★推荐</span></td><td><code>&lt;b&gt;</code> <span class="dep">不推荐</span></td><td>strong 表示内容重要性，搜索引擎会重视</td></tr>
+          <tr><td>倾斜</td><td><code>&lt;em&gt;</code> <span class="rec">★推荐</span></td><td><code>&lt;i&gt;</code> <span class="dep">不推荐</span></td><td>em 表示强调语气，增强语义</td></tr>
+          <tr><td>下划线</td><td><code>&lt;ins&gt;</code> <span class="rec">★推荐</span></td><td><code>&lt;u&gt;</code> <span class="dep">不推荐</span></td><td>ins 表示插入的新内容</td></tr>
+          <tr><td>删除线</td><td><code>&lt;del&gt;</code> <span class="rec">★推荐</span></td><td><code>&lt;s&gt;</code> <span class="dep">不推荐</span></td><td>del 表示已删除或失效的内容</td></tr>
+          <tr><td>上标</td><td><code>&lt;sup&gt;</code></td><td>—</td><td>用于数学公式，如 x²</td></tr>
+          <tr><td>下标</td><td><code>&lt;sub&gt;</code></td><td>—</td><td>用于化学式，如 H₂O</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══ §7 注释 ══ -->
+    <section class="chapter" id="s7">
+      <div class="chapter-header">
+        <span class="ch-num">§ 07</span>
+        <span class="ch-title">注释标签</span>
+        <span class="ch-hint">not see~</span>
+      </div>
+
+      <p class="body-text">注释标签用于在 HTML 代码中添加<strong>不会在浏览器中显示</strong>的说明或备注。注释的内容只在源代码中可见，对页面展示没有任何影响。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">对比演示 · 注释内容在页面上不可见</div>
+        <div class="comment-reveal">
+          <div class="cr-visible">这段文字<strong>正常显示</strong>在网页上。</div>
+          <div class="cr-hidden">
+            <span class="cr-eye">👁‍🗨</span>
+            <span>注释内容：<code>&lt;!-- 这里是注释，用户在浏览器中看不到这行内容 --&gt;</code><br>此行仅在源码中可见，不会渲染到页面。</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 注释语法</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">&lt;!-- 这里是单行注释 --&gt;</span>
+
+<span class="cmt">&lt;!--
+  这里是
+  多行注释
+  可以跨越多行
+--&gt;</span>
+
+<span class="htag">&lt;p&gt;</span>这段文字正常显示。<span class="htag">&lt;/p&gt;</span>
+<span class="cmt">&lt;!-- &lt;p&gt;这段被注释掉，不会显示。&lt;/p&gt; --&gt;</span>
+<span class="htag">&lt;p&gt;</span>下一段文字。<span class="htag">&lt;/p&gt;</span></div>
+      </div>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <div>
+          <strong>快捷键：</strong> <code>Ctrl + /</code>（Windows）或 <code>Cmd + /</code>（Mac）可以在 VS Code 中快速为选中代码添加或取消注释。<br><br>
+          <strong>三大用途：</strong><br>
+          ① 代码说明：解释某段代码的功能或注意事项<br>
+          ② 临时禁用：调试时临时屏蔽某段代码而不删除<br>
+          ③ 团队协作：给其他开发者留下说明信息
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §8 无序列表 ══ -->
+    <section class="chapter" id="s8">
+      <div class="chapter-header">
+        <span class="ch-num">§ 08</span>
+        <span class="ch-title">无序列表 ul</span>
+        <span class="ch-hint">顺序无关紧要的列表</span>
+      </div>
+
+      <p class="body-text">无序列表用于展示一组<strong>顺序无关紧要</strong>的项目。在实际开发中，无序列表非常常用，常用于导航菜单、商品列表、整齐对齐的模块等布局场景。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">实时演示 · 无序列表</div>
+        <div class="list-demo">
+          <ul>
+            <li>猪爸爸</li>
+            <li>猪妈妈</li>
+            <li>佩奇</li>
+            <li>乔治</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · ul 无序列表</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;ul&gt;</span>
+  <span class="htag">&lt;li&gt;</span>猪爸爸<span class="htag">&lt;/li&gt;</span>
+  <span class="htag">&lt;li&gt;</span>猪妈妈<span class="htag">&lt;/li&gt;</span>
+  <span class="htag">&lt;li&gt;</span>佩奇<span class="htag">&lt;/li&gt;</span>
+  <span class="htag">&lt;li&gt;</span>乔治<span class="htag">&lt;/li&gt;</span>
+<span class="htag">&lt;/ul&gt;</span></div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div>
+          <strong>注意事项：</strong><br>
+          • <code>&lt;ul&gt;</code> 里面<strong>只能包含</strong> <code>&lt;li&gt;</code> 元素，不能直接放其他标签<br>
+          • <code>&lt;li&gt;</code> 里面可以放任何其他 HTML 元素（文字、图片、链接等）<br>
+          • 无序列表在开发布局中<strong>非常重要</strong>，是最常用的列表类型
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §9 有序列表 ══ -->
+    <section class="chapter" id="s9">
+      <div class="chapter-header">
+        <span class="ch-num">§ 09</span>
+        <span class="ch-title">有序列表 ol</span>
+        <span class="ch-hint">顺序有关的列表</span>
+      </div>
+
+      <p class="body-text">有序列表用于展示一组<strong>有先后顺序关系</strong>的项目，浏览器会自动在每个 <code>&lt;li&gt;</code> 前加上编号。在实际开发中有序列表较少使用，即使有顺序，开发者一般也会用其他方式代替。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">实时演示 · 有序列表</div>
+        <div class="list-demo">
+          <ol>
+            <li>看视频</li>
+            <li>写代码</li>
+            <li>做笔记</li>
+            <li>多复习</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · ol 有序列表</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;ol&gt;</span>
+  <span class="htag">&lt;li&gt;</span>看视频<span class="htag">&lt;/li&gt;</span>
+  <span class="htag">&lt;li&gt;</span>写代码<span class="htag">&lt;/li&gt;</span>
+  <span class="htag">&lt;li&gt;</span>做笔记<span class="htag">&lt;/li&gt;</span>
+  <span class="htag">&lt;li&gt;</span>多复习<span class="htag">&lt;/li&gt;</span>
+<span class="htag">&lt;/ol&gt;</span></div>
+      </div>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <div>
+          <code>&lt;ol&gt;</code> 与 <code>&lt;ul&gt;</code> 结构完全相同，只是容器标签不同。<br>
+          同样：<code>&lt;ol&gt;</code> 里面<strong>只能包含</strong> <code>&lt;li&gt;</code> 元素；<code>&lt;li&gt;</code> 里面可以放任何其他元素。
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §10 描述列表 ══ -->
+    <section class="chapter" id="s10">
+      <div class="chapter-header">
+        <span class="ch-num">§ 10</span>
+        <span class="ch-title">描述列表 dl</span>
+        <span class="ch-hint">标记一组项目及相关描述</span>
+      </div>
+
+      <p class="body-text">描述列表用于标记一组<strong>项目及其相关描述</strong>，常见于网页底部导航栏，对分类项目进行说明展示。它由三个标签共同构成。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">实时演示 · 描述列表（常见于页面底部）</div>
+        <div class="list-demo">
+          <dl>
+            <dt>家电</dt>
+            <dd>电视</dd>
+            <dd>冰箱</dd>
+            <dd>空调</dd>
+            <dd>烟灶</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · dl 描述列表</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;dl&gt;</span>
+  <span class="htag">&lt;dt&gt;</span>家电<span class="htag">&lt;/dt&gt;</span>  <span class="cmt">&lt;!-- 术语/标题，一个 dt 可对应多个 dd --&gt;</span>
+  <span class="htag">&lt;dd&gt;</span>电视<span class="htag">&lt;/dd&gt;</span>  <span class="cmt">&lt;!-- 描述/定义，通常缩进显示 --&gt;</span>
+  <span class="htag">&lt;dd&gt;</span>冰箱<span class="htag">&lt;/dd&gt;</span>
+  <span class="htag">&lt;dd&gt;</span>空调<span class="htag">&lt;/dd&gt;</span>
+  <span class="htag">&lt;dd&gt;</span>烟灶<span class="htag">&lt;/dd&gt;</span>
+<span class="htag">&lt;/dl&gt;</span></div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">dl / dt / dd 三个标签说明</div><div class="sec-divider-line"></div></div>
+
+      <table class="data-table">
+        <thead><tr><th>标签</th><th>作用</th><th>注意事项</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;dl&gt;</code></td><td>定义列表的容器</td><td>只能包含 <code>&lt;dt&gt;</code> 和 <code>&lt;dd&gt;</code> 元素</td></tr>
+          <tr><td><code>&lt;dt&gt;</code></td><td>定义被描述的术语/标题</td><td>通常显示为左对齐或加粗；一个 dt 可以对应多个 dd</td></tr>
+          <tr><td><code>&lt;dd&gt;</code></td><td>包含术语的定义或描述</td><td>通常缩进显示；可以包含段落、图片、链接等其他元素</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div>
+          <strong>注意事项：</strong><br>
+          • <code>&lt;dl&gt;</code> 里面<strong>只能包含</strong> <code>&lt;dt&gt;</code> 和 <code>&lt;dd&gt;</code> 元素<br>
+          • 一个 <code>&lt;dt&gt;</code> 可以对应多个 <code>&lt;dd&gt;</code><br>
+          • <code>&lt;dd&gt;</code> 可以包含段落、图片、链接等其他 HTML 元素
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §11 总结速查 ══ -->
+    <section class="chapter" id="s11">
+      <div class="chapter-header">
+        <span class="ch-num">总结</span>
+        <span class="ch-title">标签速查表</span>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">标题与段落标签</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>标签</th><th>类型</th><th>作用</th><th>使用建议</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;h1&gt;</code></td><td>块级</td><td>一级标题（最重要）</td><td>每页只用一次</td></tr>
+          <tr><td><code>&lt;h2&gt; ~ &lt;h6&gt;</code></td><td>块级</td><td>二至六级标题</td><td>层次清晰，每页不超过三级</td></tr>
+          <tr><td><code>&lt;p&gt;</code></td><td>块级</td><td>段落文本</td><td>内部只放内联元素和文字</td></tr>
+          <tr><td><code>&lt;br&gt;</code></td><td>内联</td><td>强制换行</td><td>单标签，在段落内使用</td></tr>
+          <tr><td><code>&lt;hr&gt;</code></td><td>块级</td><td>水平分割线</td><td>用于内容分组</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">文本格式化标签（推荐有语义版本）</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>效果</th><th>推荐标签</th><th>不推荐</th><th>语义含义</th></tr></thead>
+        <tbody>
+          <tr><td><strong>加粗</strong></td><td><code>&lt;strong&gt;</code></td><td><code>&lt;b&gt;</code></td><td>重要性（important）</td></tr>
+          <tr><td><em>倾斜</em></td><td><code>&lt;em&gt;</code></td><td><code>&lt;i&gt;</code></td><td>强调（emphasis）</td></tr>
+          <tr><td><ins>下划线</ins></td><td><code>&lt;ins&gt;</code></td><td><code>&lt;u&gt;</code></td><td>插入的新内容</td></tr>
+          <tr><td><del>删除线</del></td><td><code>&lt;del&gt;</code></td><td><code>&lt;s&gt;</code></td><td>删除或失效的内容</td></tr>
+          <tr><td>x<sup>2</sup></td><td><code>&lt;sup&gt;</code></td><td>—</td><td>上标（superscript）</td></tr>
+          <tr><td>H<sub>2</sub>O</td><td><code>&lt;sub&gt;</code></td><td>—</td><td>下标（subscript）</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">列表标签</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>列表类型</th><th>容器标签</th><th>子元素</th><th>典型场景</th></tr></thead>
+        <tbody>
+          <tr><td>无序列表（⭐重要）</td><td><code>&lt;ul&gt;</code></td><td><code>&lt;li&gt;</code></td><td>导航菜单、商品列表、卡片布局</td></tr>
+          <tr><td>有序列表（了解）</td><td><code>&lt;ol&gt;</code></td><td><code>&lt;li&gt;</code></td><td>步骤说明、排名榜</td></tr>
+          <tr><td>描述列表（⭐次重要）</td><td><code>&lt;dl&gt;</code></td><td><code>&lt;dt&gt;</code> + <code>&lt;dd&gt;</code></td><td>页面底部分类导航</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box accent" style="margin-top:1.5rem">
+        <span class="note-icon">📌</span>
+        <div><strong>知识总结：</strong><br>
+        ① 标题共六级（h1~h6），h1 每页用一次，建议不超过三级<br>
+        ② 语义化好处：代码结构清晰、SEO 友好、可访问性好<br>
+        ③ 优先使用有语义的文本标签（strong / em / ins / del）<br>
+        ④ 三种列表：<strong>无序列表最重要</strong>，描述列表其次，有序列表了解即可<br>
+        ⑤ ul / ol 只能包含 li；dl 只能包含 dt 和 dd</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+const navItems = document.querySelectorAll('.nav-item');
+const sectionIds = ['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11'];
+
+window.goTo = function(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+};
+
+window.addEventListener('scroll', () => {
+  let cur = 0;
+  sectionIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 80) cur = i;
+  });
+  navItems.forEach(n => n.classList.remove('active'));
+  if (navItems[cur]) navItems[cur].classList.add('active');
+}, { passive: true });
+
+window.copyCode = function(btn) {
+  const body = btn.closest('.code-block').querySelector('.code-body');
+  navigator.clipboard.writeText(body.innerText.trim()).then(() => {
+    btn.textContent = '已复制';
+    setTimeout(() => btn.textContent = '复制', 1600);
+  });
+};
+
+/* ── heading demo ── */
+const headingInfo = {
+  1: { label:'h1 — 顶级标题', desc:'每个页面最好只使用一次。用于文章主标题、网页 Logo 区域。搜索引擎对 h1 的权重最高。' },
+  2: { label:'h2 — 二级标题', desc:'用于文章的主要章节标题，是仅次于 h1 的重要结构节点。' },
+  3: { label:'h3 — 三级标题', desc:'用于二级章节下的子标题。实际开发中用到 h3 已经足够，尽量不要再往下细分。' },
+  4: { label:'h4 — 四级标题', desc:'结构较深时使用，视觉权重较低。若非有必要，建议控制在 h3 以内。' },
+  5: { label:'h5 — 五级标题', desc:'很少使用，字号小于正文。若出现在设计中，通常说明内容层次过深，需重新梳理结构。' },
+  6: { label:'h6 — 六级标题', desc:'极少使用，是六个层级中权重最低的。绝大多数网站的内容不需要用到 h6。' },
+};
+
+window.showHeading = function(n) {
+  const d = headingInfo[n];
+  document.getElementById('heading-desc').textContent = d.label + ' — ' + d.desc;
+};
+
+/* ── text tag detail ── */
+const tagInfo = {
+  strong: { label:'<strong> — 加粗（语义化，推荐）', desc:'表示该内容具有重要性。搜索引擎会为 strong 包裹的词语赋予更高权重。语义上相当于说："这个词很重要！"' },
+  b:      { label:'<b> — 加粗（无语义，不推荐）',   desc:'仅改变视觉样式（变粗），没有语义含义。除非是特殊排版需求，否则请改用 <strong>。' },
+  em:     { label:'<em> — 倾斜（语义化，推荐）',    desc:'表示强调语气，如口语中的重读词。屏幕阅读器会用特殊语调朗读 em 包裹的内容。' },
+  i:      { label:'<i> — 倾斜（无语义，不推荐）',   desc:'仅改变视觉样式（变斜），没有强调含义。通常用 <em> 代替；<i> 偶尔用于图标（如 Font Awesome）。' },
+  ins:    { label:'<ins> — 下划线（语义化，推荐）',  desc:'表示插入的新内容，常见于文档修订记录。不要用来给文字加装饰性下划线（那用 CSS 做）。' },
+  u:      { label:'<u> — 下划线（无语义，不推荐）',  desc:'仅视觉效果，无语义。因为用户会把带下划线的文字误认为是超链接，请谨慎使用。' },
+  del:    { label:'<del> — 删除线（语义化，推荐）',  desc:'表示已删除或不再有效的内容，常见于价格对比（原价 / 现价）、版本变更记录。' },
+  s:      { label:'<s> — 删除线（无语义，不推荐）',  desc:'仅视觉效果。HTML5 之后建议改用 <del>（有语义）。' },
+  sup:    { label:'<sup> — 上标',                    desc:'将文字显示在基线以上，字号更小。常用于数学幂次（x²）、引用角标（注[1]）。' },
+  sub:    { label:'<sub> — 下标',                    desc:'将文字显示在基线以下，字号更小。常用于化学分子式（H₂O）、数学下标（a₁）。' },
+};
+
+window.showTag = function(key) {
+  const d = tagInfo[key];
+  document.getElementById('tag-detail').innerHTML =
+    '<strong style="color:var(--ink)">' + d.label + '</strong> — ' + d.desc;
+  document.querySelectorAll('.tp-item').forEach(el => el.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+};
+</script>
+</body>
+</html>

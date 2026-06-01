@@ -1,0 +1,175 @@
+<h2 class="sr-only">Interactive CSS attribute selector playground demonstrating seven selector variants and their matching behaviors.</h2>
+
+<style>
+  .as-wrap { font-family: var(--font-sans); color: var(--color-text-primary); padding: 0.5rem 0; }
+  .as-section { margin-bottom: 1.5rem; padding: 1rem 1.25rem; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); }
+  .as-title { font-size: 15px; font-weight: 500; margin: 0 0 4px; color: var(--color-text-primary); }
+  .as-hint { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 12px; line-height: 1.6; }
+  .as-code { font-family: var(--font-mono); font-size: 12px; background: var(--color-background-secondary); padding: 2px 6px; border-radius: 4px; color: var(--color-text-primary); }
+
+  .selector-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .sel-btn { padding: 6px 12px; font-size: 12px; font-family: var(--font-mono); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); border-radius: var(--border-radius-md); color: var(--color-text-primary); cursor: pointer; transition: all .15s; }
+  .sel-btn:hover { background: var(--color-background-secondary); }
+  .sel-btn.active { background: #CECBF6; color: #26215C; border-color: #7F77DD; font-weight: 500; }
+
+  .current-sel { padding: 10px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); font-family: var(--font-mono); font-size: 13px; margin-bottom: 12px; color: var(--color-text-primary); }
+  .sel-desc { font-size: 13px; color: var(--color-text-secondary); margin-top: 6px; font-family: var(--font-sans); }
+
+  .demo-list { display: flex; flex-direction: column; gap: 6px; }
+  .demo-item { padding: 10px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); font-size: 13px; display: flex; justify-content: space-between; align-items: center; transition: all .2s; border-left: 3px solid transparent; }
+  .demo-item .attr-info { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-secondary); }
+  .demo-item.matched { background: #E1F5EE; border-left-color: #1D9E75; color: #04342C; }
+  .demo-item.matched .attr-info { color: #0F6E56; }
+  .match-badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #1D9E75; color: white; font-weight: 500; opacity: 0; transition: opacity .2s; }
+  .demo-item.matched .match-badge { opacity: 1; }
+
+  .form-demo input { width: 100%; padding: 8px 12px; font-size: 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); margin-bottom: 8px; }
+  .form-demo input[type="email"] { border-color: #378ADD; background: #E6F1FB; }
+  .form-demo input[type="password"] { border-color: #D4537E; background: #FBEAF0; }
+  .form-demo input[required] { box-shadow: inset 3px 0 0 #E24B4A; }
+  .form-demo input[disabled] { opacity: 0.5; cursor: not-allowed; background: var(--color-background-secondary); }
+  .form-demo input[readonly] { background: #F1EFE8; color: #5F5E5A; }
+  .form-legend { font-size: 12px; color: var(--color-text-secondary); margin-top: 8px; line-height: 1.8; }
+  .form-legend span { font-family: var(--font-mono); padding: 1px 6px; border-radius: 4px; }
+
+  .link-demo a { display: inline-block; margin: 4px 8px 4px 0; padding: 6px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); color: var(--color-text-primary); text-decoration: none; font-size: 13px; }
+  .link-demo a[href^="https"]::before { content: "🔒 "; }
+  .link-demo a[href^="mailto:"]::before { content: "✉ "; }
+  .link-demo a[href^="tel:"]::before { content: "☎ "; }
+  .link-demo a[href$=".pdf"]::after { content: " (PDF)"; color: #A32D2D; font-size: 11px; }
+  .link-demo a[href$=".zip"]::after { content: " (ZIP)"; color: #BA7517; font-size: 11px; }
+  .link-demo a[href^="http"]:not([href*="example.com"])::after { content: " ↗"; color: #0C447C; }
+</style>
+
+<div class="as-wrap">
+
+  <div class="as-section">
+    <p class="as-title">七种选择器对照试验</p>
+    <p class="as-hint">切换下方按钮，看哪些元素被选中（变绿并显示 matched 标签）。</p>
+
+    <div class="selector-tabs" id="sel-tabs">
+      <button class="sel-btn active" data-sel="all">[data-lang]</button>
+      <button class="sel-btn" data-sel="exact">[data-lang="en"]</button>
+      <button class="sel-btn" data-sel="word">[data-tags~="web"]</button>
+      <button class="sel-btn" data-sel="prefix">[data-lang^="en"]</button>
+      <button class="sel-btn" data-sel="suffix">[data-file$=".js"]</button>
+      <button class="sel-btn" data-sel="contains">[data-file*="util"]</button>
+      <button class="sel-btn" data-sel="dashprefix">[data-lang|="en"]</button>
+    </div>
+
+    <div class="current-sel" id="current-sel">
+      [data-lang]
+      <div class="sel-desc">选中所有带 data-lang 属性的元素，不关心值是什么。</div>
+    </div>
+
+    <div class="demo-list" id="demo-list">
+      <div class="demo-item" data-item data-lang="en" data-tags="web frontend" data-file="app.js">
+        <span>项目 A</span>
+        <span class="attr-info">lang="en" · tags="web frontend" · file="app.js"</span>
+        <span class="match-badge">matched</span>
+      </div>
+      <div class="demo-item" data-item data-lang="en-US" data-tags="mobile native" data-file="utils.js">
+        <span>项目 B</span>
+        <span class="attr-info">lang="en-US" · tags="mobile native" · file="utils.js"</span>
+        <span class="match-badge">matched</span>
+      </div>
+      <div class="demo-item" data-item data-lang="zh-CN" data-tags="web backend" data-file="util-helper.ts">
+        <span>项目 C</span>
+        <span class="attr-info">lang="zh-CN" · tags="web backend" · file="util-helper.ts"</span>
+        <span class="match-badge">matched</span>
+      </div>
+      <div class="demo-item" data-item data-lang="fr" data-tags="design" data-file="index.html">
+        <span>项目 D</span>
+        <span class="attr-info">lang="fr" · tags="design" · file="index.html"</span>
+        <span class="match-badge">matched</span>
+      </div>
+      <div class="demo-item" data-item data-lang="english" data-tags="webapp" data-file="script.js">
+        <span>项目 E</span>
+        <span class="attr-info">lang="english" · tags="webapp" · file="script.js"</span>
+        <span class="match-badge">matched</span>
+      </div>
+      <div class="demo-item" data-item data-tags="data" data-file="chart-util.jsx">
+        <span>项目 F（无 lang）</span>
+        <span class="attr-info">tags="data" · file="chart-util.jsx"</span>
+        <span class="match-badge">matched</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="as-section form-demo">
+    <p class="as-title">表单样式实战：属性选择器取代 class</p>
+    <p class="as-hint">下面所有样式都没用 class，完全靠 <span class="as-code">[type]</span>、<span class="as-code">[required]</span>、<span class="as-code">[disabled]</span>、<span class="as-code">[readonly]</span> 区分。</p>
+    <input type="text" placeholder="普通文本输入框" />
+    <input type="email" placeholder="Email 输入框（蓝色背景）" />
+    <input type="password" placeholder="密码输入框（粉色背景）" />
+    <input type="text" placeholder="必填项（左侧红条）" required />
+    <input type="text" placeholder="禁用状态" disabled value="disabled" />
+    <input type="text" placeholder="只读" readonly value="readonly value" />
+    <div class="form-legend">
+      <span style="background:#E6F1FB; color:#0C447C;">[type="email"]</span> 蓝底 ·
+      <span style="background:#FBEAF0; color:#4B1528;">[type="password"]</span> 粉底 ·
+      <span style="background:#FCEBEB; color:#501313;">[required]</span> 左侧红条
+    </div>
+  </div>
+
+  <div class="as-section link-demo">
+    <p class="as-title">链接装饰：根据 href 自动加图标</p>
+    <p class="as-hint">没有任何 class，图标完全由 <span class="as-code">[href^="..."]</span> 和 <span class="as-code">[href$="..."]</span> 添加。</p>
+    <div>
+      <a href="https://example.com/page">内部 HTTPS</a>
+      <a href="https://anthropic.com">外部 HTTPS</a>
+      <a href="mailto:hi@test.com">邮箱</a>
+      <a href="tel:+1234567890">电话</a>
+      <a href="/docs/guide.pdf">PDF 文档</a>
+      <a href="/files/pack.zip">ZIP 压缩包</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('#sel-tabs .sel-btn');
+  const items = document.querySelectorAll('[data-item]');
+  const currentSel = document.getElementById('current-sel');
+
+  const selectors = {
+    all:         { code: '[data-lang]',           desc: '选中所有带 data-lang 属性的元素，不关心值是什么。' },
+    exact:       { code: '[data-lang="en"]',      desc: '属性值必须完全等于 "en"（不包括 en-US、english）。' },
+    word:        { code: '[data-tags~="web"]',    desc: '属性值按空格分词，其中一个词等于 "web" 即匹配。注意 "webapp" 是整词，不算。' },
+    prefix:      { code: '[data-lang^="en"]',     desc: '属性值以 "en" 开头（匹配 en、en-US、english）。' },
+    suffix:      { code: '[data-file$=".js"]',    desc: '属性值以 ".js" 结尾（不匹配 .jsx、.ts）。' },
+    contains:    { code: '[data-file*="util"]',   desc: '属性值的任意位置包含 "util" 子串。' },
+    dashprefix:  { code: '[data-lang|="en"]',     desc: '属性值等于 "en" 或以 "en-" 开头，专为语言代码设计。' }
+  };
+
+  function matches(item, mode) {
+    const lang = item.getAttribute('data-lang');
+    const tags = item.getAttribute('data-tags') || '';
+    const file = item.getAttribute('data-file') || '';
+    switch (mode) {
+      case 'all':        return item.hasAttribute('data-lang');
+      case 'exact':      return lang === 'en';
+      case 'word':       return tags.split(/\s+/).includes('web');
+      case 'prefix':     return lang && lang.startsWith('en');
+      case 'suffix':     return file.endsWith('.js');
+      case 'contains':   return file.includes('util');
+      case 'dashprefix': return lang === 'en' || (lang && lang.startsWith('en-'));
+    }
+    return false;
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const mode = tab.dataset.sel;
+      const info = selectors[mode];
+      currentSel.innerHTML = info.code + '<div class="sel-desc">' + info.desc + '</div>';
+      items.forEach(item => {
+        item.classList.toggle('matched', matches(item, mode));
+      });
+    });
+  });
+
+  items.forEach(item => item.classList.add('matched'));
+</script>

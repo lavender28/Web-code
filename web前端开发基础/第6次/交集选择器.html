@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>交集选择器</title>
+  <style>
+    p.highlight {
+      background-color: #ff0000;
+      color: blue;
+    }
+
+    p.highlight.active {
+      background-color: #00ff00;
+      color: red;
+    }
+  </style>
+
+</head>
+
+<body>
+  <p class="highlight">段落 + highlight 类</p>
+  <div class="highlight">div + highlight 类</div>
+  <p>只是普通段落</p>
+  <p class="highlight active">段落 + 两个类</p>
+</body>
+
+</html>

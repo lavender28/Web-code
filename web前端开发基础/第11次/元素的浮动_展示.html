@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>元素的浮动</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --paper:      #f5f0e8;
+  --paper-dark: #ede7d9;
+  --paper-mid:  #e8e1d3;
+  --vermilion:  #c0392b;
+  --verm-light: #f5e6e4;
+  --verm-mid:   #e8b4af;
+  --verm-dark:  #922b21;
+  --ink:        #1a1208;
+  --ink-2:      #3d2e1a;
+  --ink-3:      #6b5740;
+  --ink-4:      #9a8470;
+  --ink-5:      #c4b49e;
+  --rule:       #d4c8b4;
+  --rule-dark:  #b8a990;
+  --code-bg:    #1c1917;
+  --code-line:  #292524;
+  --teal:       #0d6e6e;
+  --teal-light: #e0f0f0;
+  --amber:      #92400e;
+  --amber-light:#fef3c7;
+  --green:      #166534;
+  --green-light:#dcfce7;
+  --sidebar-w:  260px;
+  --serif: 'Noto Serif SC', 'SimSun', 'STSong', Georgia, serif;
+  --mono:  'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--serif);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15.5px;
+  line-height: 1.85;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ══ SIDEBAR ══════════════════════════════════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  background: var(--paper-dark);
+  border-right: 2px solid var(--rule-dark);
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--rule-dark);
+  background: var(--paper-mid);
+}
+
+.sidebar-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--vermilion);
+  line-height: 1.35;
+}
+
+.sidebar-sub {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.sidebar-nav { padding: 1.25rem 0; flex: 1; }
+
+.nav-section {
+  padding: 0 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--ink-3);
+  font-family: var(--serif);
+  font-size: 13.5px;
+  line-height: 1.35;
+  transition: all 0.18s;
+  border-left: 3px solid transparent;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: var(--paper-mid);
+  color: var(--ink-2);
+  border-left-color: var(--verm-mid);
+}
+
+.nav-item.active {
+  background: var(--verm-light);
+  color: var(--vermilion);
+  border-left-color: var(--vermilion);
+  font-weight: 600;
+}
+
+.nav-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-5);
+  min-width: 22px;
+  font-weight: 500;
+}
+
+.nav-item.active .nav-num { color: var(--vermilion); opacity: 0.7; }
+
+.sidebar-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--rule);
+  font-size: 11px;
+  color: var(--ink-5);
+  font-style: italic;
+}
+
+/* ══ MAIN CONTENT ═════════════════════════════════ */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Page header ── */
+.page-header {
+  background: var(--ink-2);
+  color: var(--paper);
+  padding: 3.5rem 4rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 4px solid var(--vermilion);
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 280px; height: 280px;
+  border: 40px solid rgba(192,57,43,0.12);
+  border-radius: 50%;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  bottom: -20px; right: 80px;
+  width: 160px; height: 160px;
+  border: 2px solid rgba(192,57,43,0.18);
+  border-radius: 50%;
+}
+
+.page-header h1 {
+  font-family: var(--serif);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #f5f0e8;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  margin-bottom: 0.6rem;
+  position: relative;
+}
+
+.page-header .header-desc {
+  font-size: 14px;
+  color: var(--ink-5);
+  font-style: italic;
+  position: relative;
+}
+
+/* ── Content wrapper ── */
+.content-wrap {
+  max-width: 780px;
+  padding: 3rem 4rem 5rem;
+}
+
+/* ── Chapter section ── */
+.chapter {
+  margin-bottom: 4rem;
+  scroll-margin-top: 24px;
+}
+
+.chapter-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 1.75rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 2px solid var(--rule-dark);
+  position: relative;
+}
+
+.chapter-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 60px; height: 2px;
+  background: var(--vermilion);
+}
+
+.ch-num {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vermilion);
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.ch-title {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.06em;
+}
+
+.ch-hint {
+  font-size: 12px;
+  color: var(--ink-4);
+  font-style: italic;
+  margin-left: auto;
+}
+
+/* ── Body text ── */
+.body-text {
+  color: var(--ink-2);
+  margin-bottom: 1.25rem;
+  text-indent: 2em;
+}
+
+.body-text.no-indent { text-indent: 0; }
+
+/* ── Inline code ── */
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--verm-light);
+  color: var(--verm-dark);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--verm-mid);
+}
+
+/* ── Code block ── */
+.code-block {
+  background: var(--code-bg);
+  border-radius: 6px;
+  margin: 1.25rem 0;
+  box-shadow: 0 6px 24px rgba(26,18,8,0.22), 0 2px 8px rgba(26,18,8,0.12);
+  overflow: hidden;
+  position: relative;
+}
+
+.code-header {
+  background: var(--code-line);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #3c3532;
+}
+
+.code-dots {
+  display: flex; gap: 5px;
+}
+
+.code-dots span {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+
+.code-dots .d1 { background: #ff5f57; }
+.code-dots .d2 { background: #febc2e; }
+.code-dots .d3 { background: #28c840; }
+
+.code-lang {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #6b6563;
+  letter-spacing: 0.08em;
+  margin-left: 4px;
+}
+
+.code-copy {
+  margin-left: auto;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #9a8e88;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.code-copy:hover { background: rgba(255,255,255,0.15); color: #d4c8b4; }
+
+.code-body {
+  padding: 1.25rem 1.5rem;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.9;
+  color: #d4c8b4;
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+.kw  { color: #93c5fd; }
+.prop{ color: #86efac; }
+.val { color: #fca5a5; }
+.cmt { color: #6b6360; font-style: italic; }
+.htag{ color: #c4b5fd; }
+.attr{ color: #fde68a; }
+.str { color: #6ee7b7; }
+
+/* ── Definition block ── */
+.def-block {
+  background: var(--paper-dark);
+  border-left: 3px solid var(--vermilion);
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.def-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--vermilion);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.def-text {
+  font-size: 14.5px;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+
+/* ── Note / Tip boxes ── */
+.note-box {
+  display: flex;
+  gap: 12px;
+  padding: 0.875rem 1.1rem;
+  border-radius: 4px;
+  margin: 1.25rem 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.note-box.warning {
+  background: var(--amber-light);
+  border: 1px solid #d97706;
+  color: var(--amber);
+}
+
+.note-box.info {
+  background: var(--teal-light);
+  border: 1px solid #0d9488;
+  color: var(--teal);
+}
+
+.note-box.success {
+  background: var(--green-light);
+  border: 1px solid #16a34a;
+  color: var(--green);
+}
+
+.note-icon {
+  font-size: 16px;
+  margin-top: 1px;
+  flex-shrink: 0;
+  font-style: normal;
+}
+
+/* ── Table ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 1.25rem 0;
+}
+
+.data-table th {
+  background: var(--paper-mid);
+  padding: 9px 14px;
+  text-align: left;
+  font-family: var(--serif);
+  font-weight: 600;
+  color: var(--ink-2);
+  border-bottom: 2px solid var(--rule-dark);
+  border-top: 1px solid var(--rule-dark);
+  letter-spacing: 0.04em;
+}
+
+.data-table td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  color: var(--ink-2);
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(192,57,43,0.03); }
+.data-table code { font-size: 12px; }
+
+.yes { color: #166534; font-weight: 600; }
+.no  { color: #922b21; font-weight: 600; }
+.part{ color: #92400e; font-weight: 600; }
+
+/* ── Section divider ── */
+.sec-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2rem 0 1.25rem;
+}
+
+.sec-divider-line { flex: 1; height: 1px; background: var(--rule); }
+.sec-divider-text {
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* ══ INTERACTIVE DEMOS ════════════════════════════ */
+.demo-wrap {
+  background: var(--paper-dark);
+  border: 1px solid var(--rule-dark);
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin: 1.25rem 0;
+}
+
+.demo-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.demo-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+/* Pill buttons */
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 1.1rem;
+}
+
+.pill {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 5px 14px;
+  border-radius: 2px;
+  border: 1px solid var(--rule-dark);
+  background: var(--paper);
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: all 0.16s;
+}
+
+.pill:hover { border-color: var(--vermilion); color: var(--verm-dark); }
+.pill.on { background: var(--vermilion); border-color: var(--verm-dark); color: #f5f0e8; }
+
+/* Demo stage */
+.stage {
+  background: var(--paper);
+  border: 1.5px dashed var(--rule-dark);
+  border-radius: 4px;
+  padding: 1rem;
+  min-height: 80px;
+  transition: all 0.3s;
+}
+
+.stage-desc {
+  margin-top: 0.75rem;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-4);
+  padding: 8px 10px;
+  background: var(--paper-mid);
+  border-radius: 3px;
+  border-left: 2px solid var(--vermilion);
+}
+
+/* Type selector cards */
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.type-card {
+  border: 1.5px solid var(--rule-dark);
+  border-radius: 4px;
+  padding: 1.1rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  background: var(--paper);
+}
+
+.type-card:hover { border-color: var(--verm-mid); background: var(--verm-light); }
+
+.type-card.on {
+  border-color: var(--vermilion);
+  background: var(--verm-light);
+  box-shadow: 0 0 0 2px var(--verm-light), 0 0 0 3px var(--vermilion);
+}
+
+.type-glyph {
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  color: var(--vermilion);
+  margin-bottom: 6px;
+}
+
+.type-zh {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.type-en {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-4);
+}
+
+.type-detail {
+  display: none;
+  background: var(--paper);
+  border: 1px solid var(--rule-dark);
+  border-radius: 4px;
+  padding: 1.1rem 1.25rem;
+  animation: fadeUp 0.25s ease;
+}
+
+.type-detail.show { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feat-list { list-style: none; }
+.feat-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 14px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-2);
+}
+.feat-list li:last-child { border-bottom: none; }
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.htag-pill {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  background: var(--paper-mid);
+  border: 1px solid var(--rule-dark);
+  color: var(--verm-dark);
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+
+/* Demo elements */
+.d-el {
+  display: inline;
+  padding: 6px 14px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 3px;
+  color: #f5f0e8;
+  transition: all 0.35s cubic-bezier(0.34,1.4,0.64,1);
+}
+.d-el:nth-child(1) { background: #c0392b; }
+.d-el:nth-child(2) { background: #0d6e6e; }
+.d-el:nth-child(3) { background: #92400e; }
+
+.d-el.as-block { display: block; width: 100%; margin-bottom: 5px; }
+.d-el.as-inline { display: inline; }
+.d-el.as-ib { display: inline-block; width: 120px; height: 40px; line-height: 40px; text-align: center; vertical-align: middle; }
+.d-el.as-none { display: none; }
+
+/* Overflow stage */
+.ov-stage {
+  background: var(--paper);
+  border: 2px solid var(--teal);
+  border-radius: 4px;
+  width: 230px;
+  height: 90px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  overflow: visible;
+  transition: overflow 0s;
+  flex-shrink: 0;
+}
+
+/* Float stage */
+.float-stage {
+  background: var(--paper);
+  border: 1.5px dashed var(--rule-dark);
+  border-radius: 4px;
+  padding: 1rem;
+  min-height: 170px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.fb {
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: 3px;
+  color: #f5f0e8;
+  width: 120px;
+  height: 46px;
+  line-height: 30px;
+  text-align: center;
+  transition: all 0.45s cubic-bezier(0.34,1.3,0.64,1);
+}
+
+.fb1 { background: #c0392b; }
+.fb2 { background: #0d6e6e; }
+.fb3 { background: #92400e; }
+.fb.fn { display: block; float: none; margin-bottom: 5px; }
+.fb.fl { float: left; margin-right: 5px; }
+.fb.fr { float: right; margin-left: 5px; }
+
+/* Principles accordion */
+.acc-item {
+  border: 1px solid var(--rule-dark);
+  border-radius: 3px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+
+.acc-q {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  cursor: pointer;
+  background: var(--paper);
+  transition: background 0.15s;
+  font-size: 14px;
+  font-family: var(--serif);
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.acc-q:hover { background: var(--paper-dark); }
+.acc-item.open .acc-q { background: var(--verm-light); color: var(--verm-dark); }
+
+.acc-n {
+  font-family: var(--mono);
+  font-size: 11px;
+  min-width: 20px;
+  color: var(--vermilion);
+  font-weight: 500;
+}
+
+.acc-arrow {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-5);
+  transition: transform 0.2s;
+}
+
+.acc-item.open .acc-arrow { transform: rotate(180deg); }
+
+.acc-a {
+  display: none;
+  padding: 10px 14px 12px 44px;
+  font-size: 13.5px;
+  color: var(--ink-3);
+  background: var(--verm-light);
+  border-top: 1px solid var(--verm-mid);
+  line-height: 1.7;
+}
+
+.acc-item.open .acc-a { display: block; animation: fadeUp 0.2s ease; }
+
+/* Clear demo */
+.clear-parent {
+  background: #c8c8c8;
+  border: 1.5px dashed #888;
+  border-radius: 4px;
+  padding: 6px;
+  overflow: visible;
+  transition: all 0.4s;
+  min-height: 24px;
+}
+
+.c-box {
+  float: left;
+  width: 72px; height: 38px;
+  line-height: 38px; text-align: center;
+  margin: 6px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 12px; font-weight: 600;
+  color: #fff;
+}
+.c-box.a { background: #4ade80; }
+.c-box.b { background: #22c55e; }
+.c-box.c { background: #16a34a; }
+
+.c-below {
+  background: #c7d2fe;
+  border: 1px dashed #818cf8;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #3730a3;
+  border-radius: 3px;
+  margin-top: 6px;
+  font-family: var(--mono);
+}
+
+/* Method tabs */
+.method-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.m-tab {
+  font-family: var(--serif);
+  font-size: 13px;
+  padding: 5px 14px;
+  border-radius: 2px;
+  border: 1px solid var(--rule-dark);
+  background: var(--paper);
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: all 0.16s;
+}
+
+.m-tab:hover { border-color: var(--teal); color: var(--teal); }
+.m-tab.on { background: var(--teal); border-color: var(--teal); color: #f5f0e8; }
+
+/* ══ SCROLLBAR ════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--paper-dark); }
+::-webkit-scrollbar-thumb { background: var(--rule-dark); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-5); }
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title"><br>元素的浮动</div>
+    <div class="sidebar-sub">HTML5 + CSS3 网页布局</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <a class="nav-item active" onclick="goTo('s1')">
+        <span class="nav-num">01</span>元素的类型
+      </a>
+      <a class="nav-item" onclick="goTo('s2')">
+        <span class="nav-num">02</span>元素类型的转换
+      </a>
+      <a class="nav-item" onclick="goTo('s3')">
+        <span class="nav-num">03</span>overflow 属性
+      </a>
+      <a class="nav-item" onclick="goTo('s4')">
+        <span class="nav-num">04</span>元素的浮动
+      </a>
+      <a class="nav-item" onclick="goTo('s5')">
+        <span class="nav-num">05</span>清除浮动
+      </a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">点击目录项跳转对应知识点</div>
+</aside>
+
+<!-- ══ MAIN ══════════════════════════════════════════ -->
+<main class="main">
+
+  <header class="page-header">
+    <h1>元素的浮动</h1>
+    <div class="header-desc">掌握浮动布局的核心技术，理解文档流与脱流的本质差异</div>
+  </header>
+
+  <div class="content-wrap">
+
+    <!-- ══ S1: 元素的类型 ══ -->
+    <section class="chapter" id="s1">
+      <div class="chapter-header">
+        <span class="ch-num">§ 01</span>
+        <span class="ch-title">元素的类型</span>
+        <span class="ch-hint">点击卡片展开详情</span>
+      </div>
+
+      <p class="body-text">HTML 标签按照显示方式被划分为三种类型。理解各类型的特点，是学习浮动与布局的基础前提。</p>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 三种元素类型</div>
+        <div class="type-grid">
+          <div class="type-card" id="tc-inline" onclick="showType('inline')">
+            <div class="type-glyph">&lt;a&gt;</div>
+            <div class="type-zh">行内元素</div>
+            <div class="type-en">inline</div>
+          </div>
+          <div class="type-card" id="tc-block" onclick="showType('block')">
+            <div class="type-glyph">▬</div>
+            <div class="type-zh">块元素</div>
+            <div class="type-en">block</div>
+          </div>
+          <div class="type-card" id="tc-iblock" onclick="showType('iblock')">
+            <div class="type-glyph">⊞</div>
+            <div class="type-zh">行内块元素</div>
+            <div class="type-en">inline-block</div>
+          </div>
+        </div>
+
+        <div class="type-detail" id="detail-inline">
+          <div style="font-family:var(--serif);font-weight:700;color:var(--vermilion);margin-bottom:10px">行内元素（inline）</div>
+          <ul class="feat-list">
+            <li><span class="no">✗</span> 不独占一行，与相邻行内元素排在同一行</li>
+            <li><span class="no">✗</span> 完全不支持盒子模型，无法设置宽度、高度、对齐</li>
+            <li><span class="yes">✓</span> 宽高由内容本身决定，内容多宽就占多宽</li>
+          </ul>
+          <div style="margin-top:10px;font-size:12.5px;color:var(--ink-4);margin-bottom:6px">常见标签：</div>
+          <div class="tag-row">
+            <span class="htag-pill">&lt;span&gt;</span><span class="htag-pill">&lt;a&gt;</span>
+            <span class="htag-pill">&lt;strong&gt;</span><span class="htag-pill">&lt;em&gt;</span>
+            <span class="htag-pill">&lt;i&gt;</span><span class="htag-pill">&lt;u&gt;</span>
+            <span class="htag-pill">&lt;s&gt;</span><span class="htag-pill">&lt;del&gt;</span>
+          </div>
+        </div>
+        <div class="type-detail" id="detail-block">
+          <div style="font-family:var(--serif);font-weight:700;color:var(--vermilion);margin-bottom:10px">块元素（block）</div>
+          <ul class="feat-list">
+            <li><span class="yes">✓</span> 独占一行或多行，默认宽度 100%</li>
+            <li><span class="yes">✓</span> 完全支持盒子模型，可自由设置宽高、内外边距</li>
+            <li><span class="yes">✓</span> 可包含行内元素和其他块元素</li>
+          </ul>
+          <div style="margin-top:10px;font-size:12.5px;color:var(--ink-4);margin-bottom:6px">常见标签：</div>
+          <div class="tag-row">
+            <span class="htag-pill">&lt;div&gt;</span><span class="htag-pill">&lt;h1~h6&gt;</span>
+            <span class="htag-pill">&lt;p&gt;</span><span class="htag-pill">&lt;ul&gt;</span>
+            <span class="htag-pill">&lt;ol&gt;</span><span class="htag-pill">&lt;li&gt;</span>
+            <span class="htag-pill">&lt;header&gt;</span><span class="htag-pill">&lt;footer&gt;</span>
+          </div>
+        </div>
+        <div class="type-detail" id="detail-iblock">
+          <div style="font-family:var(--serif);font-weight:700;color:var(--vermilion);margin-bottom:10px">行内块元素（inline-block）</div>
+          <ul class="feat-list">
+            <li><span class="no">✗</span> 不独占一行（像行内元素）</li>
+            <li><span class="yes">✓</span> 可设置宽高、对齐等属性（像块元素）</li>
+            <li><span class="part">△</span> 支持部分盒子模型</li>
+          </ul>
+          <div style="margin-top:10px;font-size:12.5px;color:var(--ink-4);margin-bottom:6px">常见标签：</div>
+          <div class="tag-row">
+            <span class="htag-pill">&lt;img&gt;</span><span class="htag-pill">&lt;input&gt;</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-divider">
+        <div class="sec-divider-line"></div>
+        <div class="sec-divider-text">三种类型对比</div>
+        <div class="sec-divider-line"></div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>特性</th>
+            <th style="color:var(--teal)">行内元素</th>
+            <th style="color:var(--vermilion)">块元素</th>
+            <th style="color:var(--amber)">行内块元素</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>是否独占一行</td>
+            <td class="no">✗ 否</td>
+            <td class="yes">✓ 是</td>
+            <td class="no">✗ 否</td>
+          </tr>
+          <tr>
+            <td>可否设置宽高</td>
+            <td class="no">✗ 不可</td>
+            <td class="yes">✓ 完全支持</td>
+            <td class="yes">✓ 支持</td>
+          </tr>
+          <tr>
+            <td>盒子模型支持</td>
+            <td class="no">✗ 不支持</td>
+            <td class="yes">✓ 完全支持</td>
+            <td class="part">△ 部分支持</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══ S2: display ══ -->
+    <section class="chapter" id="s2">
+      <div class="chapter-header">
+        <span class="ch-num">§ 02</span>
+        <span class="ch-title">元素类型的转换</span>
+        <span class="ch-hint">切换按钮实时预览</span>
+      </div>
+
+      <p class="body-text">实际开发中，有时需要改变元素的默认类型：例如让 <code>&lt;a&gt;</code> 标签可以设置宽高，或让 <code>&lt;div&gt;</code> 不独占一行。可使用 <code>display</code> 属性进行转换。</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">css</span>
+          <button class="code-copy" onclick="copyCode(this)">复制</button>
+        </div>
+        <div class="code-body"><span class="kw">选择器</span> { <span class="prop">display</span>: <span class="val">inline</span> | <span class="val">block</span> | <span class="val">inline-block</span> | <span class="val">none</span>; }</div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>属性值</th><th>效果</th><th>典型应用场景</th></tr></thead>
+        <tbody>
+          <tr><td><code>inline</code></td><td>转换为行内元素，不可设宽高</td><td>让 &lt;div&gt; 不独占一行</td></tr>
+          <tr><td><code>block</code></td><td>转换为块元素，独占一行</td><td>让 &lt;a&gt; 可以设置宽高</td></tr>
+          <tr><td><code>inline-block</code></td><td>行内排列且可设宽高</td><td>导航菜单项横向排列</td></tr>
+          <tr><td><code>none</code></td><td>隐藏元素，不占页面空间</td><td>切换显示与隐藏状态</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 切换 display 值</div>
+        <div class="pill-group">
+          <button class="pill on" onclick="setDisp('inline',this)">display: inline</button>
+          <button class="pill" onclick="setDisp('block',this)">display: block</button>
+          <button class="pill" onclick="setDisp('ib',this)">display: inline-block</button>
+          <button class="pill" onclick="setDisp('none',this)">display: none</button>
+        </div>
+        <div class="stage" id="disp-stage">
+          <span class="d-el as-inline" id="de1">元素 A</span>
+          <span class="d-el as-inline" id="de2">元素 B</span>
+          <span class="d-el as-inline" id="de3">元素 C</span>
+        </div>
+        <div class="stage-desc" id="disp-desc">inline — 三个元素在同一行排列，无法设置宽高</div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <span>行内元素只可以定义左右外边距，上下边距设置无效。需要上下间距时，应先将其转换为块或行内块元素。</span>
+      </div>
+    </section>
+
+    <!-- ══ S3: overflow ══ -->
+    <section class="chapter" id="s3">
+      <div class="chapter-header">
+        <span class="ch-num">§ 03</span>
+        <span class="ch-title">overflow 属性</span>
+        <span class="ch-hint">控制内容溢出的显示方式</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text">当盒子内的内容超出盒子设定的大小时，就会产生<strong>溢出现象</strong>。<code>overflow</code> 属性用于规定溢出内容的显示状态。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">css</span>
+          <button class="code-copy" onclick="copyCode(this)">复制</button>
+        </div>
+        <div class="code-body"><span class="kw">选择器</span> { <span class="prop">overflow</span>: <span class="val">visible</span> | <span class="val">hidden</span> | <span class="val">scroll</span> | <span class="val">auto</span>; }</div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>属性值</th><th>效果</th><th>适用场景</th></tr></thead>
+        <tbody>
+          <tr><td><code>visible</code></td><td>内容显示在盒子框外（默认值）</td><td>不处理溢出</td></tr>
+          <tr><td><code>hidden</code></td><td>超出内容被隐藏裁剪</td><td>图片裁切、清除浮动</td></tr>
+          <tr><td><code>scroll</code></td><td>始终显示滚动条</td><td>固定高度的内容区域</td></tr>
+          <tr><td><code>auto</code></td><td>有溢出才出现滚动条</td><td>内容不确定的区域</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 切换 overflow 值</div>
+        <div class="pill-group">
+          <button class="pill on" onclick="setOv('visible',this)">visible</button>
+          <button class="pill" onclick="setOv('hidden',this)">hidden</button>
+          <button class="pill" onclick="setOv('scroll',this)">scroll</button>
+          <button class="pill" onclick="setOv('auto',this)">auto</button>
+        </div>
+        <div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap">
+          <div>
+            <div style="font-size:11px;color:var(--ink-4);margin-bottom:6px;font-family:var(--mono)">盒子（固定 230×90px）：</div>
+            <div class="ov-stage" id="ov-stage">这是一段较长的内容文字。当内容超出盒子固定的高度时，overflow 属性决定如何处理溢出的部分。切换上方按钮观察效果变化。</div>
+          </div>
+          <div style="flex:1;min-width:180px">
+            <div id="ov-desc" style="font-family:var(--serif);font-size:13.5px;color:var(--ink-3);padding:12px;background:var(--paper);border:1px solid var(--rule-dark);border-radius:4px;line-height:1.75">
+              <strong style="color:var(--teal)">visible（默认）</strong><br>
+              内容超出盒子后直接显示在外部，不做任何裁剪。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span><code>overflow: hidden</code> 除裁剪溢出内容外，还会触发 BFC（块级格式化上下文），可用于清除父元素的高度塌陷问题，详见知识点 §05。</span>
+      </div>
+    </section>
+
+    <!-- ══ S4: float ══ -->
+    <section class="chapter" id="s4">
+      <div class="chapter-header">
+        <span class="ch-num">§ 04</span>
+        <span class="ch-title">元素的浮动</span>
+        <span class="ch-hint">改变文档流，实现横向排列</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text"><strong>浮动</strong>：改变普通文档流的排列方式，使块元素可以在同一行中排列，让网页布局更加灵活方便。设置了浮动属性的元素将脱离标准文档流的控制，移动到父元素内指定方向的位置。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">css</span>
+          <button class="code-copy" onclick="copyCode(this)">复制</button>
+        </div>
+        <div class="code-body"><span class="kw">选择器</span> { <span class="prop">float</span>: <span class="val">none</span> | <span class="val">left</span> | <span class="val">right</span>; }</div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>属性值</th><th>效果</th></tr></thead>
+        <tbody>
+          <tr><td><code>none</code></td><td>默认值，元素不浮动，按文档流排列</td></tr>
+          <tr><td><code>left</code></td><td>元素向左浮动，脱离文档流</td></tr>
+          <tr><td><code>right</code></td><td>元素向右浮动，脱离文档流</td></tr>
+        </tbody>
+      </table>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · float 三种状态</div>
+        <div class="pill-group">
+          <button class="pill on" onclick="setFl('none',this)">float: none</button>
+          <button class="pill" onclick="setFl('left',this)">float: left</button>
+          <button class="pill" onclick="setFl('right',this)">float: right</button>
+        </div>
+        <div class="float-stage" id="fl-stage">
+          <div class="fb fb1 fn" id="fb1">box1</div>
+          <div class="fb fb2 fn" id="fb2">box2</div>
+          <div class="fb fb3 fn" id="fb3">box3</div>
+          <div style="clear:both"></div>
+        </div>
+        <div class="stage-desc" id="fl-desc">none — 三个 div 按文档流从上到下排列，各占一行</div>
+      </div>
+
+      <div class="sec-divider">
+        <div class="sec-divider-line"></div>
+        <div class="sec-divider-text">浮动的四条核心原则</div>
+        <div class="sec-divider-line"></div>
+      </div>
+
+      <div style="margin-bottom:1.25rem">
+        <div class="acc-item" onclick="toggleAcc(this)">
+          <div class="acc-q"><span class="acc-n">01</span>有浮动属性的元素一定会移动，但未必改变原来的位置<span class="acc-arrow">▾</span></div>
+          <div class="acc-a">若父容器足够宽，浮动元素视觉上可能仍在原位，但已脱离文档流，后续元素排布已受影响。</div>
+        </div>
+        <div class="acc-item" onclick="toggleAcc(this)">
+          <div class="acc-q"><span class="acc-n">02</span>有浮动属性的元素会脱离原有文档流<span class="acc-arrow">▾</span></div>
+          <div class="acc-a">脱离文档流后，元素不再占据原来的位置，后面的非浮动元素会"填上来"取代其位置，但文字内容会环绕浮动元素显示。</div>
+        </div>
+        <div class="acc-item" onclick="toggleAcc(this)">
+          <div class="acc-q"><span class="acc-n">03</span>若上一行无浮动元素，下一行浮动元素无法上移<span class="acc-arrow">▾</span></div>
+          <div class="acc-a">浮动元素只能在同一行内横向移动，遇到上方无浮动元素时，无法跨行向上浮动。</div>
+        </div>
+        <div class="acc-item" onclick="toggleAcc(this)">
+          <div class="acc-q"><span class="acc-n">04</span>非浮动元素会忽略前面的浮动元素并取代其位置<span class="acc-arrow">▾</span></div>
+          <div class="acc-a">非浮动元素的盒子边框会延伸到浮动元素下方，产生"文字环绕"效果。这也是造成父元素高度塌陷的根本原因。</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">css · 示例：三个 div 左浮动</span>
+          <button class="code-copy" onclick="copyCode(this)">复制</button>
+        </div>
+        <div class="code-body">
+          <span class="htag">#box1</span> { <span class="prop">background-color</span>: <span class="val">red</span>;   <span class="prop">float</span>: <span class="val">left</span>; }<br>
+          <span class="htag">#box2</span> { <span class="prop">background-color</span>: <span class="val">blue</span>;  <span class="prop">float</span>: <span class="val">left</span>; }<br>
+          <span class="htag">#box3</span> { <span class="prop">background-color</span>: <span class="val">green</span>; <span class="prop">float</span>: <span class="val">left</span>; }
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ S5: clear ══ -->
+    <section class="chapter" id="s5">
+      <div class="chapter-header">
+        <span class="ch-num">§ 05</span>
+        <span class="ch-title">清除浮动</span>
+        <span class="ch-hint">避免浮动对其他元素的影响</span>
+      </div>
+
+      <p class="body-text">浮动元素脱离文档流后，不再占据原来的位置，会对后面相邻的固定元素造成位置上的影响。为避免浮动对其他元素的干扰，需要清除浮动。</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">css</span>
+          <button class="code-copy" onclick="copyCode(this)">复制</button>
+        </div>
+        <div class="code-body"><span class="kw">选择器</span> { <span class="prop">clear</span>: <span class="val">left</span> | <span class="val">right</span> | <span class="val">both</span>; }</div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>属性值</th><th>效果</th></tr></thead>
+        <tbody>
+          <tr><td><code>left</code></td><td>清除左浮动的影响</td></tr>
+          <tr><td><code>right</code></td><td>清除右浮动的影响</td></tr>
+          <tr><td><code>both</code></td><td>同时清除左右两侧浮动影响（最常用）</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <span><code>clear</code> 只能清除<strong>兄弟元素</strong>之间的浮动影响。当父元素内的子元素全部浮动时，父元素高度变为 0（高度塌陷），<code>clear</code> 属性无法直接解决，需用下列专门方法。</span>
+      </div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 高度塌陷与清除方法对比</div>
+        <div class="method-tabs">
+          <button class="m-tab on" onclick="setMethod('none',this)">未清除（塌陷）</button>
+          <button class="m-tab" onclick="setMethod('empty',this)">方法一：空标记</button>
+          <button class="m-tab" onclick="setMethod('overflow',this)">方法二：overflow</button>
+        </div>
+        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start">
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:11px;color:var(--ink-4);margin-bottom:5px;font-family:var(--mono)">父元素（灰色虚线框）：</div>
+            <div class="clear-parent" id="clr-stage">
+              <div class="c-box a">box1</div>
+              <div class="c-box b">box2</div>
+              <div class="c-box c">box3</div>
+              <div id="clr-extra"></div>
+            </div>
+            <div class="c-below">父元素下方的普通内容区域</div>
+          </div>
+          <div style="flex:1;min-width:180px">
+            <div id="clr-desc" style="font-family:var(--serif);font-size:13.5px;color:var(--ink-3);padding:12px;background:var(--paper);border:1px solid var(--rule-dark);border-radius:4px;line-height:1.75">
+              <strong style="color:var(--vermilion)">问题：高度塌陷</strong><br>子元素全部浮动后，父元素高度变为 0，无法正常包裹内容。
+            </div>
+          </div>
+        </div>
+        <div id="clr-code" style="margin-top:1rem"></div>
+      </div>
+
+      <div class="sec-divider">
+        <div class="sec-divider-line"></div>
+        <div class="sec-divider-text">两种清除方法说明</div>
+        <div class="sec-divider-line"></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.25rem">
+        <div style="background:var(--paper-dark);border:1px solid var(--rule-dark);border-radius:4px;padding:1.1rem">
+          <div style="font-family:var(--serif);font-weight:700;color:var(--teal);margin-bottom:6px">方法一：空标记法</div>
+          <div style="font-size:13.5px;color:var(--ink-2);margin-bottom:8px">在浮动子元素<strong>后面</strong>添加空的块元素，并设置 <code>clear: left</code>，父元素高度恢复正常。</div>
+          <div style="font-family:var(--mono);font-size:11.5px;color:var(--ink-4)">✓ 效果直观 &nbsp;&nbsp;✗ 增加无意义标签</div>
+        </div>
+        <div style="background:var(--paper-dark);border:1px solid var(--rule-dark);border-radius:4px;padding:1.1rem">
+          <div style="font-family:var(--serif);font-weight:700;color:var(--teal);margin-bottom:6px">方法二：overflow: hidden</div>
+          <div style="font-size:13.5px;color:var(--ink-2);margin-bottom:8px">对<strong>父元素</strong>设置 <code>overflow: hidden</code>，触发 BFC，自动包含浮动子元素。</div>
+          <div style="font-family:var(--mono);font-size:11.5px;color:var(--ink-4)">✓ 代码简洁 &nbsp;&nbsp;✗ 子元素超出会被裁剪</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">html + css · 方法一：空标记</span>
+          <button class="code-copy" onclick="copyCode(this)">复制</button>
+        </div>
+        <div class="code-body"><span class="htag">.box4</span> { <span class="prop">clear</span>: <span class="val">left</span>; } <span class="cmt">/* 空标记样式 */</span>
+
+<span class="htag">&lt;div</span> <span class="attr">class</span>=<span class="str">"father"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;div</span> <span class="attr">class</span>=<span class="str">"box1"</span><span class="htag">&gt;</span>box1<span class="htag">&lt;/div&gt;</span>
+  <span class="htag">&lt;div</span> <span class="attr">class</span>=<span class="str">"box2"</span><span class="htag">&gt;</span>box2<span class="htag">&lt;/div&gt;</span>
+  <span class="htag">&lt;div</span> <span class="attr">class</span>=<span class="str">"box3"</span><span class="htag">&gt;</span>box3<span class="htag">&lt;/div&gt;</span>
+  <span class="htag">&lt;div</span> <span class="attr">class</span>=<span class="str">"box4"</span><span class="htag">&gt;&lt;/div&gt;</span>  <span class="cmt">&lt;!-- 空标记 --&gt;</span>
+<span class="htag">&lt;/div&gt;</span></div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="code-lang">css · 方法二：overflow: hidden</span>
+          <button class="code-copy" onclick="copyCode(this)">复制</button>
+        </div>
+        <div class="code-body"><span class="htag">.father</span> {
+  <span class="prop">background-color</span>: <span class="val">#c0c0c0</span>;
+  <span class="prop">overflow</span>: <span class="val">hidden</span>; <span class="cmt">/* 关键：加在父元素上，触发 BFC */</span>
+}</div>
+      </div>
+    </section>
+
+  </div><!-- /content-wrap -->
+</main>
+
+<script>
+const navItems = document.querySelectorAll('.nav-item');
+const sections = ['s1','s2','s3','s4','s5'];
+
+function goTo(id) {
+  document.getElementById(id).scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+window.addEventListener('scroll', () => {
+  let cur = 0;
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 80) cur = i;
+  });
+  navItems.forEach(n => n.classList.remove('active'));
+  navItems[cur].classList.add('active');
+}, { passive: true });
+
+/* ── Type cards ── */
+function showType(t) {
+  ['inline','block','iblock'].forEach(k => {
+    document.getElementById('detail-'+k).classList.remove('show');
+    document.getElementById('tc-'+k).classList.remove('on');
+  });
+  document.getElementById('detail-'+t).classList.add('show');
+  document.getElementById('tc-'+t).classList.add('on');
+}
+
+/* ── Display demo ── */
+const dispMap = {
+  inline:   ['as-inline','as-inline','as-inline','inline — 三个元素在同一行排列，无法设置宽高'],
+  block:    ['as-block','as-block','as-block','block — 每个元素独占一整行'],
+  ib:       ['as-ib','as-ib','as-ib','inline-block — 并排显示，同时可设置宽高（120×40px）'],
+  none:     ['as-none','as-none','as-none','none — 元素被完全隐藏，不占任何页面空间']
+};
+
+function setDisp(val, btn) {
+  document.querySelectorAll('.pill-group .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const d = dispMap[val];
+  ['de1','de2','de3'].forEach((id,i) => document.getElementById(id).className = 'd-el '+d[i]);
+  document.getElementById('disp-desc').textContent = d[3];
+}
+
+/* ── Overflow demo ── */
+const ovMap = {
+  visible: ['<strong style="color:var(--teal)">visible（默认）</strong><br>内容超出盒子后直接显示在外部，不做任何裁剪。', 'visible'],
+  hidden:  ['<strong style="color:var(--teal)">hidden</strong><br>超出部分被裁剪隐藏，盒子外看不到溢出内容。', 'hidden'],
+  scroll:  ['<strong style="color:var(--teal)">scroll</strong><br>无论是否溢出，始终显示滚动条。', 'scroll'],
+  auto:    ['<strong style="color:var(--teal)">auto</strong><br>没有溢出正常显示，有溢出时自动出现滚动条。', 'auto'],
+};
+
+function setOv(val, btn) {
+  document.querySelectorAll('.pill-group .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('ov-stage').style.overflow = val;
+  document.getElementById('ov-desc').innerHTML = ovMap[val][0];
+}
+
+/* ── Float demo ── */
+const flMap = {
+  none:  ['fn','fn','fn','none — 三个 div 按文档流从上到下排列，各占一行'],
+  left:  ['fl','fl','fl','float: left — 三个 div 脱离文档流，从左向右依次横向排列'],
+  right: ['fr','fr','fr','float: right — 三个 div 从右向左依次排列（视觉顺序反转）'],
+};
+
+function setFl(val, btn) {
+  document.querySelectorAll('.pill-group .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const d = flMap[val];
+  ['fb1','fb2','fb3'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    el.className = 'fb ' + el.classList[1] + ' ' + d[i];
+  });
+  document.getElementById('fl-desc').textContent = d[3];
+}
+
+/* ── Accordion ── */
+function toggleAcc(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.acc-item').forEach(a => a.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+/* ── Clear method ── */
+const mDescs = {
+  none:     '<strong style="color:var(--vermilion)">问题：高度塌陷</strong><br>子元素全部浮动后，父元素高度变为 0，无法正常包裹内容。',
+  empty:    '<strong style="color:var(--teal)">方法一：空标记法</strong><br>在浮动子元素后添加空 div 并设置 clear: left，父元素高度恢复正常。',
+  overflow: '<strong style="color:var(--teal)">方法二：overflow: hidden</strong><br>父元素设 overflow: hidden 触发 BFC，高度恢复正常，无需额外标签。',
+};
+
+function setMethod(val, btn) {
+  document.querySelectorAll('.m-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const stage = document.getElementById('clr-stage');
+  const extra = document.getElementById('clr-extra');
+  stage.style.overflow = val === 'overflow' ? 'hidden' : 'visible';
+  extra.innerHTML = val === 'empty' ? '<div style="clear:left;height:0"></div>' : '';
+  document.getElementById('clr-desc').innerHTML = mDescs[val];
+}
+
+/* ── Copy code ── */
+function copyCode(btn) {
+  const body = btn.closest('.code-block').querySelector('.code-body');
+  const text = body.innerText.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '已复制';
+    setTimeout(() => btn.textContent = '复制', 1600);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>盒子模型及应用 · CSS教学讲义</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================
+       CSS CUSTOM PROPERTIES — THEME
+       ============================================ */
+    :root {
+      --bg-deep:      #0b1120;
+      --bg-mid:       #111d35;
+      --bg-card:      #162040;
+      --bg-code:      #0d1625;
+      --accent-teal:  #00d4aa;
+      --accent-amber: #f5a623;
+      --accent-coral: #ff6b6b;
+      --accent-blue:  #4a9eff;
+      --text-bright:  #e8f4ff;
+      --text-mid:     #8baabf;
+      --text-dim:     #4a6380;
+      --border-line:  rgba(0, 212, 170, 0.2);
+      --font-display: 'Noto Serif SC', serif;
+      --font-body:    'Noto Sans SC', sans-serif;
+      --font-code:    'JetBrains Mono', monospace;
+
+      /* Viewport-fitted sizes */
+      --title-size:    clamp(1.6rem, 4.5vw, 3.6rem);
+      --h2-size:       clamp(1.1rem, 2.8vw, 2rem);
+      --h3-size:       clamp(0.95rem, 2vw, 1.4rem);
+      --body-size:     clamp(0.72rem, 1.3vw, 1rem);
+      --small-size:    clamp(0.62rem, 1vw, 0.82rem);
+      --code-size:     clamp(0.6rem, 1.1vw, 0.78rem);
+      --slide-padding: clamp(1.2rem, 4vw, 3.5rem);
+      --content-gap:   clamp(0.5rem, 1.5vw, 1.4rem);
+      --ease-expo:     cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ============================================
+       BASE RESET
+       ============================================ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ============================================
+       VIEWPORT BASE (from viewport-base.css)
+       ============================================ */
+    html, body { height: 100%; overflow-x: hidden; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: var(--bg-deep);
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-height: 100%;
+      overflow: hidden;
+      padding: var(--slide-padding);
+    }
+
+    /* ============================================
+       BACKGROUND LAYERS
+       ============================================ */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,170,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,170,0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .slide > * { position: relative; z-index: 1; }
+
+    /* Accent glow blob */
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-teal  { background: radial-gradient(ellipse, rgba(0,212,170,0.18) 0%, transparent 70%); }
+    .glow-amber { background: radial-gradient(ellipse, rgba(245,166,35,0.15) 0%, transparent 70%); }
+    .glow-blue  { background: radial-gradient(ellipse, rgba(74,158,255,0.15) 0%, transparent 70%); }
+
+    /* ============================================
+       PROGRESS BAR
+       ============================================ */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-teal), var(--accent-blue));
+      z-index: 9999;
+      transition: width 0.3s ease;
+    }
+
+    /* ============================================
+       NAV DOTS
+       ============================================ */
+    .nav-dots {
+      position: fixed;
+      right: clamp(0.8rem, 2vw, 1.5rem);
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(5px, 0.8vh, 9px);
+      z-index: 9000;
+    }
+    .nav-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .nav-dot.active {
+      background: var(--accent-teal);
+      box-shadow: 0 0 8px var(--accent-teal);
+      transform: scale(1.4);
+    }
+
+    /* ============================================
+       SLIDE NUMBER
+       ============================================ */
+    .slide-num {
+      position: absolute;
+      bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+      left: var(--slide-padding);
+      font-family: var(--font-code);
+      font-size: var(--small-size);
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+
+    /* ============================================
+       ANIMATION — REVEAL
+       ============================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .reveal:nth-child(2) { transition-delay: 0.15s; }
+    .reveal:nth-child(3) { transition-delay: 0.25s; }
+    .reveal:nth-child(4) { transition-delay: 0.35s; }
+    .reveal:nth-child(5) { transition-delay: 0.42s; }
+    .reveal:nth-child(6) { transition-delay: 0.49s; }
+    .reveal:nth-child(7) { transition-delay: 0.56s; }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-32px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal-left { opacity: 1; transform: translateX(0); }
+
+    /* ============================================
+       TYPOGRAPHY
+       ============================================ */
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--title-size);
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.25;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: var(--h2-size);
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.3;
+    }
+    h3 {
+      font-family: var(--font-body);
+      font-size: var(--h3-size);
+      font-weight: 500;
+      color: var(--accent-teal);
+      line-height: 1.4;
+    }
+    p, li {
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      color: var(--text-mid);
+      line-height: 1.7;
+    }
+    .accent-teal  { color: var(--accent-teal); }
+    .accent-amber { color: var(--accent-amber); }
+    .accent-coral { color: var(--accent-coral); }
+    .accent-blue  { color: var(--accent-blue); }
+    .text-bright  { color: var(--text-bright); }
+
+    /* ============================================
+       SECTION LABEL (top-left tag)
+       ============================================ */
+    .section-tag {
+      font-family: var(--font-code);
+      font-size: var(--small-size);
+      color: var(--accent-teal);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      margin-bottom: clamp(0.5rem, 1.2vh, 1rem);
+    }
+    .section-tag::before {
+      content: '';
+      display: inline-block;
+      width: 1.8em; height: 1px;
+      background: var(--accent-teal);
+    }
+
+    /* ============================================
+       DIVIDER LINE
+       ============================================ */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent-teal), transparent);
+      margin: clamp(0.5rem, 1vh, 0.9rem) 0;
+    }
+
+    /* ============================================
+       CODE BLOCK
+       ============================================ */
+    .code-block {
+      background: var(--bg-code);
+      border: 1px solid var(--border-line);
+      border-radius: 8px;
+      padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.5vw, 1.2rem);
+      font-family: var(--font-code);
+      font-size: var(--code-size);
+      color: #a8d8b0;
+      line-height: 1.6;
+      overflow: hidden;
+      position: relative;
+    }
+    .code-block .kw  { color: #c792ea; }
+    .code-block .prop{ color: #82aaff; }
+    .code-block .val { color: #f78c6c; }
+    .code-block .str { color: #c3e88d; }
+    .code-block .cmt { color: #546e7a; font-style: italic; }
+    .code-block .num { color: #f78c6c; }
+    .code-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--accent-teal);
+      border-radius: 8px 0 0 8px;
+    }
+
+    /* Inline code */
+    code {
+      font-family: var(--font-code);
+      font-size: 0.88em;
+      background: rgba(0,212,170,0.1);
+      border: 1px solid rgba(0,212,170,0.2);
+      border-radius: 3px;
+      padding: 0.05em 0.35em;
+      color: var(--accent-teal);
+    }
+
+    /* ============================================
+       INFO CARD
+       ============================================ */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-line);
+      border-radius: 10px;
+      padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.5vw, 1.2rem);
+    }
+    .card-amber { border-left: 3px solid var(--accent-amber); }
+    .card-coral { border-left: 3px solid var(--accent-coral); }
+    .card-blue  { border-left: 3px solid var(--accent-blue); }
+    .card-teal  { border-left: 3px solid var(--accent-teal); }
+
+    /* ============================================
+       GRID LAYOUTS
+       ============================================ */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(0.6rem, 1.5vw, 1.2rem);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: clamp(0.5rem, 1.2vw, 1rem);
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: clamp(0.4rem, 1vw, 0.8rem);
+    }
+    .col-span-2 { grid-column: span 2; }
+
+    /* ============================================
+       BULLET LIST
+       ============================================ */
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.3rem, 0.8vh, 0.7rem);
+    }
+    .bullet-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6em;
+    }
+    .bullet-list li::before {
+      content: '▸';
+      color: var(--accent-teal);
+      flex-shrink: 0;
+      margin-top: 0.1em;
+    }
+
+    /* ============================================
+       TABLE
+       ============================================ */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-body);
+      font-size: var(--small-size);
+    }
+    .data-table th {
+      background: rgba(0,212,170,0.12);
+      color: var(--accent-teal);
+      font-weight: 600;
+      padding: clamp(0.3rem, 0.6vh, 0.5rem) clamp(0.5rem, 1vw, 0.8rem);
+      text-align: left;
+      border-bottom: 1px solid var(--border-line);
+      font-family: var(--font-code);
+      letter-spacing: 0.05em;
+    }
+    .data-table td {
+      padding: clamp(0.25rem, 0.5vh, 0.45rem) clamp(0.5rem, 1vw, 0.8rem);
+      border-bottom: 1px solid rgba(0,212,170,0.06);
+      color: var(--text-mid);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { color: var(--accent-amber); font-family: var(--font-code); }
+
+    /* ============================================
+       BOX MODEL DIAGRAM
+       ============================================ */
+    .box-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .box-layer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      position: relative;
+    }
+    .layer-margin  { background: rgba(245,166,35,0.08); border: 1px dashed rgba(245,166,35,0.4); }
+    .layer-border  { background: rgba(255,107,107,0.1); border: 2px solid rgba(255,107,107,0.5); }
+    .layer-padding { background: rgba(74,158,255,0.08); border: 1px dashed rgba(74,158,255,0.4); }
+    .layer-content { background: rgba(0,212,170,0.15);  border: 2px solid rgba(0,212,170,0.6); }
+
+    .box-label {
+      position: absolute;
+      font-family: var(--font-code);
+      font-size: clamp(0.52rem, 0.85vw, 0.72rem);
+      white-space: nowrap;
+    }
+
+    /* ============================================
+       RESPONSIVE BREAKPOINTS
+       ============================================ */
+    @media (max-height: 700px) {
+      :root {
+        --slide-padding: clamp(0.8rem, 3vw, 2rem);
+        --content-gap:   clamp(0.3rem, 1vw, 0.8rem);
+        --title-size:    clamp(1.2rem, 4vw, 2.4rem);
+        --h2-size:       clamp(0.95rem, 2.5vw, 1.6rem);
+        --body-size:     clamp(0.68rem, 1.2vw, 0.88rem);
+        --code-size:     clamp(0.55rem, 0.9vw, 0.72rem);
+      }
+    }
+    @media (max-height: 600px) {
+      :root {
+        --slide-padding: clamp(0.6rem, 2.5vw, 1.5rem);
+        --content-gap:   clamp(0.25rem, 0.8vw, 0.6rem);
+        --title-size:    clamp(1rem, 3.5vw, 2rem);
+      }
+      .nav-dots { display: none; }
+    }
+    @media (max-height: 500px) {
+      :root {
+        --slide-padding: clamp(0.4rem, 2vw, 1rem);
+        --title-size:    clamp(0.9rem, 3vw, 1.5rem);
+        --body-size:     clamp(0.6rem, 1vw, 0.78rem);
+        --code-size:     clamp(0.5rem, 0.85vw, 0.65rem);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+
+    /* ============================================
+       SLIDE-SPECIFIC OVERRIDES
+       ============================================ */
+
+    /* — TITLE SLIDE — */
+    .title-slide { background: var(--bg-deep); }
+    .title-slide .slide-content {
+      justify-content: center;
+      align-items: flex-start;
+      padding-left: clamp(2rem, 8vw, 8rem);
+    }
+    .title-eyebrow {
+      font-family: var(--font-code);
+      font-size: var(--small-size);
+      color: var(--accent-teal);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: clamp(0.8rem, 2vh, 1.5rem);
+    }
+    .title-main {
+      font-size: clamp(2rem, 6vw, 5rem);
+      background: linear-gradient(135deg, var(--text-bright) 30%, var(--accent-teal) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: clamp(0.5rem, 1.2vh, 1rem);
+    }
+    .title-sub {
+      font-family: var(--font-body);
+      font-size: clamp(0.85rem, 1.8vw, 1.3rem);
+      color: var(--text-mid);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+    .title-meta {
+      margin-top: clamp(1.5rem, 3vh, 3rem);
+      display: flex;
+      gap: clamp(1rem, 3vw, 2.5rem);
+    }
+    .meta-item {
+      font-family: var(--font-code);
+      font-size: var(--small-size);
+      color: var(--text-dim);
+    }
+    .meta-item span { color: var(--accent-amber); }
+
+    /* — CHAPTER DIVIDER — */
+    .chapter-slide .slide-content {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .chapter-num {
+      font-family: var(--font-code);
+      font-size: clamp(4rem, 12vw, 10rem);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(0,212,170,0.2);
+      line-height: 1;
+      margin-bottom: -0.15em;
+    }
+    .chapter-title {
+      font-size: clamp(1.4rem, 4vw, 3rem);
+      font-family: var(--font-display);
+      color: var(--text-bright);
+      font-weight: 700;
+    }
+    .chapter-desc {
+      margin-top: 0.8rem;
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      color: var(--text-mid);
+    }
+
+    /* — TWO-COLUMN LAYOUT — */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(1rem, 2.5vw, 2.5rem);
+      align-items: start;
+    }
+    .two-col-40-60 { grid-template-columns: 2fr 3fr; }
+    .two-col-60-40 { grid-template-columns: 3fr 2fr; }
+
+    /* highlight box */
+    .highlight-box {
+      background: rgba(0,212,170,0.07);
+      border: 1px solid rgba(0,212,170,0.25);
+      border-radius: 8px;
+      padding: clamp(0.5rem, 1vh, 0.85rem) clamp(0.7rem, 1.2vw, 1rem);
+    }
+    .highlight-box p, .highlight-box li { font-size: var(--small-size); }
+
+    /* formula display */
+    .formula {
+      background: var(--bg-code);
+      border: 1px solid rgba(245,166,35,0.3);
+      border-radius: 8px;
+      padding: clamp(0.5rem, 1vh, 0.9rem) clamp(0.8rem, 1.5vw, 1.2rem);
+      font-family: var(--font-code);
+      font-size: var(--code-size);
+      color: var(--accent-amber);
+      line-height: 1.7;
+    }
+
+    /* badge */
+    .badge {
+      display: inline-block;
+      font-family: var(--font-code);
+      font-size: clamp(0.5rem, 0.8vw, 0.68rem);
+      padding: 0.15em 0.6em;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+    .badge-teal  { background: rgba(0,212,170,0.15); color: var(--accent-teal); border: 1px solid rgba(0,212,170,0.3); }
+    .badge-amber { background: rgba(245,166,35,0.15); color: var(--accent-amber); border: 1px solid rgba(245,166,35,0.3); }
+    .badge-coral { background: rgba(255,107,107,0.15); color: var(--accent-coral); border: 1px solid rgba(255,107,107,0.3); }
+
+    /* warning callout */
+    .callout {
+      display: flex;
+      gap: 0.6em;
+      align-items: flex-start;
+      border-radius: 6px;
+      padding: clamp(0.4rem, 0.8vh, 0.7rem) clamp(0.6rem, 1vw, 0.9rem);
+    }
+    .callout-warn { background: rgba(245,166,35,0.08); border-left: 3px solid var(--accent-amber); }
+    .callout-info { background: rgba(74,158,255,0.08); border-left: 3px solid var(--accent-blue); }
+    .callout .icon { font-size: 0.9em; flex-shrink: 0; margin-top: 0.1em; }
+    .callout p { font-size: var(--small-size); color: var(--text-mid); }
+    .callout strong { color: var(--text-bright); }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar" id="progressBar"></div>
+  <nav class="nav-dots" id="navDots"></nav>
+
+  <!-- =============================================
+       SLIDE 1 · TITLE
+       ============================================= -->
+  <section class="slide title-slide" id="slide-1">
+    <div class="glow glow-teal" style="width:60vw;height:60vh;top:-15vh;left:-10vw;"></div>
+    <div class="glow glow-blue"  style="width:40vw;height:40vh;bottom:0;right:5vw;"></div>
+
+    <div class="slide-content">
+      <p class="title-eyebrow reveal">CSS · 第五单元</p>
+      <h1 class="title-main reveal">盒子模型<br>及应用</h1>
+      <p class="title-sub reveal">Box Model — The Foundation of CSS Layout</p>
+      <div class="title-meta reveal">
+        <span class="meta-item">课时 <span>4课时</span></span>
+        <span class="meta-item">教材 <span>HTML5+CSS3（第3版）</span></span>
+      </div>
+    </div>
+    <span class="slide-num">01 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 2 · 什么是盒子模型
+       ============================================= -->
+  <section class="slide" id="slide-2">
+    <div class="glow glow-teal" style="width:50vw;height:50vh;top:-5vh;right:-10vw;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">认识盒子模型</p>
+      <h2 class="reveal">什么是盒子模型？</h2>
+      <div class="divider reveal"></div>
+
+      <div class="two-col" style="margin-top: var(--content-gap);">
+        <div>
+          <ul class="bullet-list reveal">
+            <li>CSS 将 HTML 页面中的<strong class="text-bright">每一个元素</strong>都看作一个<strong class="accent-teal">矩形盒子</strong></li>
+            <li>每个盒子占据一定的页面空间</li>
+            <li>一个 HTML 页面由无数盒子<strong class="text-bright">排列、堆叠、嵌套</strong>而成</li>
+          </ul>
+          <div style="margin-top: var(--content-gap);">
+            <p class="reveal" style="font-size: var(--small-size); color: var(--text-dim); margin-bottom: 0.4em;">学习网页布局的两个核心任务：</p>
+            <div class="card card-teal reveal" style="margin-top: 0.4em;">
+              <p><span class="accent-teal">①</span> 理解一个独立盒子的<strong class="text-bright">内部结构</strong></p>
+            </div>
+            <div class="card card-blue reveal" style="margin-top: 0.4em;">
+              <p><span class="accent-blue">②</span> 掌握多个盒子之间的<strong class="text-bright">相互关系</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal" style="display: flex; flex-direction: column; gap: var(--content-gap);">
+          <div class="highlight-box" style="text-align: center; padding: clamp(0.8rem,1.5vh,1.2rem);">
+            <p style="font-family: var(--font-code); font-size: var(--code-size); color: var(--text-dim); margin-bottom: 0.5em;">页面结构示意</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+              <div style="background:rgba(0,212,170,0.15);border:1px solid rgba(0,212,170,0.3);border-radius:4px;padding:0.4em;font-size:var(--small-size);color:var(--accent-teal);">导航菜单</div>
+              <div style="background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.25);border-radius:4px;padding:0.4em;font-size:var(--small-size);color:var(--accent-blue);">广告区</div>
+            </div>
+            <div style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);border-radius:4px;padding:0.5em;font-size:var(--small-size);color:var(--accent-amber); margin-bottom: 6px;">文章正文区域</div>
+            <div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.25);border-radius:4px;padding:0.4em;font-size:var(--small-size);color:var(--accent-coral);">页面底部</div>
+          </div>
+          <div class="callout callout-info reveal">
+            <span class="icon">💡</span>
+            <p><code>&lt;div&gt;&lt;/div&gt;</code> 是最常用的"盒子"标签，本身无默认样式，可自由定义大小、颜色、位置。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">02 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 3 · 盒子模型四层结构
+       ============================================= -->
+  <section class="slide" id="slide-3">
+    <div class="glow glow-amber" style="width:45vw;height:45vh;bottom:-5vh;left:-5vw;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">认识盒子模型</p>
+      <h2 class="reveal">四层结构组成</h2>
+      <div class="divider reveal"></div>
+
+      <div class="two-col" style="margin-top: var(--content-gap); align-items: center;">
+
+        <!-- 盒子图示 -->
+        <div class="reveal" style="display: flex; align-items: center; justify-content: center;">
+          <div class="box-layer layer-margin" style="width: min(22vw, 280px); height: min(22vw, 280px);">
+            <span class="box-label accent-amber" style="top: 0.3em; left: 0.5em;">margin</span>
+            <div class="box-layer layer-border" style="width: 78%; height: 78%;">
+              <span class="box-label accent-coral" style="top: 0.3em; left: 0.5em;">border</span>
+              <div class="box-layer layer-padding" style="width: 76%; height: 76%;">
+                <span class="box-label accent-blue" style="top: 0.3em; left: 0.5em;">padding</span>
+                <div class="box-layer layer-content" style="width: 62%; height: 62%; border-radius: 3px;">
+                  <span style="font-family:var(--font-code);font-size:clamp(0.5rem,0.9vw,0.7rem);color:var(--accent-teal);">content</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 说明表格 -->
+        <div class="reveal">
+          <table class="data-table">
+            <thead>
+              <tr><th>组成部分</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>content<br><span style="color:var(--accent-teal);font-size:0.85em;">内容</span></td>
+                <td>承载文字、图片等实际内容，由 <code>width</code> / <code>height</code> 控制</td>
+              </tr>
+              <tr>
+                <td>padding<br><span style="color:var(--accent-blue);font-size:0.85em;">内边距</span></td>
+                <td>内容与边框之间的透明区域，<strong class="text-bright">背景色延伸到此区域</strong></td>
+              </tr>
+              <tr>
+                <td>border<br><span style="color:var(--accent-coral);font-size:0.85em;">边框</span></td>
+                <td>围绕内边距和内容外的可见线框</td>
+              </tr>
+              <tr>
+                <td>margin<br><span style="color:var(--accent-amber);font-size:0.85em;">外边距</span></td>
+                <td>边框以外的透明区域，控制盒子与其他元素的间距</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-info" style="margin-top: 0.6em;">
+            <span class="icon">📦</span>
+            <p><strong>生活类比：</strong>内容=手机，内边距=泡沫，边框=纸盒厚度，外边距=货架间距</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">03 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 4 · 盒子尺寸计算
+       ============================================= -->
+  <section class="slide" id="slide-4">
+    <div class="glow glow-blue" style="width:50vw;height:40vh;top:0;right:-5vw;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">认识盒子模型</p>
+      <h2 class="reveal">盒子尺寸的计算</h2>
+      <div class="divider reveal"></div>
+
+      <div class="two-col" style="margin-top: var(--content-gap);">
+        <div>
+          <div class="formula reveal">
+            <div>实际宽度 = <span style="color:var(--accent-teal);">width</span></div>
+            <div style="padding-left:1.5em;">+ <span style="color:var(--accent-blue);">padding</span>（左+右）</div>
+            <div style="padding-left:1.5em;">+ <span style="color:var(--accent-coral);">border</span>（左+右）</div>
+            <div style="padding-left:1.5em;">+ <span style="color:var(--accent-amber);">margin</span>（左+右）</div>
+          </div>
+          <div class="callout callout-warn reveal" style="margin-top: 0.7em;">
+            <span class="icon">⚠️</span>
+            <p><code>width</code> / <code>height</code> <strong>仅指内容区域（content）</strong>的宽高，不包含 padding、border、margin。</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="code-block reveal">
+            <span class="kw">div</span> {<br>
+            &nbsp;&nbsp;<span class="prop">width</span>:  <span class="num">200</span><span class="val">px</span>;&nbsp;<span class="cmt">/* 内容宽度 */</span><br>
+            &nbsp;&nbsp;<span class="prop">height</span>: <span class="num">100</span><span class="val">px</span>;<br>
+            &nbsp;&nbsp;<span class="prop">padding</span>: <span class="num">10</span><span class="val">px</span>;&nbsp;<span class="cmt">/* 四边各10px */</span><br>
+            &nbsp;&nbsp;<span class="prop">border</span>:  <span class="num">2</span><span class="val">px solid red</span>;<br>
+            &nbsp;&nbsp;<span class="prop">margin</span>:  <span class="num">20</span><span class="val">px</span>;<br>
+            }
+          </div>
+          <div class="card card-teal reveal" style="margin-top: 0.7em;">
+            <p style="font-family:var(--font-code); font-size: var(--small-size);">
+              实际宽度 = 200 + 10×2 + 2×2 + 20×2 = <span class="accent-teal" style="font-size:1.1em;font-weight:700;">264px</span>
+            </p>
+            <p style="font-family:var(--font-code); font-size: var(--small-size); margin-top: 0.3em;">
+              实际高度 = 100 + 10×2 + 2×2 + 20×2 = <span class="accent-teal" style="font-size:1.1em;font-weight:700;">164px</span>
+            </p>
+          </div>
+          <div class="callout callout-info reveal" style="margin-top: 0.5em;">
+            <span class="icon">💡</span>
+            <p><code>width</code>/<code>height</code> 仅适用于<strong>块元素</strong>，对行内元素无效。<code>&lt;img&gt;</code>、<code>&lt;input&gt;</code> 为特殊例外。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">04 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 5 · div 标签
+       ============================================= -->
+  <section class="slide" id="slide-5">
+    <div class="glow glow-teal" style="width:40vw;height:40vh;bottom:0;right:0;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">认识盒子模型</p>
+      <h2 class="reveal"><code style="color:var(--accent-teal);font-size:0.9em;">&lt;div&gt;</code> 标签——网页布局的基石</h2>
+      <div class="divider reveal"></div>
+
+      <div class="grid-4" style="margin-top: var(--content-gap);">
+        <div class="card card-teal reveal">
+          <p class="accent-teal" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">① 完整盒子属性</p>
+          <p>支持设置 <code>width</code>、<code>height</code>、<code>padding</code>、<code>border</code>、<code>margin</code></p>
+        </div>
+        <div class="card card-blue reveal">
+          <p class="accent-blue" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">② 强大嵌套能力</p>
+          <p>内部可嵌套绝大多数 HTML 标签，包括多层嵌套 <code>&lt;div&gt;</code></p>
+        </div>
+        <div class="card card-amber reveal">
+          <p class="accent-amber" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">③ id/class 配合</p>
+          <p>与 <code>id</code>、<code>class</code> 选择器结合使用，赋予可视样式</p>
+        </div>
+        <div class="card card-coral reveal">
+          <p class="accent-coral" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">④ 语义注意</p>
+          <p>本身无语义，优先使用 <code>&lt;header&gt;</code>、<code>&lt;main&gt;</code>、<code>&lt;footer&gt;</code> 等语义标签</p>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top: var(--content-gap);">
+        <div class="code-block reveal">
+          <span class="cmt">/* id 定义唯一区域 */</span><br>
+          <span class="kw">&lt;div</span> <span class="prop">id</span>=<span class="str">"header"</span><span class="kw">&gt;</span>网页头部<span class="kw">&lt;/div&gt;</span><br><br>
+          <span class="cmt">/* class 定义可复用区域 */</span><br>
+          <span class="kw">&lt;div</span> <span class="prop">class</span>=<span class="str">"card"</span><span class="kw">&gt;</span>卡片区块<span class="kw">&lt;/div&gt;</span><br>
+          <span class="kw">&lt;div</span> <span class="prop">class</span>=<span class="str">"card"</span><span class="kw">&gt;</span>卡片区块<span class="kw">&lt;/div&gt;</span>
+        </div>
+        <div class="code-block reveal">
+          <span class="cmt">/* 嵌套结构示例 */</span><br>
+          <span class="kw">&lt;div</span> <span class="prop">id</span>=<span class="str">"main"</span><span class="kw">&gt;</span><br>
+          &nbsp;&nbsp;<span class="kw">&lt;div</span> <span class="prop">id</span>=<span class="str">"article"</span><span class="kw">&gt;</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">&lt;p&gt;</span>文章内容...<span class="kw">&lt;/p&gt;</span><br>
+          &nbsp;&nbsp;<span class="kw">&lt;/div&gt;</span><br>
+          &nbsp;&nbsp;<span class="kw">&lt;div</span> <span class="prop">id</span>=<span class="str">"sidebar"</span><span class="kw">&gt;</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">&lt;p&gt;</span>侧边栏...<span class="kw">&lt;/p&gt;</span><br>
+          &nbsp;&nbsp;<span class="kw">&lt;/div&gt;</span><br>
+          <span class="kw">&lt;/div&gt;</span>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">05 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 6 · 边框属性总览 + border-style
+       ============================================= -->
+  <section class="slide" id="slide-6">
+    <div class="glow glow-coral" style="width:40vw;height:40vh;top:0;right:0;background:radial-gradient(ellipse,rgba(255,107,107,0.15) 0%,transparent 70%);"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">边框的设置</p>
+      <h2 class="reveal">边框样式（border-style）</h2>
+      <div class="divider reveal"></div>
+
+      <div class="two-col" style="margin-top: var(--content-gap);">
+        <div>
+          <p class="reveal" style="font-size:var(--small-size);color:var(--text-dim);margin-bottom:0.4em;"><span class="accent-coral">⚑</span> 边框样式是显示边框的<strong class="text-bright">前提条件</strong>，不设置则边框不显示。</p>
+
+          <table class="data-table reveal">
+            <thead><tr><th>属性值</th><th>效果</th></tr></thead>
+            <tbody>
+              <tr><td>none</td><td>无边框（默认值）</td></tr>
+              <tr><td>solid</td><td>单实线 ── 最常用</td></tr>
+              <tr><td>dashed</td><td>虚线 - - - - -</td></tr>
+              <tr><td>dotted</td><td>点线 · · · · ·</td></tr>
+              <tr><td>double</td><td>双实线 ═══════</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-warn reveal" style="margin-top:0.6em;">
+            <span class="icon">⚠️</span>
+            <p><strong>值复制原则</strong>：1值=四边，2值=上下/左右，3值=上/左右/下，4值=上右下左（顺时针）</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="code-block reveal">
+            <span class="prop">border-style</span>: <span class="val">double</span>;&nbsp;<span class="cmt">/* 四边双实线 */</span><br>
+            <br>
+            <span class="prop">border-style</span>: <span class="val">solid dashed</span>;<br>
+            <span class="cmt">/* 上下单实线，左右虚线 */</span><br>
+            <br>
+            <span class="prop">border-style</span>: <span class="val">solid dashed dotted</span>;<br>
+            <span class="cmt">/* 上实线，左右虚线，下点线 */</span>
+          </div>
+
+          <div style="margin-top: 0.7em;">
+            <p class="reveal" style="font-size:var(--small-size);color:var(--text-dim);margin-bottom:0.4em;">单边属性（更精确控制）：</p>
+            <div class="code-block reveal">
+              <span class="prop">border-top-style</span>:    <span class="val">solid</span>;<br>
+              <span class="prop">border-right-style</span>:   <span class="val">dashed</span>;<br>
+              <span class="prop">border-bottom-style</span>:  <span class="val">dotted</span>;<br>
+              <span class="prop">border-left-style</span>:    <span class="val">double</span>;
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">06 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 7 · border-width / border-color / border
+       ============================================= -->
+  <section class="slide" id="slide-7">
+    <div class="glow glow-blue" style="width:40vw;height:40vh;bottom:0;left:-5vw;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">边框的设置</p>
+      <h2 class="reveal">宽度 / 颜色 / 综合设置</h2>
+      <div class="divider reveal"></div>
+
+      <div class="grid-3" style="margin-top: var(--content-gap);">
+
+        <div class="reveal">
+          <h3 style="margin-bottom:0.5em;">border-width</h3>
+          <div class="code-block" style="margin-bottom:0.5em;">
+            <span class="prop">border-width</span>: <span class="num">1</span><span class="val">px</span>;&nbsp;<span class="cmt">/* 四边 */</span><br>
+            <span class="prop">border-width</span>: <span class="num">2</span><span class="val">px</span> <span class="num">1</span><span class="val">px</span>;<br>
+            <span class="cmt">/* 上下2px，左右1px */</span>
+          </div>
+          <table class="data-table" style="font-size:var(--small-size);">
+            <thead><tr><th>粗细</th><th>场景</th></tr></thead>
+            <tbody>
+              <tr><td>1px</td><td>表格线、输入框</td></tr>
+              <tr><td>2~3px</td><td>卡片、按钮</td></tr>
+              <tr><td>4px+</td><td>装饰性粗边框</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reveal">
+          <h3 style="margin-bottom:0.5em;">border-color</h3>
+          <div class="code-block" style="margin-bottom:0.5em;">
+            <span class="cmt">/* 三种颜色写法 */</span><br>
+            <span class="prop">border-color</span>: <span class="val">red</span>;<br>
+            <span class="prop">border-color</span>: <span class="str">#f00</span>;<br>
+            <span class="prop">border-color</span>: <span class="val">rgb</span>(<span class="num">255</span>,<span class="num">0</span>,<span class="num">0</span>);<br><br>
+            <span class="cmt">/* 十六进制简写 */</span><br>
+            <span class="str">#FF0000</span> → <span class="str">#f00</span><br>
+            <span class="str">#FFFFFF</span> → <span class="str">#fff</span>
+          </div>
+          <div class="callout callout-info">
+            <span class="icon">💡</span>
+            <p>当每两位相同时可简写为一位</p>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <h3 style="margin-bottom:0.5em;">border 综合属性</h3>
+          <div class="code-block" style="margin-bottom:0.5em;">
+            <span class="cmt">/* 一行搞定三要素 */</span><br>
+            <span class="prop">border</span>: <span class="num">3</span><span class="val">px solid #00f</span>;<br><br>
+            <span class="cmt">/* 单侧综合属性 */</span><br>
+            <span class="prop">border-top</span>:    <span class="val">2px solid red</span>;<br>
+            <span class="prop">border-right</span>:  <span class="val">3px double #f90</span>;<br>
+            <span class="prop">border-bottom</span>: <span class="val">2px dotted #c0f</span>;<br>
+            <span class="prop">border-left</span>:   <span class="val">3px double #f90</span>;
+          </div>
+          <div class="callout callout-warn">
+            <span class="icon">⚠️</span>
+            <p><strong>style 不能省略</strong>，否则边框不显示</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">07 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 8 · border-radius
+       ============================================= -->
+  <section class="slide" id="slide-8">
+    <div class="glow glow-teal" style="width:50vw;height:50vh;top:-10vh;left:-10vw;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">边框的设置</p>
+      <h2 class="reveal">圆角边框（border-radius）</h2>
+      <div class="divider reveal"></div>
+
+      <div class="two-col" style="margin-top: var(--content-gap);">
+        <div>
+          <p class="reveal" style="font-size:var(--small-size);color:var(--text-mid);margin-bottom:0.6em;">
+            <strong class="text-bright">原理：</strong>在每个角落用一段圆弧替代直角，圆弧所在圆的半径即 border-radius 值。
+          </p>
+
+          <div class="code-block reveal" style="margin-bottom:0.6em;">
+            <span class="prop">border-radius</span>: <span class="val">参数1</span> / <span class="val">参数2</span>;<br>
+            <span class="cmt">/* 参数1=水平半径，参数2=垂直半径 */</span><br>
+            <span class="cmt">/* 省略参数2则等于参数1 */</span><br><br>
+            <span class="prop">border-radius</span>: <span class="num">50</span><span class="val">px</span>;&nbsp;<span class="cmt">/* 四角相同 */</span><br>
+            <span class="prop">border-radius</span>: <span class="num">50</span><span class="val">px</span> / <span class="num">30</span><span class="val">px</span>;&nbsp;<span class="cmt">/* 椭圆弧 */</span>
+          </div>
+
+          <table class="data-table reveal">
+            <thead><tr><th>值个数</th><th>对应位置</th></tr></thead>
+            <tbody>
+              <tr><td>1个值</td><td>四个角全部相同</td></tr>
+              <tr><td>2个值</td><td>左上+右下 / 右上+左下</td></tr>
+              <tr><td>3个值</td><td>左上 / 右上+左下 / 右下</td></tr>
+              <tr><td>4个值</td><td>左上 右上 右下 左下（顺时针）</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <p class="reveal" style="font-size:var(--small-size);color:var(--text-dim);margin-bottom:0.5em;">实用技巧演示：</p>
+          <div class="grid-2 reveal">
+            <!-- 正圆 -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0.5em;">
+              <div style="width:clamp(50px,8vw,80px);height:clamp(50px,8vw,80px);background:rgba(0,212,170,0.2);border:2px solid var(--accent-teal);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:var(--small-size);color:var(--accent-teal);">50%</span>
+              </div>
+              <div class="code-block" style="width:100%;">
+                <span class="prop">border-radius</span>: <span class="num">50</span><span class="val">%</span>;<br>
+                <span class="cmt">/* 正圆（宽=高） */</span>
+              </div>
+            </div>
+            <!-- 胶囊 -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0.5em;">
+              <div style="width:clamp(80px,14vw,130px);height:clamp(28px,3.5vw,40px);background:rgba(74,158,255,0.15);border:2px solid var(--accent-blue);border-radius:999px;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:var(--small-size);color:var(--accent-blue);">胶囊按钮</span>
+              </div>
+              <div class="code-block" style="width:100%;">
+                <span class="prop">border-radius</span>: <span class="num">20</span><span class="val">px</span>;<br>
+                <span class="cmt">/* = 高度的一半 */</span>
+              </div>
+            </div>
+          </div>
+          <div class="callout callout-info reveal" style="margin-top: 0.6em;">
+            <span class="icon">💡</span>
+            <p>等宽等高 + <code>border-radius: 50%</code> = 正圆；高度一半 = 胶囊形按钮</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">08 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 9 · padding 内边距
+       ============================================= -->
+  <section class="slide" id="slide-9">
+    <div class="glow glow-blue" style="width:45vw;height:45vh;top:0;right:-5vw;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">内边距的设置</p>
+      <h2 class="reveal">padding — 内容与边框之间的距离</h2>
+      <div class="divider reveal"></div>
+
+      <div class="two-col" style="margin-top: var(--content-gap);">
+        <div>
+          <div class="card card-blue reveal">
+            <p style="font-size:var(--small-size);line-height:1.7;">
+              <strong class="accent-blue">关键特性 ①</strong>：内边距区域继承背景色，<code>background-color</code> 会延伸到 padding 区域。
+            </p>
+          </div>
+          <div class="card card-coral reveal" style="margin-top: 0.5em;">
+            <p style="font-size:var(--small-size);line-height:1.7;">
+              <strong class="accent-coral">关键特性 ②</strong>：内边距会撑大盒子，必须计入实际尺寸。
+            </p>
+          </div>
+          <div class="callout callout-warn reveal" style="margin-top: 0.5em;">
+            <span class="icon">⚠️</span>
+            <p><strong>padding 不允许负值</strong>。百分比基准是<strong>父元素的宽度（width）</strong>，与高度无关。</p>
+          </div>
+
+          <div class="code-block reveal" style="margin-top: 0.5em;">
+            <span class="cmt">/* 值复制原则 */</span><br>
+            <span class="prop">padding</span>: <span class="num">10</span><span class="val">px</span>;&nbsp;<span class="cmt">/* 四边均为10px */</span><br>
+            <span class="prop">padding</span>: <span class="num">10</span><span class="val">px</span> <span class="num">20</span><span class="val">px</span>;&nbsp;<span class="cmt">/* 上下/左右 */</span><br>
+            <span class="prop">padding</span>: <span class="num">10</span><span class="val">px</span> <span class="num">20</span><span class="val">px</span> <span class="num">30</span><span class="val">px</span>;&nbsp;<span class="cmt">/* 上/左右/下 */</span><br>
+            <span class="prop">padding</span>: <span class="num">10</span><span class="val">px</span> <span class="num">20</span><span class="val">px</span> <span class="num">30</span><span class="val">px</span> <span class="num">40</span><span class="val">px</span>;
+          </div>
+        </div>
+
+        <div>
+          <div class="code-block reveal">
+            <span class="kw">#box</span> {<br>
+            &nbsp;&nbsp;<span class="prop">width</span>:  <span class="num">400</span><span class="val">px</span>;<br>
+            &nbsp;&nbsp;<span class="prop">border</span>: <span class="num">5</span><span class="val">px solid red</span>;<br>
+            &nbsp;&nbsp;<span class="prop">padding</span>: <span class="num">10</span><span class="val">px</span> <span class="num">40</span><span class="val">px</span> <span class="num">80</span><span class="val">px</span> <span class="num">120</span><span class="val">px</span>;<br>
+            &nbsp;&nbsp;<span class="cmt">/* 上10，右40，下80，左120 */</span><br>
+            &nbsp;&nbsp;<span class="prop">background-color</span>: <span class="str">#e8f4fd</span>;<br>
+            &nbsp;&nbsp;<span class="cmt">/* 背景色延伸到内边距区域 */</span><br>
+            }
+          </div>
+
+          <div style="margin-top: 0.6em;">
+            <p class="reveal" style="font-size:var(--small-size);color:var(--text-dim);margin-bottom:0.4em;">单边属性：</p>
+            <div class="code-block reveal">
+              <span class="prop">padding-top</span>:    <span class="num">10</span><span class="val">px</span>;<br>
+              <span class="prop">padding-right</span>:  <span class="num">20</span><span class="val">px</span>;<br>
+              <span class="prop">padding-bottom</span>: <span class="num">30</span><span class="val">px</span>;<br>
+              <span class="prop">padding-left</span>:   <span class="num">40</span><span class="val">px</span>;
+            </div>
+          </div>
+
+          <div class="formula reveal" style="margin-top: 0.5em;">
+            盒子实际宽度 = 400 + 40×2 + 5×2 = <span style="color:var(--accent-teal);font-weight:700;">490px</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">09 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 10 · margin 外边距基础
+       ============================================= -->
+  <section class="slide" id="slide-10">
+    <div class="glow glow-amber" style="width:45vw;height:45vh;bottom:0;right:0;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">外边距的设置</p>
+      <h2 class="reveal">margin — 盒子与外部世界的距离</h2>
+      <div class="divider reveal"></div>
+
+      <div class="two-col" style="margin-top: var(--content-gap);">
+        <div>
+          <table class="data-table reveal">
+            <thead><tr><th>对比维度</th><th>padding（内）</th><th>margin（外）</th></tr></thead>
+            <tbody>
+              <tr><td>位置</td><td>边框内侧</td><td>边框外侧</td></tr>
+              <tr><td>背景色</td><td>✅ 会显示</td><td>❌ 始终透明</td></tr>
+              <tr><td>负值</td><td>❌ 不允许</td><td>✅ 允许</td></tr>
+              <tr><td>合并</td><td>不会发生</td><td>上下方向会合并</td></tr>
+            </tbody>
+          </table>
+
+          <div class="code-block reveal" style="margin-top: 0.6em;">
+            <span class="kw">*</span> {<br>
+            &nbsp;&nbsp;<span class="prop">padding</span>: <span class="num">0</span>; <span class="cmt">/* 清除默认内边距 */</span><br>
+            &nbsp;&nbsp;<span class="prop">margin</span>:  <span class="num">0</span>; <span class="cmt">/* 清除默认外边距 */</span><br>
+            }
+          </div>
+        </div>
+
+        <div>
+          <h3 class="reveal" style="margin-bottom:0.4em;">上下外边距合并（塌陷）</h3>
+          <div class="card card-amber reveal">
+            <p style="font-size:var(--small-size);line-height:1.7;">
+              两个垂直相邻的块元素，各自设置上下外边距时，不会叠加，而是<strong class="text-bright">合并取较大值</strong>。
+            </p>
+          </div>
+          <div class="formula reveal" style="margin-top:0.5em;">
+            box1: margin-bottom = 50px<br>
+            box2: margin-top    = 30px<br>
+            ─────────────────────────<br>
+            实际间距 = <span style="color:var(--accent-teal);">max(50, 30) = 50px</span><br>
+            <span style="color:var(--text-dim);">不是 80px！</span>
+          </div>
+          <div class="code-block reveal" style="margin-top:0.5em;">
+            <span class="cmt">/* 解决方案 */</span><br>
+            <span class="prop">overflow</span>: <span class="val">hidden</span>; <span class="cmt">/* 触发BFC，推荐 */</span><br>
+            <span class="prop">border</span>: <span class="num">1</span><span class="val">px solid transparent</span>;<br>
+            <span class="prop">padding-top</span>: <span class="num">1</span><span class="val">px</span>;
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">10 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 11 · margin 高级用法
+       ============================================= -->
+  <section class="slide" id="slide-11">
+    <div class="glow glow-teal" style="width:40vw;height:40vh;top:0;left:-5vw;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">外边距的设置</p>
+      <h2 class="reveal">水平居中 · 负值 · 默认值重置</h2>
+      <div class="divider reveal"></div>
+
+      <div class="grid-3" style="margin-top: var(--content-gap);">
+
+        <div class="reveal">
+          <h3 style="margin-bottom:0.5em;">水平居中 <span class="badge badge-teal">常用</span></h3>
+          <div class="code-block" style="margin-bottom:0.5em;">
+            <span class="kw">.container</span> {<br>
+            &nbsp;&nbsp;<span class="prop">width</span>: <span class="num">960</span><span class="val">px</span>;<br>
+            &nbsp;&nbsp;<span class="prop">margin</span>: <span class="num">0</span> <span class="val">auto</span>;<br>
+            &nbsp;&nbsp;<span class="cmt">/* 左右auto → 均分余量 */</span><br>
+            }
+          </div>
+          <div class="callout callout-info">
+            <span class="icon">💡</span>
+            <p><code>auto</code> = 浏览器自动均分，仅对<strong>块元素</strong>有效</p>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <h3 style="margin-bottom:0.5em;">负值效果 <span class="badge badge-coral">高级</span></h3>
+          <div class="code-block" style="margin-bottom:0.5em;">
+            <span class="kw">#box2</span> {<br>
+            &nbsp;&nbsp;<span class="prop">margin-top</span>: <span class="num">-20</span><span class="val">px</span>;<br>
+            &nbsp;&nbsp;<span class="cmt">/* 向上移动20px */</span><br>
+            &nbsp;&nbsp;<span class="cmt">/* 与上方元素重叠 */</span><br>
+            }
+          </div>
+          <div class="callout callout-warn">
+            <span class="icon">⚠️</span>
+            <p>初学阶段谨慎使用，易造成布局混乱</p>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <h3 style="margin-bottom:0.5em;">重置默认样式 <span class="badge badge-amber">必备</span></h3>
+          <div class="code-block" style="margin-bottom:0.5em;">
+            <span class="kw">*</span> {<br>
+            &nbsp;&nbsp;<span class="prop">padding</span>: <span class="num">0</span>;<br>
+            &nbsp;&nbsp;<span class="prop">margin</span>:  <span class="num">0</span>;<br>
+            }
+          </div>
+          <p style="font-size:var(--small-size);color:var(--text-mid);line-height:1.6;">不同浏览器默认样式不同，项目开始时必须先重置，保证跨浏览器一致性。</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info reveal" style="margin-top: var(--content-gap);">
+        <span class="icon">📖</span>
+        <p>进阶项目推荐使用 <strong>Eric Meyer's Reset CSS</strong> 或 <strong>Normalize.css</strong> 进行更精细的默认样式控制，而非简单的全部清零。</p>
+      </div>
+    </div>
+    <span class="slide-num">11 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 12 · width / height / box-sizing
+       ============================================= -->
+  <section class="slide" id="slide-12">
+    <div class="glow glow-blue" style="width:40vw;height:40vh;bottom:0;right:-5vw;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">宽度与高度</p>
+      <h2 class="reveal">width / height / box-sizing</h2>
+      <div class="divider reveal"></div>
+
+      <div class="two-col" style="margin-top: var(--content-gap);">
+        <div>
+          <h3 class="reveal" style="margin-bottom:0.5em;">width / height 注意事项</h3>
+          <ul class="bullet-list reveal">
+            <li>仅定义<strong class="text-bright">内容区域（content）</strong>的大小，不含 padding 和 border</li>
+            <li>仅适用于<strong class="text-bright">块级元素</strong>，行内元素无效</li>
+            <li><code>&lt;img&gt;</code> 和 <code>&lt;input&gt;</code> 虽为行内元素，但可以设置宽高</li>
+            <li>百分比宽度参照<strong class="text-bright">父元素的内容宽度</strong></li>
+          </ul>
+
+          <div class="code-block reveal" style="margin-top: 0.6em;">
+            <span class="prop">width</span>:  <span class="num">500</span><span class="val">px</span>;&nbsp;<span class="cmt">/* 像素值（最常用）*/</span><br>
+            <span class="prop">width</span>:  <span class="num">50</span><span class="val">%</span>;&nbsp;<span class="cmt">/* 相对父元素宽度 */</span><br>
+            <span class="prop">width</span>:  <span class="val">auto</span>;&nbsp;<span class="cmt">/* 自动填满父元素 */</span>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="reveal" style="margin-bottom:0.5em;">box-sizing <span class="badge badge-teal">CSS3</span></h3>
+          <div class="code-block reveal" style="margin-bottom:0.5em;">
+            <span class="cmt">/* 默认：width仅指内容区域 */</span><br>
+            <span class="prop">box-sizing</span>: <span class="val">content-box</span>;<br><br>
+            <span class="cmt">/* width 包含 padding + border */</span><br>
+            <span class="prop">box-sizing</span>: <span class="val">border-box</span>;&nbsp;<span class="cmt">← 推荐</span>
+          </div>
+          <div class="card card-teal reveal">
+            <p style="font-size:var(--small-size);line-height:1.7;">
+              使用 <code>border-box</code> 后，<code>width: 300px</code> 就是盒子的真实宽度，无需手动减去 padding 和 border。
+            </p>
+          </div>
+          <div class="code-block reveal" style="margin-top:0.5em;">
+            <span class="cmt">/* 全局推荐写法 */</span><br>
+            <span class="kw">*, *::before, *::after</span> {<br>
+            &nbsp;&nbsp;<span class="prop">box-sizing</span>: <span class="val">border-box</span>;<br>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="slide-num">12 / 13</span>
+  </section>
+
+  <!-- =============================================
+       SLIDE 13 · 任务小结
+       ============================================= -->
+  <section class="slide" id="slide-13">
+    <div class="glow glow-teal" style="width:60vw;height:60vh;bottom:-15vh;right:-10vw;"></div>
+    <div class="glow glow-amber" style="width:40vw;height:40vh;top:0;left:-10vw;"></div>
+
+    <div class="slide-content">
+      <p class="section-tag reveal">任务小结</p>
+      <h2 class="reveal">知识点总览</h2>
+      <div class="divider reveal"></div>
+
+      <div class="grid-3" style="margin-top: var(--content-gap);">
+        <div class="card card-teal reveal">
+          <p class="accent-teal" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">01 · 盒子模型概念</p>
+          <p>content + padding + border + margin 四层结构；<strong class="text-bright">尺寸计算公式</strong></p>
+        </div>
+        <div class="card card-blue reveal">
+          <p class="accent-blue" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">02 · &lt;div&gt; 标签</p>
+          <p>最基础的布局容器，无语义，与 id/class 配合，优先语义标签</p>
+        </div>
+        <div class="card card-coral reveal">
+          <p class="accent-coral" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">03 · 边框设置</p>
+          <p>style/width/color 三要素；border 综合属性；border-radius 圆角</p>
+        </div>
+        <div class="card card-amber reveal">
+          <p class="accent-amber" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">04 · padding 内边距</p>
+          <p>不能为负值；背景色延伸到此区域；百分比基准=父元素宽度</p>
+        </div>
+        <div class="card card-teal reveal">
+          <p class="accent-teal" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">05 · margin 外边距</p>
+          <p>可为负值；上下方向外边距合并（取较大值）；0 auto 水平居中</p>
+        </div>
+        <div class="card card-blue reveal">
+          <p class="accent-blue" style="font-family:var(--font-code);font-size:var(--small-size);margin-bottom:0.3em;">06 · box-sizing</p>
+          <p>border-box 让 width 包含 padding+border，现代项目全局推荐</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info reveal" style="margin-top: var(--content-gap);">
+        <span class="icon">🛠</span>
+        <p>实践建议：按 <strong>F12</strong> 打开浏览器开发者工具，在 Computed 面板中查看每个元素的盒子模型示意图，是学习和调试的最佳方式。</p>
+      </div>
+    </div>
+    <span class="slide-num">13 / 13</span>
+  </section>
+
+  <!-- ============================================
+       JAVASCRIPT CONTROLLER
+       ============================================ -->
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.totalSlides = this.slides.length;
+        this.currentIndex = 0;
+        this.isScrolling = false;
+        this.touchStartY = 0;
+
+        this.progressBar = document.getElementById('progressBar');
+        this.navDotsContainer = document.getElementById('navDots');
+
+        this.setupNavDots();
+        this.setupIntersectionObserver();
+        this.setupKeyboardNav();
+        this.setupWheelNav();
+        this.setupTouchNav();
+        this.updateProgress(0);
+      }
+
+      setupNavDots() {
+        this.navDotsContainer.innerHTML = '';
+        this.slides.forEach((_, i) => {
+          const dot = document.createElement('div');
+          dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+          dot.addEventListener('click', () => this.goToSlide(i));
+          this.navDotsContainer.appendChild(dot);
+        });
+      }
+
+      setupIntersectionObserver() {
+        const opts = { threshold: 0.5 };
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              const idx = Array.from(this.slides).indexOf(entry.target);
+              if (idx !== -1) {
+                this.currentIndex = idx;
+                this.updateProgress(idx);
+                this.updateDots(idx);
+              }
+            }
+          });
+        }, opts);
+        this.slides.forEach(s => observer.observe(s));
+      }
+
+      setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+          switch (e.key) {
+            case 'ArrowDown': case 'ArrowRight': case ' ': case 'PageDown':
+              e.preventDefault(); this.next(); break;
+            case 'ArrowUp': case 'ArrowLeft': case 'PageUp':
+              e.preventDefault(); this.prev(); break;
+            case 'Home': e.preventDefault(); this.goToSlide(0); break;
+            case 'End':  e.preventDefault(); this.goToSlide(this.totalSlides - 1); break;
+          }
+        });
+      }
+
+      setupWheelNav() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const now = Date.now();
+          if (now - lastWheel < 600) return;
+          lastWheel = now;
+          e.deltaY > 0 ? this.next() : this.prev();
+        }, { passive: false });
+      }
+
+      setupTouchNav() {
+        document.addEventListener('touchstart', (e) => {
+          this.touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+          const delta = this.touchStartY - e.changedTouches[0].clientY;
+          if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
+        }, { passive: true });
+      }
+
+      next() { if (this.currentIndex < this.totalSlides - 1) this.goToSlide(this.currentIndex + 1); }
+      prev() { if (this.currentIndex > 0) this.goToSlide(this.currentIndex - 1); }
+
+      goToSlide(idx) {
+        idx = Math.max(0, Math.min(idx, this.totalSlides - 1));
+        this.slides[idx].scrollIntoView({ behavior: 'smooth' });
+      }
+
+      updateProgress(idx) {
+        const pct = this.totalSlides > 1 ? (idx / (this.totalSlides - 1)) * 100 : 0;
+        this.progressBar.style.width = pct + '%';
+      }
+
+      updateDots(idx) {
+        document.querySelectorAll('.nav-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === idx);
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => new SlidePresentation());
+  </script>
+</body>
+</html>

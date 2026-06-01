@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>表格</title>
+  <style>
+    table {
+      border: 1px solid #333;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+    }
+    td:first-child {
+      width: 40px;
+    }
+    tr:first-child th {
+      height: 50px;
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <th>姓名</th>
+      <th>年龄</th>
+      <th>性别</th>
+      <th>备注</th>
+    </tr>
+    <tr>
+      <td>张三</td>
+      <td>25</td>
+      <!-- <td colspan="2">男</td> -->
+      <td>男</td>
+      <td rowspan="2">单元格</td>
+    </tr>
+    <tr>
+      <td>李四</td>
+      <td>30</td>
+      <td>女</td>
+      <!-- <td rowspan="2">单元格</td> -->
+    </tr>
+  </table>
+<hr>
+  <!-- <table>
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>年龄</th>
+        <th>性别</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>张三</td>
+        <td>25</td>
+        <td>男</td>
+      </tr>
+      <tr>
+        <td>李四</td>
+        <td>30</td>
+        <td>女</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">总计：2人</td>
+      </tr>
+    </tfoot>
+  </table> -->
+</body>
+</html>

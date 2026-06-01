@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML5 新增标签及属性</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --paper:       #f5f0e8;
+  --paper-dark:  #ede7d9;
+  --paper-mid:   #e8e1d3;
+  --vermilion:   #c0392b;
+  --verm-light:  #f5e6e4;
+  --verm-mid:    #e8b4af;
+  --verm-dark:   #922b21;
+  --ink:         #1a1208;
+  --ink-2:       #3d2e1a;
+  --ink-3:       #6b5740;
+  --ink-4:       #9a8470;
+  --ink-5:       #c4b49e;
+  --rule:        #d4c8b4;
+  --rule-dark:   #b8a990;
+  --code-bg:     #1c1917;
+  --code-line:   #292524;
+  --teal:        #0d6e6e;
+  --teal-light:  #e0f0f0;
+  --amber:       #92400e;
+  --amber-light: #fef3c7;
+  --green:       #166534;
+  --green-light: #dcfce7;
+  --sidebar-w:   272px;
+  --serif: 'Noto Serif SC', 'SimSun', 'STSong', Georgia, serif;
+  --mono:  'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--serif);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15.5px;
+  line-height: 1.85;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  position: fixed; top: 0; left: 0; bottom: 0;
+  background: var(--paper-dark);
+  border-right: 2px solid var(--rule-dark);
+  display: flex; flex-direction: column;
+  z-index: 200; overflow-y: auto;
+}
+.sidebar-header {
+  padding: 1.75rem 1.5rem 1.4rem;
+  border-bottom: 1px solid var(--rule-dark);
+  background: var(--paper-mid);
+}
+.sidebar-unit { font-size: 10.5px; letter-spacing: 0.18em; color: var(--ink-4); text-transform: uppercase; margin-bottom: 5px; font-family: var(--serif); }
+.sidebar-title { font-size: 15px; font-weight: 700; color: var(--vermilion); line-height: 1.4; font-family: var(--serif); }
+.sidebar-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; font-style: italic; }
+
+.sidebar-nav { padding: 0.9rem 0; flex: 1; }
+.nav-group { margin-bottom: 0.35rem; }
+.nav-group-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; color: var(--ink-5); text-transform: uppercase; padding: 5px 18px 3px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 14px; border-radius: 3px; cursor: pointer;
+  color: var(--ink-3); font-family: var(--serif); font-size: 12.5px; line-height: 1.35;
+  transition: all 0.16s; border-left: 3px solid transparent; text-decoration: none;
+}
+.nav-item:hover { background: var(--paper-mid); color: var(--ink-2); border-left-color: var(--verm-mid); }
+.nav-item.active { background: var(--verm-light); color: var(--vermilion); border-left-color: var(--vermilion); font-weight: 600; }
+.nav-num { font-family: var(--mono); font-size: 10px; color: var(--ink-5); min-width: 20px; font-weight: 500; }
+.nav-item.active .nav-num { color: var(--vermilion); opacity: 0.65; }
+.sidebar-footer { padding: 0.9rem 1.5rem; border-top: 1px solid var(--rule); font-size: 11px; color: var(--ink-5); font-style: italic; }
+
+/* ══ MAIN ══ */
+.main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; }
+
+.page-header {
+  background: var(--ink-2); color: var(--paper);
+  padding: 3rem 4rem 2.25rem; position: relative; overflow: hidden;
+  border-bottom: 4px solid var(--vermilion);
+}
+.page-header::before { content:''; position:absolute; top:-40px; right:-40px; width:260px; height:260px; border:38px solid rgba(192,57,43,0.1); border-radius:50%; }
+.page-header::after  { content:''; position:absolute; bottom:-20px; right:80px; width:140px; height:140px; border:2px solid rgba(192,57,43,0.16); border-radius:50%; }
+.header-tag { display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:0.15em; color:var(--verm-mid); background:rgba(192,57,43,0.14); border:1px solid rgba(192,57,43,0.28); padding:3px 11px; border-radius:2px; margin-bottom:0.85rem; }
+.page-header h1 { font-size:2.2rem; font-weight:700; color:#f5f0e8; letter-spacing:0.04em; line-height:1.2; margin-bottom:0.5rem; position:relative; font-family:var(--serif); }
+.header-desc { font-size:13.5px; color:var(--ink-5); font-style:italic; position:relative; }
+.header-meta { display:flex; gap:1.5rem; margin-top:1rem; flex-wrap:wrap; }
+.header-meta-item { font-family:var(--mono); font-size:11px; color:var(--ink-5); display:flex; align-items:center; gap:5px; }
+.header-meta-item::before { content:''; width:6px; height:6px; background:var(--vermilion); border-radius:50%; display:inline-block; opacity:0.7; }
+
+.content-wrap { max-width: 800px; padding: 2.75rem 4rem 5rem; }
+
+/* ══ CHAPTER ══ */
+.chapter { margin-bottom: 3.5rem; scroll-margin-top: 20px; }
+.chapter-header { display:flex; align-items:baseline; gap:14px; margin-bottom:1.6rem; padding-bottom:0.8rem; border-bottom:2px solid var(--rule-dark); position:relative; }
+.chapter-header::after { content:''; position:absolute; bottom:-2px; left:0; width:52px; height:2px; background:var(--vermilion); }
+.ch-num { font-family:var(--mono); font-size:12.5px; font-weight:500; color:var(--vermilion); letter-spacing:0.05em; opacity:0.8; }
+.ch-title { font-family:var(--serif); font-size:1.3rem; font-weight:700; color:var(--ink); letter-spacing:0.06em; }
+.ch-hint { font-size:11.5px; color:var(--ink-4); font-style:italic; margin-left:auto; }
+
+.sub-section { margin-bottom: 2.25rem; scroll-margin-top: 20px; }
+.sub-header { display:flex; align-items:center; gap:10px; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--rule); }
+.sub-badge { font-family:var(--mono); font-size:10px; background:var(--paper-mid); color:var(--ink-4); border:1px solid var(--rule-dark); padding:2px 7px; border-radius:2px; letter-spacing:0.06em; }
+.sub-title { font-family:var(--serif); font-size:1.05rem; font-weight:600; color:var(--ink); letter-spacing:0.05em; }
+
+/* text */
+.body-text { color:var(--ink-2); margin-bottom:1.1rem; text-indent:2em; }
+.body-text.no-indent { text-indent:0; }
+code { font-family:var(--mono); font-size:0.86em; background:var(--verm-light); color:var(--verm-dark); padding:1px 5px; border-radius:3px; border:1px solid var(--verm-mid); }
+strong { font-weight:600; color:var(--ink); }
+
+/* def box */
+.def-block { background:var(--paper-dark); border-left:3px solid var(--vermilion); padding:0.9rem 1.2rem; margin:1.1rem 0; border-radius:0 4px 4px 0; }
+.def-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.18em; color:var(--vermilion); text-transform:uppercase; margin-bottom:4px; font-weight:500; }
+.def-text { font-size:14.5px; color:var(--ink-2); line-height:1.7; }
+
+/* note boxes */
+.note-box { display:flex; gap:11px; padding:0.8rem 1.05rem; border-radius:4px; margin:1.1rem 0; font-size:13.5px; line-height:1.6; }
+.note-box.warning { background:var(--amber-light); border:1px solid #d97706; color:var(--amber); }
+.note-box.info    { background:var(--teal-light);  border:1px solid #0d9488; color:var(--teal); }
+.note-box.success { background:var(--green-light); border:1px solid #16a34a; color:var(--green); }
+.note-box.accent  { background:var(--verm-light);  border:1px solid var(--verm-mid); color:var(--verm-dark); }
+.note-icon { font-size:15px; margin-top:1px; flex-shrink:0; }
+
+/* table */
+.data-table { width:100%; border-collapse:collapse; font-size:13.5px; margin:1.1rem 0; }
+.data-table th { background:var(--paper-mid); padding:8px 13px; text-align:left; font-family:var(--serif); font-weight:600; color:var(--ink-2); border-bottom:2px solid var(--rule-dark); border-top:1px solid var(--rule-dark); letter-spacing:0.04em; }
+.data-table td { padding:8px 13px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink-2); }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:rgba(192,57,43,0.03); }
+.data-table code { font-size:11.5px; }
+
+/* code block */
+.code-block { background:var(--code-bg); border-radius:6px; margin:1.1rem 0; box-shadow:0 6px 24px rgba(26,18,8,0.22),0 2px 8px rgba(26,18,8,0.12); overflow:hidden; }
+.code-header { background:var(--code-line); padding:7px 15px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #3c3532; }
+.code-dots { display:flex; gap:5px; }
+.code-dots span { width:10px; height:10px; border-radius:50%; }
+.code-dots .d1{background:#ff5f57}.code-dots .d2{background:#febc2e}.code-dots .d3{background:#28c840}
+.code-lang { font-family:var(--mono); font-size:10.5px; color:#6b6563; letter-spacing:0.08em; margin-left:3px; }
+.code-copy { margin-left:auto; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); color:#9a8e88; font-family:var(--mono); font-size:10.5px; padding:3px 9px; border-radius:3px; cursor:pointer; transition:all 0.16s; }
+.code-copy:hover { background:rgba(255,255,255,0.15); color:#d4c8b4; }
+.code-body { padding:1.1rem 1.4rem; font-family:var(--mono); font-size:12.5px; line-height:1.9; color:#d4c8b4; overflow-x:auto; tab-size:2; white-space:pre; }
+.kw{color:#93c5fd}.prop{color:#86efac}.val{color:#fca5a5}.cmt{color:#6b6360;font-style:italic}
+.htag{color:#c4b5fd}.attr{color:#fde68a}.str{color:#6ee7b7}.sel{color:#fb923c}
+
+/* divider */
+.sec-divider { display:flex; align-items:center; gap:10px; margin:1.8rem 0 1.1rem; }
+.sec-divider-line { flex:1; height:1px; background:var(--rule); }
+.sec-divider-text { font-family:var(--serif); font-size:12.5px; font-weight:600; color:var(--ink-3); letter-spacing:0.1em; white-space:nowrap; }
+
+/* feat list */
+.feat-list { list-style:none; margin:0.6rem 0; }
+.feat-list li { display:flex; align-items:flex-start; gap:9px; padding:5px 0; font-size:14.5px; color:var(--ink-2); border-bottom:1px solid var(--rule); }
+.feat-list li:last-child { border-bottom:none; }
+.feat-mark { font-family:var(--mono); font-size:12px; min-width:18px; margin-top:2px; font-weight:600; }
+.feat-mark.yes{color:#166534}.feat-mark.no{color:#922b21}.feat-mark.neu{color:var(--amber)}
+
+/* ══ INTERACTIVE DEMOS ══ */
+.demo-wrap { background:var(--paper-dark); border:1px solid var(--rule-dark); border-radius:6px; padding:1.4rem; margin:1.1rem 0; }
+.demo-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.2em; color:var(--ink-4); text-transform:uppercase; margin-bottom:1rem; display:flex; align-items:center; gap:8px; }
+.demo-label::after { content:''; flex:1; height:1px; background:var(--rule); }
+
+/* ── page structure diagram ── */
+.page-struct { display:grid; grid-template-rows:auto auto auto; gap:0; font-family:var(--mono); font-size:12px; }
+.ps-row { display:grid; gap:0; }
+.ps-cell {
+  border:1.5px solid var(--rule-dark); padding:8px 12px; background:var(--paper);
+  display:flex; align-items:center; justify-content:center;
+  text-align:center; cursor:pointer; transition:all 0.2s;
+  position:relative;
+}
+.ps-cell:hover { border-color:var(--vermilion); z-index:1; }
+.ps-cell.active { background:var(--verm-light); border-color:var(--vermilion); color:var(--verm-dark); font-weight:600; }
+.ps-tag { font-family:var(--mono); font-size:12px; font-weight:600; }
+.ps-desc { font-size:10.5px; color:var(--ink-4); margin-top:2px; }
+.ps-row-2 { grid-template-columns:1fr 2fr 1fr; }
+.ps-row-3 { grid-template-columns:1fr; }
+.ps-header { background:rgba(192,57,43,0.08); }
+.ps-nav { background:rgba(146,64,14,0.06); }
+.ps-article { background:rgba(13,110,110,0.05); }
+.ps-aside { background:rgba(92,92,120,0.06); }
+.ps-section { background:rgba(22,101,52,0.05); }
+.ps-footer { background:rgba(192,57,43,0.04); }
+
+/* tag popup */
+.tag-info { display:none; background:var(--paper); border:1px solid var(--rule-dark); border-radius:4px; padding:0.9rem 1.1rem; margin-top:1rem; font-size:13.5px; color:var(--ink-2); line-height:1.7; animation:fadeUp 0.22s ease; }
+.tag-info.show { display:block; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── details interactive demo ── */
+.demo-details { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:0; overflow:hidden; }
+.demo-details summary { padding:10px 14px; cursor:pointer; font-family:var(--serif); font-size:14px; font-weight:600; color:var(--ink-2); background:var(--paper-mid); border-bottom:1px solid var(--rule); list-style:none; display:flex; align-items:center; gap:8px; user-select:none; }
+.demo-details summary::before { content:'▶'; font-size:10px; color:var(--vermilion); transition:transform 0.2s; }
+.demo-details[open] summary::before { transform:rotate(90deg); }
+.demo-details summary::-webkit-details-marker { display:none; }
+.demo-details .detail-body { padding:12px 14px; font-size:13.5px; color:var(--ink-3); }
+
+/* ── progress / meter demo ── */
+.gauge-demo { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1rem 1.25rem; }
+.gauge-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.gauge-row:last-child { margin-bottom:0; }
+.gauge-label { font-family:var(--mono); font-size:11.5px; color:var(--ink-3); min-width:80px; }
+.gauge-bar { flex:1; height:16px; background:var(--paper-mid); border-radius:8px; overflow:hidden; border:1px solid var(--rule-dark); }
+.gauge-fill { height:100%; border-radius:8px; transition:width 0.8s cubic-bezier(0.34,1.2,0.64,1); }
+.gf-green { background:linear-gradient(90deg,#22c55e,#16a34a); }
+.gf-amber { background:linear-gradient(90deg,#f59e0b,#d97706); }
+.gf-red   { background:linear-gradient(90deg,#ef4444,#dc2626); }
+.gf-blue  { background:linear-gradient(90deg,#3b82f6,#2563eb); }
+.gf-anim  { background:linear-gradient(90deg,var(--vermilion),var(--verm-dark)); animation:gProgress 2s ease-in-out infinite alternate; }
+@keyframes gProgress{from{width:15%}to{width:85%}}
+.gauge-val { font-family:var(--mono); font-size:11px; color:var(--ink-4); min-width:36px; }
+
+/* ── global attr demo ── */
+.attr-demo { background:var(--paper); border:1.5px solid var(--rule-dark); border-radius:4px; padding:1rem 1.25rem; }
+.editable-list { list-style:disc; padding-left:1.5rem; font-size:14px; color:var(--ink-2); }
+.editable-list[contenteditable="true"] { outline:1.5px solid var(--teal); border-radius:3px; padding:8px 8px 8px 1.5rem; background:var(--teal-light); }
+.editable-hint { font-family:var(--mono); font-size:10.5px; color:var(--teal); margin-top:6px; }
+.hidden-box { font-size:14px; color:var(--ink-3); }
+.hidden-box img { border:2px dashed var(--rule-dark); padding:4px; }
+
+/* ── semantic text demo ── */
+.mark-demo { font-size:15px; color:var(--ink-2); line-height:2; }
+.mark-demo mark { background:#fde68a; color:#92400e; padding:0 3px; border-radius:2px; }
+.time-demo { font-size:14.5px; color:var(--ink-2); line-height:2; }
+.time-demo time { font-family:var(--mono); font-size:13px; background:var(--paper-mid); border:1px solid var(--rule-dark); padding:1px 6px; border-radius:3px; color:var(--teal); }
+
+/* ── structure layout toggle ── */
+.pill-group { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:1rem; }
+.pill { font-family:var(--mono); font-size:11.5px; padding:5px 13px; border-radius:2px; border:1px solid var(--rule-dark); background:var(--paper); color:var(--ink-3); cursor:pointer; transition:all 0.16s; }
+.pill:hover { border-color:var(--vermilion); color:var(--verm-dark); }
+.pill.on { background:var(--vermilion); border-color:var(--verm-dark); color:#f5f0e8; }
+.stage-desc { margin-top:0.7rem; font-family:var(--mono); font-size:11.5px; color:var(--ink-4); padding:7px 10px; background:var(--paper-mid); border-radius:3px; border-left:2px solid var(--vermilion); }
+
+/* decision tree */
+.dtree { background:var(--paper); border:1px solid var(--rule-dark); border-radius:4px; padding:1.1rem 1.25rem; font-size:13.5px; color:var(--ink-2); font-family:var(--mono); line-height:2; }
+.dtree-q { color:var(--vermilion); font-weight:600; }
+.dtree-a { color:var(--teal); }
+.dtree-node { margin-left:1.5em; }
+
+/* quick ref */
+.quick-table { width:100%; border-collapse:collapse; font-size:13px; margin:0.8rem 0; }
+.quick-table th { background:var(--ink-2); color:var(--paper); padding:7px 12px; text-align:left; font-family:var(--serif); font-weight:600; letter-spacing:0.04em; }
+.quick-table td { padding:7px 12px; border-bottom:1px solid var(--rule); color:var(--ink-2); }
+.quick-table tr:last-child td { border-bottom:none; }
+.quick-table tr:nth-child(even) td { background:rgba(192,57,43,0.025); }
+.quick-table code { font-size:11px; }
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--paper-dark)}
+::-webkit-scrollbar-thumb{background:var(--rule-dark);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-5)}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-unit">HTML5 基础 · 第四讲</div>
+    <div class="sidebar-title">HTML5 新增标签<br>及属性</div>
+    <div class="sidebar-sub">HTML5 + CSS3 前端基础</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">结构标签</div>
+      <a class="nav-item active" onclick="window.goTo('s1')"><span class="nav-num">§1</span>网页结构标签总览</a>
+      <a class="nav-item" onclick="window.goTo('s1-header')"><span class="nav-num">1.1</span>&lt;header&gt; 页眉</a>
+      <a class="nav-item" onclick="window.goTo('s1-nav')"><span class="nav-num">1.2</span>&lt;nav&gt; 导航</a>
+      <a class="nav-item" onclick="window.goTo('s1-article')"><span class="nav-num">1.3</span>&lt;article&gt; 独立内容</a>
+      <a class="nav-item" onclick="window.goTo('s1-aside')"><span class="nav-num">1.4</span>&lt;aside&gt; 侧边栏</a>
+      <a class="nav-item" onclick="window.goTo('s1-section')"><span class="nav-num">1.5</span>&lt;section&gt; 区段</a>
+      <a class="nav-item" onclick="window.goTo('s1-footer')"><span class="nav-num">1.6</span>&lt;footer&gt; 页脚</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">分组标签</div>
+      <a class="nav-item" onclick="window.goTo('s2')"><span class="nav-num">§2</span>&lt;figure&gt; / &lt;figcaption&gt;</a>
+      <a class="nav-item" onclick="window.goTo('s2-hgroup')"><span class="nav-num">2.2</span>&lt;hgroup&gt; 标题组</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">交互标签</div>
+      <a class="nav-item" onclick="window.goTo('s3')"><span class="nav-num">§3</span>&lt;details&gt; / &lt;summary&gt;</a>
+      <a class="nav-item" onclick="window.goTo('s3-progress')"><span class="nav-num">3.2</span>&lt;progress&gt; 进度条</a>
+      <a class="nav-item" onclick="window.goTo('s3-meter')"><span class="nav-num">3.3</span>&lt;meter&gt; 度量</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">语义标签</div>
+      <a class="nav-item" onclick="window.goTo('s4')"><span class="nav-num">§4</span>&lt;time&gt; / &lt;mark&gt; / &lt;cite&gt;</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">全局属性</div>
+      <a class="nav-item" onclick="window.goTo('s5')"><span class="nav-num">§5</span>HTML5 全局属性</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">附录</div>
+      <a class="nav-item" onclick="window.goTo('s6')"><span class="nav-num">总结</span>标签速查与决策</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">点击目录项跳转对应章节</div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <header class="page-header">
+    <div class="header-tag">HTML5 · LESSON 04</div>
+    <h1>HTML5 新增标签及属性</h1>
+    <div class="header-desc">语义化结构标签、交互标签、文本语义标签与 HTML5 全局属性详解</div>
+    <div class="header-meta">
+      <span class="header-meta-item">结构标签 · 分组标签</span>
+      <span class="header-meta-item">交互标签 · 语义标签</span>
+      <span class="header-meta-item">全局属性</span>
+    </div>
+  </header>
+
+  <div class="content-wrap">
+
+    <!-- ══ §1 结构标签 ══ -->
+    <section class="chapter" id="s1">
+      <div class="chapter-header">
+        <span class="ch-num">§ 01</span>
+        <span class="ch-title">HTML5 网页结构标签</span>
+        <span class="ch-hint">点击区块查看标签说明</span>
+      </div>
+
+      <p class="body-text">HTML5 引入了一系列<strong>语义化结构标签</strong>，用于替代原来大量使用 <code>&lt;div&gt;</code> 进行布局的方式。语义化标签让代码结构更清晰，有利于 SEO（搜索引擎优化）和无障碍访问。</p>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span>在 HTML5 之前，开发者习惯用 <code>&lt;div id="header"&gt;</code>、<code>&lt;div id="nav"&gt;</code> 等方式定义页面区域。语义化标签的出现让标签名称本身就能表达用途，机器和人都能更轻松地读懂页面结构。</span>
+      </div>
+
+      <!-- Interactive page diagram -->
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 点击页面区块了解对应标签</div>
+        <div class="page-struct">
+          <div class="ps-row" style="grid-template-columns:1fr">
+            <div class="ps-cell ps-header" onclick="window.showTag('header')">
+              <div><div class="ps-tag">&lt;header&gt;</div><div class="ps-desc">页眉 · Logo · 标题 · 导航</div></div>
+            </div>
+          </div>
+          <div class="ps-row" style="grid-template-columns:1fr">
+            <div class="ps-cell ps-nav" onclick="window.showTag('nav')" style="padding:6px 12px">
+              <div><div class="ps-tag">&lt;nav&gt;</div><div class="ps-desc">导航链接区域</div></div>
+            </div>
+          </div>
+          <div class="ps-row ps-row-2" style="margin-top:0">
+            <div class="ps-cell ps-aside" onclick="window.showTag('aside')" style="min-height:100px">
+              <div><div class="ps-tag">&lt;aside&gt;</div><div class="ps-desc">侧边栏<br>附属内容</div></div>
+            </div>
+            <div class="ps-cell ps-article" style="flex-direction:column;gap:0;padding:0;cursor:default;min-height:100px">
+              <div class="ps-cell ps-article" style="border:none;border-bottom:1.5px solid var(--rule-dark);flex:1;width:100%;cursor:pointer" onclick="window.showTag('article')">
+                <div><div class="ps-tag">&lt;article&gt;</div><div class="ps-desc">独立文章内容</div></div>
+              </div>
+              <div class="ps-cell ps-section" style="border:none;flex:1;width:100%;cursor:pointer" onclick="window.showTag('section')">
+                <div><div class="ps-tag">&lt;section&gt;</div><div class="ps-desc">章节 · 带标题的专题内容</div></div>
+              </div>
+            </div>
+            <div class="ps-cell ps-aside" onclick="window.showTag('aside')" style="min-height:100px">
+              <div><div class="ps-tag">&lt;aside&gt;</div><div class="ps-desc">侧边栏<br>附属内容</div></div>
+            </div>
+          </div>
+          <div class="ps-row" style="grid-template-columns:1fr">
+            <div class="ps-cell ps-footer" onclick="window.showTag('footer')">
+              <div><div class="ps-tag">&lt;footer&gt;</div><div class="ps-desc">页脚 · 版权信息 · 联系方式</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tag-info" id="tag-popup"></div>
+      </div>
+
+      <!-- §1.1 header -->
+      <div class="sub-section" id="s1-header">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;header&gt; · 页眉标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">具有引导作用的结构标签，可以包含所有放在页面头部的内容，例如网站 Logo 图像、导航链接、标题、表单等相关内容。</div>
+        </div>
+        <ul class="feat-list">
+          <li><span class="feat-mark neu">—</span>一个文档中可以定义<strong>多个</strong> <code>&lt;header&gt;</code> 标签</li>
+          <li><span class="feat-mark neu">—</span>可以为每个独立内容块单独添加 <code>&lt;header&gt;</code></li>
+          <li><span class="feat-mark neu">—</span>也可以用来放置整个页面或某个内容区块的标题</li>
+        </ul>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · header 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;header&gt;</span>
+  <span class="htag">&lt;h2</span> <span class="attr">align</span>=<span class="str">"center"</span><span class="htag">&gt;</span>我院通过教育部第二批国家现代学徒制试点单位评审认定<span class="htag">&lt;/h2&gt;</span>
+  <span class="htag">&lt;p</span> <span class="attr">align</span>=<span class="str">"center"</span><span class="htag">&gt;</span>
+    发表时间：2017-09-09&amp;nbsp;&amp;nbsp;来源：信息工程系
+  <span class="htag">&lt;/p&gt;</span>
+  <span class="htag">&lt;hr /&gt;</span>
+<span class="htag">&lt;/header&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- §1.2 nav -->
+      <div class="sub-section" id="s1-nav">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;nav&gt; · 导航标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">用于定义导航链接，将具有导航性质的链接归纳在一个区域中，使页面元素的语义更加明确。</div>
+        </div>
+        <div class="note-box info">
+          <span class="note-icon">💡</span>
+          <span>并非所有文档都需要使用 <code>&lt;nav&gt;</code>，只用于标注<strong>主要的导航链接区域</strong>。可根据不同设备控制导航的显示与隐藏，以适应不同屏幕。</span>
+        </div>
+        <p class="body-text no-indent" style="margin-bottom:0.5rem"><strong>可设置的导航类型：</strong>网站主导航（页头菜单）、页面内锚点导航（目录）、面包屑导航、侧边栏导航、翻页导航（上一篇/下一篇）。</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · nav 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;nav&gt;</span>
+  <span class="htag">&lt;ul&gt;</span>
+    <span class="htag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="htag">&gt;</span>首页<span class="htag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="htag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="htag">&gt;</span>公司概况<span class="htag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="htag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="htag">&gt;</span>产品展示<span class="htag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="htag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="htag">&gt;</span>联系我们<span class="htag">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="htag">&lt;/ul&gt;</span>
+<span class="htag">&lt;/nav&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- §1.3 article -->
+      <div class="sub-section" id="s1-article">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;article&gt; · 独立内容标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">用于定义文档、页面或应用程序中<strong>与上下文不相关的独立部分</strong>，经常用于定义日志、新闻、用户评论等内容。</div>
+        </div>
+        <ul class="feat-list">
+          <li><span class="feat-mark neu">—</span>标签内容本身必须有意义，且必须独立于文档的其余部分</li>
+          <li><span class="feat-mark neu">—</span>内部可用多个 <code>&lt;section&gt;</code> 进行进一步划分</li>
+          <li><span class="feat-mark neu">—</span>适用：<strong>论坛帖子、博客文章、新闻故事、评论</strong>等</li>
+        </ul>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · article 嵌套 header 与 footer</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;article&gt;</span>
+  <span class="htag">&lt;header&gt;</span>
+    <span class="htag">&lt;h1&gt;</span>秋天的味道<span class="htag">&lt;/h1&gt;</span>
+    <span class="htag">&lt;p&gt;</span>你想不想知道秋天的味道？它是甜、是苦、是涩。<span class="htag">&lt;/p&gt;</span>
+  <span class="htag">&lt;/header&gt;</span>
+  <span class="htag">&lt;section&gt;</span>文章正文内容……<span class="htag">&lt;/section&gt;</span>
+  <span class="htag">&lt;footer&gt;</span>
+    <span class="htag">&lt;p&gt;</span>著作权归 XXXXXX 公司所有。<span class="htag">&lt;/p&gt;</span>
+  <span class="htag">&lt;/footer&gt;</span>
+<span class="htag">&lt;/article&gt;</span></div>
+        </div>
+        <div class="note-box accent">
+          <span class="note-icon">🔑</span>
+          <span><code>&lt;article&gt;</code> 与 <code>&lt;section&gt;</code> 可以互相嵌套，没有上下级关系。<code>&lt;article&gt;</code> 内可以有多个 <code>&lt;section&gt;</code>，<code>&lt;section&gt;</code> 内也可以有多个 <code>&lt;article&gt;</code>。</span>
+        </div>
+      </div>
+
+      <!-- §1.4 aside -->
+      <div class="sub-section" id="s1-aside">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;aside&gt; · 侧边栏标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">用来定义当前页面或文章的附属信息部分，可以包含与主要内容相关的引用、侧边栏、广告、导航条等有别于主要内容的部分。</div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>用法</th><th>位置</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>用法一</td><td>置于 <code>&lt;article&gt;</code> <strong>内部</strong></td><td>用于定义文章主要内容的附属信息</td></tr>
+            <tr><td>用法二</td><td>置于 <code>&lt;article&gt;</code> <strong>外部</strong></td><td>用于定义整个页面或网站的附属信息（如右侧菜单）</td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · aside 两种用法</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;article&gt;</span>
+  <span class="htag">&lt;section&gt;</span>文章主要内容<span class="htag">&lt;/section&gt;</span>
+  <span class="htag">&lt;aside&gt;</span>文章的其他相关信息<span class="htag">&lt;/aside&gt;</span>  <span class="cmt">&lt;!-- 用法一 --&gt;</span>
+<span class="htag">&lt;/article&gt;</span>
+<span class="htag">&lt;aside&gt;</span>右侧菜单<span class="htag">&lt;/aside&gt;</span>  <span class="cmt">&lt;!-- 用法二：页面级侧边栏 --&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- §1.5 section -->
+      <div class="sub-section" id="s1-section">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;section&gt; · 区段标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">用于定义一段<strong>专题性的内容</strong>，一般会带有标题，主要应用在文章的章节划分中。</div>
+        </div>
+        <ul class="feat-list">
+          <li><span class="feat-mark yes">✓</span>具有<strong>语义化</strong>，仅为样式或脚本使用时应改用无语义的 <code>&lt;div&gt;</code></li>
+          <li><span class="feat-mark yes">✓</span>如果 <code>&lt;article&gt;</code>、<code>&lt;aside&gt;</code> 或 <code>&lt;nav&gt;</code> 更符合条件，则无需使用 <code>&lt;section&gt;</code></li>
+          <li><span class="feat-mark no">✗</span><strong>没有标题</strong>的内容模块不要使用 <code>&lt;section&gt;</code></li>
+          <li><span class="feat-mark neu">—</span>与 <code>&lt;article&gt;</code> 可以互相嵌套，没有上下级关系</li>
+        </ul>
+        <div class="note-box warning">
+          <span class="note-icon">⚠</span>
+          <span>常见误区：不要把 <code>&lt;section&gt;</code> 当作通用容器来使用，通用容器请用 <code>&lt;div&gt;</code>。<code>&lt;section&gt;</code> 的核心是"<strong>专题性内容 + 通常有标题</strong>"。</span>
+        </div>
+      </div>
+
+      <!-- §1.6 footer -->
+      <div class="sub-section" id="s1-footer">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;footer&gt; · 页脚标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">用于定义一个页面或区域的底部，可以包含所有放在页面底部的内容，如版权信息、作者信息、联系方式等。</div>
+        </div>
+        <p class="body-text no-indent">与 <code>&lt;header&gt;</code> 类似，一个文档中可以使用<strong>多个</strong> <code>&lt;footer&gt;</code> 元素（例如，整个页面有页脚，每篇文章也可以有自己的页脚）。</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · footer 两种用法</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;article&gt;</span>
+  <span class="htag">&lt;footer&gt;</span>
+    <span class="htag">&lt;p&gt;</span>版权所有 © 2024 · 著作权归原作者所有<span class="htag">&lt;/p&gt;</span>
+  <span class="htag">&lt;/footer&gt;</span>
+<span class="htag">&lt;/article&gt;</span>
+
+<span class="htag">&lt;footer&gt;</span>  <span class="cmt">&lt;!-- 整个页面的页脚 --&gt;</span>
+  <span class="htag">&lt;p&gt;</span>© 2024 浙江安防职业技术学院 版权所有<span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;/footer&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- summary table -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">结构标签对照表</div><div class="sec-divider-line"></div></div>
+      <table class="data-table">
+        <thead><tr><th>标签</th><th>语义</th><th>常见用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;header&gt;</code></td><td>页眉</td><td>文章标题、发布信息、Logo + 导航</td></tr>
+          <tr><td><code>&lt;nav&gt;</code></td><td>导航</td><td>网站主菜单、面包屑导航</td></tr>
+          <tr><td><code>&lt;article&gt;</code></td><td>独立文章</td><td>博客正文、新闻、论坛帖子</td></tr>
+          <tr><td><code>&lt;aside&gt;</code></td><td>侧边栏 / 附属</td><td>广告、相关链接、补充说明</td></tr>
+          <tr><td><code>&lt;section&gt;</code></td><td>区段</td><td>文章内的章节划分（带标题）</td></tr>
+          <tr><td><code>&lt;footer&gt;</code></td><td>页脚</td><td>版权信息、联系方式</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══ §2 分组标签 ══ -->
+    <section class="chapter" id="s2">
+      <div class="chapter-header">
+        <span class="ch-num">§ 02</span>
+        <span class="ch-title">HTML5 分组标签</span>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;figure&gt; 与 &lt;figcaption&gt; · 媒体内容标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text"><strong><code>&lt;figure&gt;</code></strong> 用于定义独立的网页内容，例如图像、图表、照片、代码等。<strong><code>&lt;figcaption&gt;</code></strong> 嵌套在 <code>&lt;figure&gt;</code> 中，为其添加标题说明。</div>
+        </div>
+        <ul class="feat-list">
+          <li><span class="feat-mark neu">—</span>一个 <code>&lt;figure&gt;</code> 内<strong>最多允许使用一个</strong> <code>&lt;figcaption&gt;</code></li>
+          <li><span class="feat-mark neu">—</span><code>&lt;figcaption&gt;</code> 应置于 <code>&lt;figure&gt;</code> 的<strong>第一个或最后一个</strong>子元素位置</li>
+          <li><span class="feat-mark neu">—</span>删除 <code>&lt;figure&gt;</code> 内容，不应对文档流产生影响</li>
+        </ul>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · figure 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;figure&gt;</span>
+  <span class="htag">&lt;img</span> <span class="attr">src</span>=<span class="str">"images/zjaf.jpg"</span> <span class="attr">alt</span>=<span class="str">"校园规划图"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;figcaption&gt;</span>校园规划图<span class="htag">&lt;/figcaption&gt;</span>
+<span class="htag">&lt;/figure&gt;</span></div>
+        </div>
+      </div>
+
+      <div class="sub-section" id="s2-hgroup">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;hgroup&gt; · 标题组标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">用于将多个标题（主标题、副标题或子标题）组成一个标题组，通常与 <code>&lt;h1&gt;</code>~<code>&lt;h6&gt;</code> 组合使用。<strong>不会改变标题的样式。</strong></div>
+        </div>
+        <ul class="feat-list">
+          <li><span class="feat-mark no">✗</span>如果只有<strong>一个</strong>标题元素，不建议使用 <code>&lt;hgroup&gt;</code></li>
+          <li><span class="feat-mark yes">✓</span>含多个标题标签时，通常将 <code>&lt;hgroup&gt;</code> 放到 <code>&lt;header&gt;</code> 标签中</li>
+        </ul>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · hgroup 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;header&gt;</span>
+  <span class="htag">&lt;hgroup&gt;</span>
+    <span class="htag">&lt;h1&gt;</span>浙江安防职业技术学院<span class="htag">&lt;/h1&gt;</span>
+    <span class="htag">&lt;h2&gt;</span>——培养公共安全管理人才的高职院校<span class="htag">&lt;/h2&gt;</span>
+  <span class="htag">&lt;/hgroup&gt;</span>
+  <span class="htag">&lt;nav&gt;</span>…<span class="htag">&lt;/nav&gt;</span>
+<span class="htag">&lt;/header&gt;</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §3 交互标签 ══ -->
+    <section class="chapter" id="s3">
+      <div class="chapter-header">
+        <span class="ch-num">§ 03</span>
+        <span class="ch-title">页面交互标签</span>
+      </div>
+      <p class="body-text">HTML5 新增的交互标签，<strong>无需 JavaScript</strong> 即可实现一些基础的用户交互效果。</p>
+
+      <!-- details / summary -->
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;details&gt; 与 &lt;summary&gt; · 展开 / 折叠标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text"><strong><code>&lt;details&gt;</code></strong> 描述文档或某部分的细节，内容默认隐藏。<strong><code>&lt;summary&gt;</code></strong> 作为第一个子元素，定义可见的点击标题。用户单击标题时，显示或隐藏其余内容。</div>
+        </div>
+        <div class="demo-wrap">
+          <div class="demo-label">实时演示 · 原生 &lt;details&gt; 折叠效果（可点击）</div>
+          <details class="demo-details">
+            <summary>什么是 &lt;details&gt; 标签？</summary>
+            <div class="detail-body">
+              <code>&lt;details&gt;</code> 标签用于描述文档或文档某个部分的细节。<code>&lt;summary&gt;</code> 标签作为 details 的第一个子元素，用于定义 details 的可见标题。当用户单击标题时，会显示或隐藏 details 中的其他内容。
+            </div>
+          </details>
+          <details class="demo-details" style="margin-top:6px">
+            <summary>面试技巧：如何介绍自己？</summary>
+            <div class="detail-body">
+              建议从"个人背景 → 核心技能 → 相关经验 → 为什么选择这家公司"四个维度展开，控制在 2 分钟以内，语速适中，保持眼神交流。
+            </div>
+          </details>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · details + summary 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;details&gt;</span>
+  <span class="htag">&lt;summary&gt;</span>details 标签和 summary 标签<span class="htag">&lt;/summary&gt;</span>
+  details 标签用于描述文档或文档某个部分的细节。
+  summary 标签作为 details 的第一个子元素，用于定义标题。
+  标题是可见的，当用户单击标题时，会显示或隐藏其他内容。
+<span class="htag">&lt;/details&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- progress -->
+      <div class="sub-section" id="s3-progress">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;progress&gt; · 进度条标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">用于定义运行中的任务进度（进程）。</div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>属性</th><th>描述</th></tr></thead>
+          <tbody>
+            <tr><td><code>max</code></td><td>规定需要完成的值（总量）</td></tr>
+            <tr><td><code>value</code></td><td>规定进程的当前值；不设置时显示为动态滚动状态</td></tr>
+          </tbody>
+        </table>
+        <div class="demo-wrap">
+          <div class="demo-label">可视化演示 · &lt;progress&gt; 两种用法</div>
+          <div class="gauge-demo">
+            <div class="gauge-row">
+              <div class="gauge-label">任务进行中</div>
+              <div class="gauge-bar" style="background:var(--paper-mid)"><div class="gauge-fill gf-anim" style="width:60%"></div></div>
+              <div class="gauge-val" style="font-style:italic;color:var(--ink-4)">动态</div>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-label">已修满学分</div>
+              <div class="gauge-bar"><div class="gauge-fill gf-blue" style="width:45%"></div></div>
+              <div class="gauge-val">45/100</div>
+            </div>
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · progress 两种用法</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="cmt">&lt;!-- 用法一：任务正在进行（不确定进度） --&gt;</span>
+工作进行中：<span class="htag">&lt;progress&gt;&lt;/progress&gt;</span>
+
+<span class="cmt">&lt;!-- 用法二：表示已完成的任务量 --&gt;</span>
+已修满学分：<span class="htag">&lt;progress</span> <span class="attr">value</span>=<span class="str">"45"</span> <span class="attr">max</span>=<span class="str">"100"</span><span class="htag">&gt;&lt;/progress&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- meter -->
+      <div class="sub-section" id="s3-meter">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;meter&gt; · 度量标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">定义已知范围内的度量值，仅用于<strong>有明确最大值和最小值</strong>的场景，如磁盘使用、相关性评分、电量显示等。</div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>属性</th><th>描述</th></tr></thead>
+          <tbody>
+            <tr><td><code>min</code></td><td>最小值，默认为 0</td></tr>
+            <tr><td><code>max</code></td><td>最大值，默认为 1</td></tr>
+            <tr><td><code>value</code></td><td>当前度量值</td></tr>
+            <tr><td><code>low</code></td><td>定义"低"值的分界线</td></tr>
+            <tr><td><code>high</code></td><td>定义"高"值的分界线</td></tr>
+            <tr><td><code>optimum</code></td><td>定义最佳值，浏览器可能据此附着不同颜色</td></tr>
+            <tr><td><code>title</code></td><td>鼠标悬停时显示的提示文字</td></tr>
+          </tbody>
+        </table>
+        <div class="demo-wrap">
+          <div class="demo-label">可视化演示 · 手机电量三种状态</div>
+          <div class="gauge-demo">
+            <div class="gauge-row">
+              <div class="gauge-label">充足模式</div>
+              <div class="gauge-bar"><div class="gauge-fill gf-green" style="width:80%"></div></div>
+              <div class="gauge-val">80%</div>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-label">省电模式</div>
+              <div class="gauge-bar"><div class="gauge-fill gf-amber" style="width:15%"></div></div>
+              <div class="gauge-val">15%</div>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-label">低电模式</div>
+              <div class="gauge-bar"><div class="gauge-fill gf-red" style="width:5%"></div></div>
+              <div class="gauge-val">5%</div>
+            </div>
+          </div>
+        </div>
+        <div class="note-box info">
+          <span class="note-icon">💡</span>
+          <div><strong><code>&lt;progress&gt;</code> vs <code>&lt;meter&gt;</code>：</strong><br>
+          <code>&lt;progress&gt;</code>：表示<strong>任务的完成进度</strong>（如下载、上传）<br>
+          <code>&lt;meter&gt;</code>：表示<strong>已知范围内的量</strong>（如评分、电量、磁盘占用）</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §4 语义标签 ══ -->
+    <section class="chapter" id="s4">
+      <div class="chapter-header">
+        <span class="ch-num">§ 04</span>
+        <span class="ch-title">层次语义标签（文本语义标签）</span>
+      </div>
+      <p class="body-text">层次语义标签用于赋予文本内容更精确的语义含义，有助于搜索引擎理解和无障碍访问。</p>
+
+      <!-- time -->
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;time&gt; · 时间标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">以机器可读的方式对日期和时间进行编码。浏览器不会呈现视觉效果，主要供搜索引擎、日历应用识别。</div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>属性</th><th>描述</th></tr></thead>
+          <tbody>
+            <tr><td><code>datetime</code></td><td>定义具体时间（如 <code>15:00</code>）或日期（如 <code>2010-10-10</code>）</td></tr>
+            <tr><td><code>pubdate</code></td><td>定义发布日期，通常值为 <code>pubdate</code></td></tr>
+          </tbody>
+        </table>
+        <div class="demo-wrap">
+          <div class="demo-label">效果展示 · &lt;time&gt; 标签渲染</div>
+          <div class="time-demo">
+            <p>我们每天早上 <time>9:00</time> 开始营业。</p>
+            <p>我在 <time datetime="2018-02-14">情人节</time> 有个约会。</p>
+            <p>发布于 <time datetime="2017-10-27">2017-10-27</time></p>
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · time 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;p&gt;</span>我们每天早上 <span class="htag">&lt;time&gt;</span>9:00<span class="htag">&lt;/time&gt;</span> 开始营业。<span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;p&gt;</span>我在 <span class="htag">&lt;time</span> <span class="attr">datetime</span>=<span class="str">"2018-02-14"</span><span class="htag">&gt;</span>情人节<span class="htag">&lt;/time&gt;</span> 有个约会。<span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;p&gt;</span>发布于 <span class="htag">&lt;time</span> <span class="attr">datetime</span>=<span class="str">"2017-10-27"</span> <span class="attr">pubdate</span>=<span class="str">"pubdate"</span><span class="htag">&gt;</span>2017-10-27<span class="htag">&lt;/time&gt;&lt;/p&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- mark -->
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;mark&gt; · 高亮标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">定义带有记号的文本，实现<strong>高亮显示</strong>某些字符，以引起用户注意（类似荧光笔效果）。</div>
+        </div>
+        <div class="demo-wrap">
+          <div class="demo-label">效果展示 · &lt;mark&gt; 高亮效果</div>
+          <div class="mark-demo">
+            燕子去了，有再来的时候；杨柳枯了，有再青的时候；桃花谢了，有再开的时候。
+            但是，聪明的，你告诉我，我们的日子为什么<mark>一去不复返</mark>呢？
+            ——是有人偷了他们罢……从水盆里，<mark>从水盆里过去</mark>；吃饭的时候，
+            日子<mark>从饭碗里过去</mark>；默默时，便<mark>从凝然的双眼前过去</mark>。
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · mark 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;mark&gt;</span>一去不复返<span class="htag">&lt;/mark&gt;</span>呢？
+从水盆里，<span class="htag">&lt;mark&gt;</span>从水盆里过去<span class="htag">&lt;/mark&gt;</span>；
+日子<span class="htag">&lt;mark&gt;</span>从饭碗里过去<span class="htag">&lt;/mark&gt;</span>；</div>
+        </div>
+      </div>
+
+      <!-- cite -->
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">HTML5</span><span class="sub-title">&lt;cite&gt; · 作品引用标签</span></div>
+        <div class="def-block">
+          <div class="def-label">作用</div>
+          <div class="def-text">定义作品的标题（书籍、歌曲、电影、电视节目、绘画、雕塑等）。<code>&lt;cite&gt;</code> 标签定义的文本将以<strong>斜体</strong>显示。</div>
+        </div>
+        <div class="note-box warning">
+          <span class="note-icon">⚠</span>
+          <span><strong>人名不属于</strong>作品的标题，不应使用 <code>&lt;cite&gt;</code>。</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · cite 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;p&gt;</span>山不在高，有仙则名。水不在深，有龙则灵。<span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;cite&gt;</span>——《陋室铭》<span class="htag">&lt;/cite&gt;</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ §5 全局属性 ══ -->
+    <section class="chapter" id="s5">
+      <div class="chapter-header">
+        <span class="ch-num">§ 05</span>
+        <span class="ch-title">HTML5 全局属性</span>
+      </div>
+      <p class="body-text">全局属性是可以应用于<strong>任何 HTML 元素</strong>的属性，HTML5 新增了以下几个常用全局属性。</p>
+
+      <!-- draggable -->
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">全局属性</span><span class="sub-title">draggable · 拖动属性</span></div>
+        <div class="def-block"><div class="def-label">作用</div><div class="def-text">规定元素是否可以被拖动。</div></div>
+        <table class="data-table">
+          <thead><tr><th>属性值</th><th>效果</th></tr></thead>
+          <tbody>
+            <tr><td><code>false</code></td><td>默认值，不可拖动</td></tr>
+            <tr><td><code>true</code></td><td>选中后可拖动</td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · draggable 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;p</span> <span class="attr">draggable</span>=<span class="str">"true"</span><span class="htag">&gt;</span>
+  draggable 只是开启拖动能力，实际拖放逻辑需配合 JavaScript 的 drag 事件实现
+<span class="htag">&lt;/p&gt;</span>
+<span class="htag">&lt;img</span> <span class="attr">src</span>=<span class="str">"images/wlw.png"</span> <span class="attr">width</span>=<span class="str">"460"</span> <span class="attr">draggable</span>=<span class="str">"true"</span><span class="htag">&gt;</span></div>
+        </div>
+        <div class="note-box warning"><span class="note-icon">⚠</span><span><code>draggable="true"</code> 只是开启拖动能力，实际的拖放交互逻辑需要配合 JavaScript 的 <code>drag</code> 事件实现。</span></div>
+      </div>
+
+      <!-- hidden -->
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">全局属性</span><span class="sub-title">hidden · 隐藏属性</span></div>
+        <div class="def-block"><div class="def-label">作用</div><div class="def-text">规定元素是否可见。设置后元素被隐藏，且<strong>不占据页面空间</strong>。</div></div>
+        <table class="data-table">
+          <thead><tr><th>设置</th><th>效果</th></tr></thead>
+          <tbody>
+            <tr><td>不设置</td><td>元素正常显示</td></tr>
+            <tr><td><code>hidden</code></td><td>元素被隐藏（不占据页面空间）</td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · hidden 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="htag">&lt;img</span> <span class="attr">src</span>=<span class="str">"images/wlw.png"</span> <span class="attr">width</span>=<span class="str">"460"</span> <span class="attr">hidden</span><span class="htag">&gt;</span></div>
+        </div>
+        <div class="note-box info"><span class="note-icon">💡</span><span><code>hidden</code> 与 CSS 的 <code>visibility: hidden</code> 的区别：<code>hidden</code> 属性使元素<strong>不占据空间</strong>，而 <code>visibility: hidden</code> 仍然占据空间。</span></div>
+      </div>
+
+      <!-- spellcheck -->
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">全局属性</span><span class="sub-title">spellcheck · 拼写检查属性</span></div>
+        <div class="def-block"><div class="def-label">作用</div><div class="def-text">规定是否对元素的输入内容进行拼写和语法检查，主要用于文本输入框。</div></div>
+        <table class="data-table">
+          <thead><tr><th>属性值</th><th>效果</th></tr></thead>
+          <tbody>
+            <tr><td><code>true</code></td><td>默认值，检测拼写和语法</td></tr>
+            <tr><td><code>false</code></td><td>不检测</td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · spellcheck 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body">开启拼写检查：
+<span class="htag">&lt;textarea</span> <span class="attr">cols</span>=<span class="str">"40"</span> <span class="attr">rows</span>=<span class="str">"3"</span> <span class="attr">spellcheck</span>=<span class="str">"true"</span><span class="htag">&gt;&lt;/textarea&gt;</span>
+
+关闭拼写检查：
+<span class="htag">&lt;textarea</span> <span class="attr">cols</span>=<span class="str">"40"</span> <span class="attr">rows</span>=<span class="str">"3"</span> <span class="attr">spellcheck</span>=<span class="str">"false"</span><span class="htag">&gt;&lt;/textarea&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- contenteditable -->
+      <div class="sub-section">
+        <div class="sub-header"><span class="sub-badge">全局属性</span><span class="sub-title">contenteditable · 内容可编辑属性</span></div>
+        <div class="def-block"><div class="def-label">作用</div><div class="def-text">规定元素的内容是否可以由用户编辑。元素必须可以获得鼠标焦点，且不是只读的。</div></div>
+        <div class="demo-wrap">
+          <div class="demo-label">实时演示 · 点击下方列表可直接编辑内容</div>
+          <div class="attr-demo">
+            <p style="font-size:13px;color:var(--ink-4);margin-bottom:8px;font-family:var(--mono)">不可编辑的菜单：</p>
+            <ul class="editable-list" style="margin-bottom:14px">
+              <li>菜单 1</li><li>菜单 2</li><li>菜单 3</li><li>菜单 4</li>
+            </ul>
+            <p style="font-size:13px;color:var(--teal);margin-bottom:6px;font-family:var(--mono)">可编辑的菜单（点击试试）：</p>
+            <ul class="editable-list" contenteditable="true">
+              <li>菜单 1</li><li>菜单 2</li><li>菜单 3</li><li>菜单 4</li>
+            </ul>
+            <p class="editable-hint">↑ 点击上方列表，可直接在页面中修改文字内容</p>
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · contenteditable 示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+          <div class="code-body"><span class="cmt">&lt;!-- 不可编辑 --&gt;</span>
+<span class="htag">&lt;ul&gt;</span>
+  <span class="htag">&lt;li&gt;</span>菜单1<span class="htag">&lt;/li&gt;</span>
+<span class="htag">&lt;/ul&gt;</span>
+
+<span class="cmt">&lt;!-- 可编辑 --&gt;</span>
+<span class="htag">&lt;ul</span> <span class="attr">contenteditable</span>=<span class="str">"true"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;li&gt;</span>菜单1<span class="htag">&lt;/li&gt;</span>
+<span class="htag">&lt;/ul&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- summary table -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">全局属性汇总</div><div class="sec-divider-line"></div></div>
+      <table class="data-table">
+        <thead><tr><th>属性</th><th>作用</th><th>默认值</th></tr></thead>
+        <tbody>
+          <tr><td><code>draggable</code></td><td>控制元素是否可拖动</td><td><code>false</code></td></tr>
+          <tr><td><code>hidden</code></td><td>控制元素是否隐藏（不占空间）</td><td>不设置（显示）</td></tr>
+          <tr><td><code>spellcheck</code></td><td>控制拼写检查（文本框）</td><td><code>true</code></td></tr>
+          <tr><td><code>contenteditable</code></td><td>控制内容是否可编辑</td><td><code>false</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══ §6 总结 ══ -->
+    <section class="chapter" id="s6">
+      <div class="chapter-header">
+        <span class="ch-num">总结</span>
+        <span class="ch-title">标签速查与决策思路</span>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">标签速查表</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>标签 / 属性</th><th>类别</th><th>核心用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;header&gt;</code></td><td>结构</td><td>页眉：Logo、标题、导航</td></tr>
+          <tr><td><code>&lt;nav&gt;</code></td><td>结构</td><td>导航链接区域</td></tr>
+          <tr><td><code>&lt;article&gt;</code></td><td>结构</td><td>独立完整内容（博客、新闻、评论）</td></tr>
+          <tr><td><code>&lt;aside&gt;</code></td><td>结构</td><td>侧边栏 / 附属信息</td></tr>
+          <tr><td><code>&lt;section&gt;</code></td><td>结构</td><td>带标题的专题区段（章节划分）</td></tr>
+          <tr><td><code>&lt;footer&gt;</code></td><td>结构</td><td>页脚：版权、联系方式</td></tr>
+          <tr><td><code>&lt;figure&gt; / &lt;figcaption&gt;</code></td><td>分组</td><td>独立图文内容 + 标题说明</td></tr>
+          <tr><td><code>&lt;hgroup&gt;</code></td><td>分组</td><td>主标题 + 副标题组合</td></tr>
+          <tr><td><code>&lt;details&gt; / &lt;summary&gt;</code></td><td>交互</td><td>折叠展开（无需 JS）</td></tr>
+          <tr><td><code>&lt;progress&gt;</code></td><td>交互</td><td>任务完成进度条</td></tr>
+          <tr><td><code>&lt;meter&gt;</code></td><td>交互</td><td>已知范围内的度量值</td></tr>
+          <tr><td><code>&lt;time&gt;</code></td><td>语义</td><td>机器可读的时间/日期</td></tr>
+          <tr><td><code>&lt;mark&gt;</code></td><td>语义</td><td>高亮文本（荧光笔效果）</td></tr>
+          <tr><td><code>&lt;cite&gt;</code></td><td>语义</td><td>作品引用（书名、影片名等）</td></tr>
+          <tr><td><code>draggable</code></td><td>全局属性</td><td>可拖动（需配合 JS）</td></tr>
+          <tr><td><code>hidden</code></td><td>全局属性</td><td>隐藏元素（不占空间）</td></tr>
+          <tr><td><code>spellcheck</code></td><td>全局属性</td><td>拼写检查（文本框）</td></tr>
+          <tr><td><code>contenteditable</code></td><td>全局属性</td><td>内容可编辑</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">选用标签的决策思路</div><div class="sec-divider-line"></div></div>
+      <div class="dtree">
+        <div style="color:var(--ink-2);margin-bottom:6px">需要定义页面区域？</div>
+        <div class="dtree-node">
+          <div class="dtree-q">├── 有导航链接</div><div class="dtree-node"><div class="dtree-a">└── &lt;nav&gt;</div></div>
+          <div class="dtree-q">├── 是头部内容</div><div class="dtree-node"><div class="dtree-a">└── &lt;header&gt;</div></div>
+          <div class="dtree-q">├── 是尾部内容</div><div class="dtree-node"><div class="dtree-a">└── &lt;footer&gt;</div></div>
+          <div class="dtree-q">├── 是独立完整内容（可被转载）</div><div class="dtree-node"><div class="dtree-a">└── &lt;article&gt;</div></div>
+          <div class="dtree-q">├── 是带标题的专题区段</div><div class="dtree-node"><div class="dtree-a">└── &lt;section&gt;</div></div>
+          <div class="dtree-q">├── 是附属 / 侧边内容</div><div class="dtree-node"><div class="dtree-a">└── &lt;aside&gt;</div></div>
+          <div class="dtree-q">└── 仅为布局分组，无语义</div><div class="dtree-node"><div class="dtree-a">└── <span style="color:var(--vermilion)">&lt;div&gt;</span></div></div>
+        </div>
+        <div style="color:var(--ink-2);margin-top:12px;margin-bottom:6px">需要为文字添加样式？</div>
+        <div class="dtree-node">
+          <div class="dtree-q">├── 要表达重要性</div><div class="dtree-node"><div class="dtree-a">└── &lt;strong&gt;（不要只用 &lt;b&gt;）</div></div>
+          <div class="dtree-q">├── 要表达强调</div><div class="dtree-node"><div class="dtree-a">└── &lt;em&gt;（不要只用 &lt;i&gt;）</div></div>
+          <div class="dtree-q">├── 要引用作品名</div><div class="dtree-node"><div class="dtree-a">└── &lt;cite&gt;</div></div>
+          <div class="dtree-q">├── 要标注时间日期</div><div class="dtree-node"><div class="dtree-a">└── &lt;time&gt;</div></div>
+          <div class="dtree-q">└── 要高亮关键词</div><div class="dtree-node"><div class="dtree-a">└── &lt;mark&gt;</div></div>
+        </div>
+      </div>
+
+      <div class="note-box accent" style="margin-top:1.5rem">
+        <span class="note-icon">📌</span>
+        <div><strong>学习建议：</strong>按照"理解语义 → 查看示例 → 动手实践 → 综合运用"的路径进行学习。每个标签的核心是理解它的<strong>语义含义</strong>，而不只是记忆其视觉效果。多动手尝试将各标签组合使用，才能真正掌握 HTML5 的语义化网页结构设计。</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+const navItems = document.querySelectorAll('.nav-item');
+const sectionIds = ['s1','s1-header','s1-nav','s1-article','s1-aside','s1-section','s1-footer','s2','s2-hgroup','s3','s3-progress','s3-meter','s4','s5','s6'];
+
+window.goTo = function(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+};
+
+window.addEventListener('scroll', () => {
+  let cur = 0;
+  sectionIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 80) cur = i;
+  });
+  navItems.forEach(n => n.classList.remove('active'));
+  if (navItems[cur]) navItems[cur].classList.add('active');
+}, { passive: true });
+
+window.copyCode = function(btn) {
+  const body = btn.closest('.code-block').querySelector('.code-body');
+  navigator.clipboard.writeText(body.innerText.trim()).then(() => {
+    btn.textContent = '已复制';
+    setTimeout(() => btn.textContent = '复制', 1600);
+  });
+};
+
+const tagData = {
+  header:  { title:'&lt;header&gt; · 页眉标签', desc:'具有引导作用的结构标签，可包含 Logo、标题、导航等页头内容。一个文档中<strong>可以定义多个</strong> &lt;header&gt;，也可为每个独立内容块单独添加。' },
+  nav:     { title:'&lt;nav&gt; · 导航标签',   desc:'用于定义导航链接区域，将导航性质的链接归纳在一起。只用于标注<strong>主要的导航链接区域</strong>，可适应不同设备的显示控制。' },
+  article: { title:'&lt;article&gt; · 独立内容标签', desc:'用于定义与上下文<strong>不相关的独立部分</strong>，如博客文章、新闻、论坛帖子、评论等。内容必须独立且有意义，内部可嵌套多个 &lt;section&gt;。' },
+  section: { title:'&lt;section&gt; · 区段标签', desc:'用于定义<strong>带有标题的专题内容</strong>，主要用于章节划分。切记：不要当通用容器使用，通用容器请用 &lt;div&gt;；没有标题的区块不要使用 &lt;section&gt;。' },
+  aside:   { title:'&lt;aside&gt; · 侧边栏标签', desc:'用于定义页面或文章的<strong>附属信息</strong>。置于 &lt;article&gt; 内部时为文章附属信息；置于外部时为页面级侧边栏（如右侧菜单、广告）。' },
+  footer:  { title:'&lt;footer&gt; · 页脚标签', desc:'用于定义页面或区域的底部，可包含版权信息、作者信息、联系方式等。与 &lt;header&gt; 一样，<strong>可以使用多个</strong> &lt;footer&gt;。' },
+};
+
+window.showTag = function(key) {
+  const popup = document.getElementById('tag-popup');
+  const d = tagData[key];
+  document.querySelectorAll('.ps-cell').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.ps-' + key).forEach(c => c.classList.add('active'));
+  popup.innerHTML = '<strong style="font-family:var(--serif);color:var(--vermilion);display:block;margin-bottom:4px">' + d.title + '</strong>' + d.desc;
+  popup.classList.add('show');
+};
+</script>
+</body>
+</html>

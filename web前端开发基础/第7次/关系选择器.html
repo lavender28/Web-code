@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关系选择器</title>
+  <style>
+    /* 子元素选择器 */
+    /* div>p {
+      color: red;
+    } */
+
+    /* 兄弟选择器 */
+    /* h2+p {
+      color: blue;
+    } */
+
+    /* 通用兄弟选择器 */
+    /* h2~p {
+      color: green;
+    } */
+
+    /* 反向关系选择器 */
+    p:has(img) {
+      color: red;
+    }
+
+    /* 有嵌套 ul 的 li，也就是有子菜单的菜单项 */
+    li:has(> ul) {
+      color: red;
+    }
+
+    h2:has(+ p.lede) {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <p>
+      我是一个段落
+    </p>
+    <section>
+      <p>
+        我是一个段落
+      </p>
+    </section>
+  </div>
+
+  <div id="header">
+    <h2>
+      我是一个标题
+    </h2>
+    <p>
+      我是一个段落
+    </p>
+    <p>
+      我是一个段落
+    </p>
+  </div>
+
+  <div>
+    <p>
+      我是一个段落
+    </p>
+    <div>
+      <p>
+        我是一个段落
+        <img src="" alt="">
+      </p>
+    </div>
+  </div>
+
+  <ul>
+    <li>
+      我是一个列表项
+    </li>
+    <li>
+      我是一个列表项
+    </li>
+    <li>
+      <ul>
+        <li>
+          我是一个子列表项
+        </li>
+        <li>
+          我是一个子列表项
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2>文章标题</h2>
+  <p class="lede">这是引言段落...</p>
+  <p>正文第一段...</p>
+
+  <h2>文章标题</h2>
+  <p>这是文章段落...</p>
+  <p class="lede">这是引言段落...</p>
+  <p>正文第一段...</p>
+</body>
+
+</html>
