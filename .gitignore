@@ -28,3 +28,10 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+shouban/*
+FastAPIProject/*
+front-end/*
+back-end/*
+Vue3/05_状态管理/*
+Vue3/06_项目实战/*
