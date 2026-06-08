@@ -1,0 +1,73 @@
+/* 全局重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "微软雅黑", "PingFang SC", sans-serif;
+  background: #1a1a2e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* 播放器外层容器 */
+.player-wrapper {
+  padding: 20px;
+}
+
+/* 播放器主体 */
+.music-player {
+  background: linear-gradient(135deg, #16213e, #0f3460);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  width: 480px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* 专辑封面 */
+.album-cover {
+  flex-shrink: 0;
+}
+
+.album-cover img {
+  width: 140px;
+  height: 140px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* 歌曲信息 */
+.song-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.song-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f5f0e8;
+  margin-bottom: 6px;
+  /* 长标题省略 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-artist {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 20px;
+}
+
+/* 音频播放器 */
+.audio-wrap audio {
+  width: 100%;
+}

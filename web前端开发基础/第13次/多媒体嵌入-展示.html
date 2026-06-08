@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多媒体嵌入 — HTML5 教学手册</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --paper:       #f5f0e8;
+  --paper-dark:  #ede7d9;
+  --paper-mid:   #e8e1d3;
+  --vermilion:   #c0392b;
+  --verm-light:  #f5e6e4;
+  --verm-mid:    #e8b4af;
+  --verm-dark:   #922b21;
+  --ink:         #1a1208;
+  --ink-2:       #3d2e1a;
+  --ink-3:       #6b5740;
+  --ink-4:       #9a8470;
+  --ink-5:       #c4b49e;
+  --rule:        #d4c8b4;
+  --rule-dark:   #b8a990;
+  --code-bg:     #1c1917;
+  --code-line:   #292524;
+  --teal:        #0d6e6e;
+  --teal-light:  #e0f0f0;
+  --amber:       #92400e;
+  --amber-light: #fef3c7;
+  --green:       #166534;
+  --green-light: #dcfce7;
+  --sidebar-w:   272px;
+  --serif: 'Noto Serif SC','SimSun','STSong',Georgia,serif;
+  --mono:  'Fira Code','Cascadia Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--serif);background:var(--paper);color:var(--ink);font-size:15.5px;line-height:1.85;display:flex;min-height:100vh}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sidebar-w);min-height:100vh;position:fixed;top:0;left:0;bottom:0;background:var(--paper-dark);border-right:2px solid var(--rule-dark);display:flex;flex-direction:column;z-index:200;overflow-y:auto}
+.sidebar-header{padding:1.75rem 1.5rem 1.4rem;border-bottom:1px solid var(--rule-dark);background:var(--paper-mid)}
+.sidebar-title{font-size:15px;font-weight:700;color:var(--vermilion);line-height:1.4;font-family:var(--serif)}
+.sidebar-sub{font-size:11.5px;color:var(--ink-3);margin-top:3px;font-style:italic}
+.sidebar-nav{padding:.9rem 0;flex:1}
+.nav-group{margin-bottom:.35rem}
+.nav-group-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;color:var(--ink-5);text-transform:uppercase;padding:5px 18px 3px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 14px;border-radius:3px;cursor:pointer;color:var(--ink-3);font-family:var(--serif);font-size:13px;line-height:1.35;transition:all .16s;border-left:3px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--paper-mid);color:var(--ink-2);border-left-color:var(--verm-mid)}
+.nav-item.active{background:var(--verm-light);color:var(--vermilion);border-left-color:var(--vermilion);font-weight:600}
+.nav-num{font-family:var(--mono);font-size:10px;color:var(--ink-5);min-width:18px;font-weight:500}
+.nav-item.active .nav-num{color:var(--vermilion);opacity:.65}
+.sidebar-footer{padding:.9rem 1.5rem;border-top:1px solid var(--rule);font-size:11px;color:var(--ink-5);font-style:italic}
+
+/* ══ MAIN ══ */
+.main{margin-left:var(--sidebar-w);flex:1;min-width:0}
+.page-header{background:var(--ink-2);color:var(--paper);padding:3rem 4rem 2.25rem;position:relative;overflow:hidden;border-bottom:4px solid var(--vermilion)}
+.page-header::before{content:'';position:absolute;top:-40px;right:-40px;width:260px;height:260px;border:38px solid rgba(192,57,43,.1);border-radius:50%}
+.page-header::after{content:'';position:absolute;bottom:-20px;right:80px;width:140px;height:140px;border:2px solid rgba(192,57,43,.16);border-radius:50%}
+.page-header h1{font-size:2.2rem;font-weight:700;color:#f5f0e8;letter-spacing:.04em;line-height:1.2;margin-bottom:.5rem;position:relative;font-family:var(--serif)}
+.header-desc{font-size:13.5px;color:var(--ink-5);font-style:italic;position:relative}
+.header-meta{display:flex;gap:1.5rem;margin-top:1rem;flex-wrap:wrap}
+.header-meta-item{font-family:var(--mono);font-size:11px;color:var(--ink-5);display:flex;align-items:center;gap:5px}
+.header-meta-item::before{content:'';width:6px;height:6px;background:var(--vermilion);border-radius:50%;display:inline-block;opacity:.7}
+.content-wrap{max-width:820px;padding:2.75rem 4rem 5rem}
+
+/* ══ CHAPTER ══ */
+.chapter{margin-bottom:3.5rem;scroll-margin-top:20px}
+.chapter-header{display:flex;align-items:baseline;gap:14px;margin-bottom:1.6rem;padding-bottom:.8rem;border-bottom:2px solid var(--rule-dark);position:relative}
+.chapter-header::after{content:'';position:absolute;bottom:-2px;left:0;width:52px;height:2px;background:var(--vermilion)}
+.ch-num{font-family:var(--mono);font-size:12.5px;font-weight:500;color:var(--vermilion);letter-spacing:.05em;opacity:.8}
+.ch-title{font-family:var(--serif);font-size:1.3rem;font-weight:700;color:var(--ink);letter-spacing:.06em}
+.ch-hint{font-size:11.5px;color:var(--ink-4);font-style:italic;margin-left:auto}
+.sub-section{margin-bottom:2.1rem;scroll-margin-top:20px}
+.sub-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--rule)}
+.sub-badge{font-family:var(--mono);font-size:10px;background:var(--paper-mid);color:var(--ink-4);border:1px solid var(--rule-dark);padding:2px 7px;border-radius:2px;letter-spacing:.06em}
+.sub-title{font-family:var(--serif);font-size:1.05rem;font-weight:600;color:var(--ink);letter-spacing:.05em}
+
+/* ══ TEXT ══ */
+.body-text{color:var(--ink-2);margin-bottom:1.1rem;text-indent:2em}
+.body-text.no-indent{text-indent:0}
+code{font-family:var(--mono);font-size:.86em;background:var(--verm-light);color:var(--verm-dark);padding:1px 5px;border-radius:3px;border:1px solid var(--verm-mid)}
+strong{font-weight:600;color:var(--ink)}
+
+.def-block{background:var(--paper-dark);border-left:3px solid var(--vermilion);padding:.9rem 1.2rem;margin:1.1rem 0;border-radius:0 4px 4px 0}
+.def-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--vermilion);text-transform:uppercase;margin-bottom:4px;font-weight:500}
+.def-text{font-size:14.5px;color:var(--ink-2);line-height:1.7}
+
+.note-box{display:flex;gap:11px;padding:.8rem 1.05rem;border-radius:4px;margin:1.1rem 0;font-size:13.5px;line-height:1.6}
+.note-box.warning{background:var(--amber-light);border:1px solid #d97706;color:var(--amber)}
+.note-box.info   {background:var(--teal-light); border:1px solid #0d9488;color:var(--teal)}
+.note-box.success{background:var(--green-light);border:1px solid #16a34a;color:var(--green)}
+.note-box.accent {background:var(--verm-light); border:1px solid var(--verm-mid);color:var(--verm-dark)}
+.note-icon{font-size:15px;margin-top:1px;flex-shrink:0}
+
+.data-table{width:100%;border-collapse:collapse;font-size:13.5px;margin:1.1rem 0}
+.data-table th{background:var(--paper-mid);padding:8px 13px;text-align:left;font-family:var(--serif);font-weight:600;color:var(--ink-2);border-bottom:2px solid var(--rule-dark);border-top:1px solid var(--rule-dark);letter-spacing:.04em}
+.data-table td{padding:8px 13px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(192,57,43,.03)}
+.data-table code{font-size:11.5px}
+.tick{color:var(--green);font-weight:700}
+.cross{color:var(--vermilion);font-weight:700}
+
+.code-block{background:var(--code-bg);border-radius:6px;margin:1.1rem 0;box-shadow:0 6px 24px rgba(26,18,8,.22),0 2px 8px rgba(26,18,8,.12);overflow:hidden}
+.code-header{background:var(--code-line);padding:7px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #3c3532}
+.code-dots{display:flex;gap:5px}
+.code-dots span{width:10px;height:10px;border-radius:50%}
+.code-dots .d1{background:#ff5f57}.code-dots .d2{background:#febc2e}.code-dots .d3{background:#28c840}
+.code-lang{font-family:var(--mono);font-size:10.5px;color:#6b6563;letter-spacing:.08em;margin-left:3px}
+.code-copy{margin-left:auto;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#9a8e88;font-family:var(--mono);font-size:10.5px;padding:3px 9px;border-radius:3px;cursor:pointer;transition:all .16s}
+.code-copy:hover{background:rgba(255,255,255,.15);color:#d4c8b4}
+.code-body{padding:1.1rem 1.4rem;font-family:var(--mono);font-size:12.5px;line-height:1.9;color:#d4c8b4;overflow-x:auto;tab-size:2;white-space:pre}
+.kw{color:#93c5fd}.prop{color:#86efac}.val{color:#fca5a5}.cmt{color:#6b6360;font-style:italic}
+.htag{color:#c4b5fd}.attr{color:#fde68a}.str{color:#6ee7b7}.sel{color:#fb923c}
+
+.sec-divider{display:flex;align-items:center;gap:10px;margin:1.8rem 0 1.1rem}
+.sec-divider-line{flex:1;height:1px;background:var(--rule)}
+.sec-divider-text{font-family:var(--serif);font-size:12.5px;font-weight:600;color:var(--ink-3);letter-spacing:.1em;white-space:nowrap}
+
+.feat-list{list-style:none;margin:.6rem 0}
+.feat-list li{display:flex;align-items:flex-start;gap:9px;padding:6px 0;font-size:14.5px;color:var(--ink-2);border-bottom:1px solid var(--rule)}
+.feat-list li:last-child{border-bottom:none}
+.feat-mark{font-family:var(--mono);font-size:12px;min-width:18px;margin-top:2px;font-weight:600}
+.feat-mark.yes{color:#166534}.feat-mark.no{color:#922b21}.feat-mark.neu{color:var(--amber)}
+
+/* ══ DEMOS ══ */
+.demo-wrap{background:var(--paper-dark);border:1px solid var(--rule-dark);border-radius:6px;padding:1.4rem;margin:1.1rem 0}
+.demo-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--ink-4);text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.demo-label::after{content:'';flex:1;height:1px;background:var(--rule)}
+.stage-desc{margin-top:.7rem;font-family:var(--mono);font-size:11.5px;color:var(--ink-4);padding:7px 10px;background:var(--paper-mid);border-radius:3px;border-left:2px solid var(--vermilion)}
+
+.pill-group{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1rem}
+.pill{font-family:var(--mono);font-size:11.5px;padding:5px 13px;border-radius:2px;border:1px solid var(--rule-dark);background:var(--paper);color:var(--ink-3);cursor:pointer;transition:all .16s}
+.pill:hover{border-color:var(--vermilion);color:var(--verm-dark)}
+.pill.on{background:var(--vermilion);border-color:var(--verm-dark);color:#f5f0e8}
+
+/* ── Before/After plugin vs HTML5 ── */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:1.1rem 0}
+.cmp-card{border:1.5px solid var(--rule-dark);border-radius:5px;overflow:hidden}
+.cmp-head{padding:10px 14px;font-family:var(--serif);font-size:13px;font-weight:700;letter-spacing:.04em}
+.cmp-body{padding:12px 14px;font-size:13.5px;color:var(--ink-2);line-height:1.7}
+.cmp-before .cmp-head{background:rgba(146,64,14,.1);color:var(--amber)}
+.cmp-after  .cmp-head{background:rgba(22,101,52,.1);color:var(--green)}
+
+/* ── Browser support matrix ── */
+.browser-matrix{background:var(--paper);border:1.5px solid var(--rule-dark);border-radius:4px;overflow:hidden}
+.bm-table{width:100%;border-collapse:collapse;font-size:13px}
+.bm-table th{background:var(--ink-2);color:var(--paper);padding:8px 12px;text-align:center;font-family:var(--serif);font-weight:600;font-size:12px}
+.bm-table th:first-child{text-align:left;width:120px}
+.bm-table td{padding:8px 12px;border-bottom:1px solid var(--rule);text-align:center;color:var(--ink-2);font-size:12.5px}
+.bm-table td:first-child{text-align:left;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--verm-dark)}
+.bm-table tr:last-child td{border-bottom:none}
+.bm-table tr:nth-child(even) td{background:rgba(192,57,43,.025)}
+.bm-sect{background:var(--paper-mid);padding:6px 12px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--ink-4);text-transform:uppercase}
+
+/* ── Format cards ── */
+.format-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:1.1rem 0}
+.fmt-card{border:1px solid var(--rule-dark);border-radius:4px;padding:.9rem 1rem;background:var(--paper);cursor:pointer;transition:all .18s}
+.fmt-card:hover{border-color:var(--vermilion);background:var(--verm-light)}
+.fmt-icon{font-size:1.4rem;margin-bottom:5px}
+.fmt-ext{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--vermilion);margin-bottom:3px}
+.fmt-name{font-family:var(--serif);font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.fmt-desc{font-size:12px;color:var(--ink-3);line-height:1.5}
+.fmt-badge{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 5px;border-radius:2px;margin-top:4px}
+.fbv{background:var(--teal-light);color:var(--teal)}
+.fba{background:var(--amber-light);color:var(--amber)}
+.fbb{background:var(--verm-light);color:var(--verm-dark)}
+
+/* ── anatomy diagram ── */
+.anatomy-box{background:var(--code-bg);border-radius:5px;padding:1.25rem 1.5rem;margin:1.1rem 0;box-shadow:0 4px 18px rgba(26,18,8,.2);font-family:var(--mono);font-size:14px;overflow-x:auto}
+.an-tag{color:#c4b5fd}
+.an-attr{color:#fde68a;cursor:pointer;border-bottom:1px dashed #fde68a55;transition:all .16s}
+.an-attr:hover{color:#fff;border-bottom-color:#fff8}
+.an-val{color:#6ee7b7}
+.an-label-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #3c3532}
+.an-label{display:flex;align-items:center;gap:6px;font-size:11px;color:#9a8e88}
+.an-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+.attr-popup{display:none;margin-top:.75rem;background:var(--paper);border:1px solid var(--rule-dark);border-radius:4px;padding:.9rem 1.1rem;font-size:13.5px;color:var(--ink-2);line-height:1.7;animation:fadeUp .22s ease}
+.attr-popup.show{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Source tag flow ── */
+.source-flow{display:flex;flex-direction:column;gap:0;background:var(--paper);border:1.5px solid var(--rule-dark);border-radius:4px;overflow:hidden}
+.sf-row{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--rule)}
+.sf-row:last-child{border-bottom:none}
+.sf-browser{background:var(--paper-mid);padding:10px 14px;font-family:var(--serif);font-size:12.5px;font-weight:600;color:var(--ink-3);min-width:160px;border-right:1px solid var(--rule)}
+.sf-arrow{padding:0 10px;font-size:1rem;color:var(--ink-5)}
+.sf-try{padding:10px 0;font-size:12.5px;color:var(--ink-2);font-family:var(--mono);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sf-file{background:var(--teal-light);color:var(--teal);padding:2px 8px;border-radius:3px;font-size:11.5px;border:1px solid #9ecece}
+.sf-file.fail{background:var(--verm-light);color:var(--verm-dark);border-color:var(--verm-mid)}
+.sf-file.ok{background:var(--green-light);color:var(--green);border:1px solid #86efac}
+
+/* ── Video mock player ── */
+.video-mock{background:#000;border-radius:5px;overflow:hidden;margin:1.1rem 0;position:relative;width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.video-mock-inner{text-align:center;color:#fff}
+.video-play-btn{width:60px;height:60px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;cursor:pointer;transition:all .2s}
+.video-play-btn:hover{background:rgba(192,57,43,.7);border-color:var(--verm-mid)}
+.video-title{font-family:var(--serif);font-size:13px;color:rgba(255,255,255,.7)}
+.video-controls{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.8));padding:8px 12px 10px;display:flex;align-items:center;gap:10px}
+.vc-btn{color:#fff;font-size:14px;cursor:pointer;padding:2px 4px;opacity:.8;transition:opacity .16s}
+.vc-btn:hover{opacity:1}
+.vc-progress{flex:1;height:3px;background:rgba(255,255,255,.3);border-radius:2px;cursor:pointer;position:relative}
+.vc-fill{height:100%;background:var(--vermilion);border-radius:2px;width:30%;transition:width .1s}
+.vc-time{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.7)}
+
+/* ── Audio mock player ── */
+.audio-mock{background:var(--paper);border:1.5px solid var(--rule-dark);border-radius:5px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin:1.1rem 0}
+.am-icon{font-size:1.8rem;color:var(--vermilion);flex-shrink:0}
+.am-info{flex:1}
+.am-track{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.am-artist{font-size:12px;color:var(--ink-4)}
+.am-controls{display:flex;align-items:center;gap:10px;margin-top:8px}
+.am-btn{background:none;border:1.5px solid var(--rule-dark);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--ink-3);transition:all .16s}
+.am-btn:hover,.am-btn.play{background:var(--vermilion);border-color:var(--vermilion);color:#fff}
+.am-progress{flex:1;height:4px;background:var(--paper-mid);border-radius:2px;cursor:pointer;position:relative}
+.am-fill{height:100%;background:var(--vermilion);border-radius:2px;width:35%}
+.am-time{font-family:var(--mono);font-size:10px;color:var(--ink-4)}
+
+/* ── Property cards ── */
+.prop-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:1.1rem 0}
+.prop-card{border:1px solid var(--rule-dark);border-radius:4px;padding:.9rem 1.1rem;background:var(--paper)}
+.pc-attr{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--vermilion);margin-bottom:4px}
+.pc-val{font-family:var(--mono);font-size:11px;color:var(--ink-4);margin-bottom:6px}
+.pc-desc{font-size:13.5px;color:var(--ink-2);line-height:1.6}
+
+/* ── Case study ── */
+.case-mockup{background:var(--code-bg);border-radius:6px;overflow:hidden;margin:1.1rem 0;box-shadow:0 8px 28px rgba(26,18,8,.25)}
+.cm-titlebar{background:#2d2926;padding:8px 14px;display:flex;align-items:center;gap:8px}
+.cm-dot{width:11px;height:11px;border-radius:50%}
+.cm-title{font-family:var(--mono);font-size:11px;color:#6b6360;margin-left:8px}
+.cm-body{padding:0;background:#0a0a0a}
+.cm-player{background:linear-gradient(160deg,#1a0f0a 0%,#0a0a0f 100%);padding:2rem;display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap}
+.cm-album{width:120px;height:120px;background:linear-gradient(135deg,var(--verm-dark),#1a0a0a);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.cm-info{flex:1;min-width:160px}
+.cm-song{font-family:var(--serif);font-size:16px;font-weight:700;color:#f5f0e8;margin-bottom:4px}
+.cm-artist-name{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:14px}
+.cm-ctrl{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.cm-btn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.15);background:transparent;transition:all .16s}
+.cm-btn.main{background:var(--vermilion);border-color:var(--verm-dark);color:#fff;width:40px;height:40px;font-size:15px}
+.cm-btn:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+.cm-prog{height:3px;background:rgba(255,255,255,.15);border-radius:2px;margin-bottom:6px;position:relative}
+.cm-prog-fill{height:100%;width:40%;background:var(--vermilion);border-radius:2px}
+.cm-time-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.4)}
+
+.quick-table{width:100%;border-collapse:collapse;font-size:13px;margin:.8rem 0}
+.quick-table th{background:var(--ink-2);color:var(--paper);padding:7px 12px;text-align:left;font-family:var(--serif);font-weight:600;letter-spacing:.04em}
+.quick-table td{padding:7px 12px;border-bottom:1px solid var(--rule);color:var(--ink-2)}
+.quick-table tr:last-child td{border-bottom:none}
+.quick-table tr:nth-child(even) td{background:rgba(192,57,43,.025)}
+.quick-table code{font-size:11px}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--paper-dark)}
+::-webkit-scrollbar-thumb{background:var(--rule-dark);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-5)}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">多媒体嵌入</div>
+    <div class="sidebar-sub">video · audio · source · CSS</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">技术概述</div>
+      <a class="nav-item active" onclick="window.goTo('s1')"><span class="nav-num">01</span>嵌入技术概述</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">格式支持</div>
+      <a class="nav-item" onclick="window.goTo('s2')"><span class="nav-num">02</span>视频格式</a>
+      <a class="nav-item" onclick="window.goTo('s2a')"><span class="nav-num">03</span>音频格式</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">嵌入视频与音频</div>
+      <a class="nav-item" onclick="window.goTo('s3')"><span class="nav-num">04</span>嵌入视频 &lt;video&gt;</a>
+      <a class="nav-item" onclick="window.goTo('s3-attr')"><span class="nav-num">　↳</span>video 属性详解</a>
+      <a class="nav-item" onclick="window.goTo('s3b')"><span class="nav-num">05</span>嵌入音频 &lt;audio&gt;</a>
+      <a class="nav-item" onclick="window.goTo('s3b-attr')"><span class="nav-num">　↳</span>audio 属性详解</a>
+      <a class="nav-item" onclick="window.goTo('s3c')"><span class="nav-num">06</span>兼容性与 &lt;source&gt;</a>
+      <a class="nav-item" onclick="window.goTo('s3d')"><span class="nav-num">07</span>调用网络音视频</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">CSS 控制</div>
+      <a class="nav-item" onclick="window.goTo('s4')"><span class="nav-num">08</span>CSS 控制宽度和高度</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">阶段案例</div>
+      <a class="nav-item" onclick="window.goTo('s5')"><span class="nav-num">09</span>音乐播放界面</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">附录</div>
+      <a class="nav-item" onclick="window.goTo('summary')"><span class="nav-num">总结</span>标签速查表</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">点击目录项跳转对应章节</div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <header class="page-header">
+    <h1>多媒体嵌入</h1>
+    <div class="header-desc">用 &lt;video&gt; 和 &lt;audio&gt; 让网页开口说话——无需插件，原生播放</div>
+    <div class="header-meta">
+      <span class="header-meta-item">&lt;video&gt; 视频嵌入</span>
+      <span class="header-meta-item">&lt;audio&gt; 音频嵌入</span>
+      <span class="header-meta-item">&lt;source&gt; 兼容性方案</span>
+      <span class="header-meta-item">CSS 宽高控制</span>
+    </div>
+  </header>
+
+  <div class="content-wrap">
+
+    <!-- ══ 1 技术概述 ══ -->
+    <section class="chapter" id="s1">
+      <div class="chapter-header">
+        <span class="ch-num">01</span>
+        <span class="ch-title">视频、音频嵌入技术概述</span>
+      </div>
+
+      <p class="body-text">在网络传输速度越来越快的今天，视频和音频技术已被越来越广泛地应用在网页设计中——相比静态的图片和文字，多媒体能为用户提供更直观、丰富的信息体验。</p>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">HTML5 之前 vs HTML5 之后</div><div class="sec-divider-line"></div></div>
+
+      <div class="compare-grid">
+        <div class="cmp-card cmp-before">
+          <div class="cmp-head">😓 HTML5 之前：第三方插件</div>
+          <div class="cmp-body">
+            <ul class="feat-list" style="margin:0">
+              <li><span class="feat-mark no">✗</span>依赖 Flash、Silverlight 等第三方插件</li>
+              <li><span class="feat-mark no">✗</span>代码<strong>冗长复杂</strong>，维护困难</li>
+              <li><span class="feat-mark no">✗</span>移动端不支持 Flash，体验差</li>
+              <li><span class="feat-mark no">✗</span>安全漏洞多，Flash 已于 2020 年退役</li>
+            </ul>
+          </div>
+        </div>
+        <div class="cmp-card cmp-after">
+          <div class="cmp-head">✅ HTML5：原生标签嵌入</div>
+          <div class="cmp-body">
+            <ul class="feat-list" style="margin:0">
+              <li><span class="feat-mark yes">✓</span>使用 <code>&lt;video&gt;</code> 和 <code>&lt;audio&gt;</code> 原生标签</li>
+              <li><span class="feat-mark yes">✓</span>代码<strong>简单精炼</strong>，一行即可嵌入</li>
+              <li><span class="feat-mark yes">✓</span>无需任何插件，浏览器原生支持</li>
+              <li><span class="feat-mark yes">✓</span>移动端完美支持</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">浏览器支持情况</div><div class="sec-divider-line"></div></div>
+
+      <table class="data-table">
+        <thead><tr><th>浏览器</th><th>支持的最低版本</th></tr></thead>
+        <tbody>
+          <tr><td>IE 浏览器</td><td>9.0 及以上</td></tr>
+          <tr><td>Firefox（火狐）</td><td>3.5 及以上</td></tr>
+          <tr><td>Opera（欧朋）</td><td>10.5 及以上</td></tr>
+          <tr><td>Chrome（谷歌）</td><td>3.0 及以上</td></tr>
+          <tr><td>Safari（苹果）</td><td>3.1 及以上</td></tr>
+          <tr><td>Edge</td><td>12.0 及以上</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span>不同浏览器对 <code>&lt;video&gt;</code>、<code>&lt;audio&gt;</code> 标签的界面样式略有不同，但功能一致。在实际项目中，通常会用 CSS 自定义播放器界面来统一外观。</span>
+      </div>
+    </section>
+
+    <!-- ══ 2 格式 ══ -->
+    <section class="chapter" id="s2">
+      <div class="chapter-header">
+        <span class="ch-num">02</span>
+        <span class="ch-title">HTML5 支持的视频格式</span>
+        <span class="ch-hint">点击卡片查看详情</span>
+      </div>
+
+      <p class="body-text">HTML5 支持三种主流视频格式，但并非所有浏览器都支持全部格式，因此在实际开发中需要考虑兼容性，提供多种格式备用。</p>
+
+      <div class="format-grid">
+        <div class="fmt-card" onclick="window.showFmt('ogg',this)">
+          <div class="fmt-icon">🎬</div>
+          <div class="fmt-ext">.ogg / .ogv</div>
+          <div class="fmt-name">Ogg / Theora</div>
+          <div class="fmt-desc">开源免费格式，Firefox、Chrome、Opera 支持良好</div>
+          <div><span class="fmt-badge fbv">视频</span></div>
+        </div>
+        <div class="fmt-card" onclick="window.showFmt('mp4',this)">
+          <div class="fmt-icon">🎥</div>
+          <div class="fmt-ext">.mp4 / .m4v</div>
+          <div class="fmt-name">MPEG-4 / H.264</div>
+          <div class="fmt-desc">最广泛支持的格式，<strong>全浏览器兼容</strong>，首选推荐</div>
+          <div><span class="fmt-badge fbv">视频</span></div>
+        </div>
+        <div class="fmt-card" onclick="window.showFmt('webm',this)">
+          <div class="fmt-icon">🌐</div>
+          <div class="fmt-ext">.webm</div>
+          <div class="fmt-name">WebM / VP8</div>
+          <div class="fmt-desc">Google 推出的开放格式，压缩率高，现代浏览器广泛支持</div>
+          <div><span class="fmt-badge fbv">视频</span></div>
+        </div>
+      </div>
+
+      <div class="attr-popup" id="fmt-popup"></div>
+    </section>
+
+    <section class="chapter" id="s2a">
+      <div class="chapter-header">
+        <span class="ch-num">03</span>
+        <span class="ch-title">HTML5 支持的音频格式</span>
+      </div>
+
+      <div class="format-grid">
+        <div class="fmt-card">
+          <div class="fmt-icon">🎵</div>
+          <div class="fmt-ext">.ogg</div>
+          <div class="fmt-name">Ogg Vorbis</div>
+          <div class="fmt-desc">开源免费，Firefox、Chrome、Opera 支持，IE/Safari 不支持</div>
+          <div><span class="fmt-badge fba">音频</span></div>
+        </div>
+        <div class="fmt-card" style="border-color:var(--vermilion);background:var(--verm-light)">
+          <div class="fmt-icon">🎶</div>
+          <div class="fmt-ext">.mp3</div>
+          <div class="fmt-name">MP3</div>
+          <div class="fmt-desc"><strong>全浏览器支持</strong>，是最广泛使用的音频格式，<strong>强烈推荐</strong></div>
+          <div><span class="fmt-badge fba">音频</span></div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-icon">🎙️</div>
+          <div class="fmt-ext">.wav</div>
+          <div class="fmt-name">WAV</div>
+          <div class="fmt-desc">无损格式，音质最高但文件较大；Firefox、Chrome、Safari 支持，IE 不支持</div>
+          <div><span class="fmt-badge fba">音频</span></div>
+        </div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">浏览器格式兼容矩阵</div><div class="sec-divider-line"></div></div>
+
+      <div class="browser-matrix">
+        <table class="bm-table">
+          <thead>
+            <tr>
+              <th>格式</th>
+              <th>IE 9+</th>
+              <th>Firefox 4+</th>
+              <th>Opera 11+</th>
+              <th>Chrome 8+</th>
+              <th>Safari 12+</th>
+              <th>Edge 17+</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="7" class="bm-sect">视频格式</td></tr>
+            <tr><td>.ogg</td><td class="cross">×</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="cross">×</td><td class="tick">✓</td></tr>
+            <tr><td>.mp4 ⭐</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td></tr>
+            <tr><td>.webm</td><td class="cross">×</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td></tr>
+            <tr><td colspan="7" class="bm-sect">音频格式</td></tr>
+            <tr><td>.ogg</td><td class="cross">×</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="cross">×</td><td class="tick">✓</td></tr>
+            <tr><td>.mp3 ⭐</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td></tr>
+            <tr><td>.wav</td><td class="cross">×</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note-box accent">
+        <span class="note-icon">📌</span>
+        <span><strong>开发建议：</strong>视频首选 <code>.mp4</code>（H.264 编码），音频首选 <code>.mp3</code>——二者均获得全浏览器支持，是最稳妥的选择。编码格式：视频 H.264，音频 AAC。</span>
+      </div>
+    </section>
+
+    <!-- ══ 3 video ══ -->
+    <section class="chapter" id="s3">
+      <div class="chapter-header">
+        <span class="ch-num">04</span>
+        <span class="ch-title">在 HTML5 中嵌入视频</span>
+        <span class="ch-hint">点击属性名查看说明</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text">在 HTML5 中，<code>&lt;video&gt;</code> 标签用于在网页中定义和嵌入视频文件，支持 MP4、WebM、Ogg 格式。</div>
+      </div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 点击属性名查看详解</div>
+        <div class="anatomy-box">
+          <span style="color:#c4b5fd">&lt;video</span>&#160;<span class="an-attr" onclick="window.showVAttr('src')">src</span>=<span class="an-val">"video/movie.mp4"</span>&#160;<span class="an-attr" onclick="window.showVAttr('controls')">controls</span>=<span class="an-val">"controls"</span><span style="color:#c4b5fd">&gt;</span><br>
+          &#160;&#160;<span style="color:#6b6360;font-style:italic">您的浏览器不支持 video 标签</span><br>
+          <span style="color:#c4b5fd">&lt;/video&gt;</span>
+          <div class="an-label-row">
+            <div class="an-label"><div class="an-dot" style="background:#fde68a"></div>src — 视频文件路径</div>
+            <div class="an-label"><div class="an-dot" style="background:#fde68a"></div>controls — 显示播放控件</div>
+            <div class="an-label"><div class="an-dot" style="background:#6b6360"></div>标签间文字 — 不支持时显示</div>
+          </div>
+        </div>
+        <div class="attr-popup" id="vattr-popup"></div>
+        <div class="stage-desc" id="vattr-hint">点击上方黄色属性名，查看该属性的详细说明</div>
+      </div>
+
+      <!-- mock video player -->
+      <div class="demo-wrap">
+        <div class="demo-label">效果模拟 · video 播放器外观</div>
+        <div class="video-mock" onclick="window.togglePlay(this)">
+          <div class="video-mock-inner" id="video-inner">
+            <div class="video-play-btn" id="play-btn">▶</div>
+            <div class="video-title">movie.mp4 · 点击播放</div>
+          </div>
+          <div class="video-controls">
+            <div class="vc-btn" onclick="event.stopPropagation();window.togglePlay(this.closest('.video-mock'))">▶</div>
+            <div class="vc-progress" onclick="event.stopPropagation()"><div class="vc-fill" id="vc-fill"></div></div>
+            <div class="vc-time">0:30 / 1:42</div>
+            <div class="vc-btn">🔊</div>
+          </div>
+        </div>
+        <div class="stage-desc">注：以上为界面模拟示意，实际嵌入后由浏览器渲染原生播放器</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 基础嵌入视频</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">&lt;!-- 最简写法：仅 src 和 controls --&gt;</span>
+<span class="htag">&lt;video</span> <span class="attr">src</span>=<span class="str">"video/movie.mp4"</span> <span class="attr">controls</span>=<span class="str">"controls"</span><span class="htag">&gt;</span>
+  您的浏览器不支持 video 标签
+<span class="htag">&lt;/video&gt;</span></div>
+      </div>
+    </section>
+
+    <!-- video 属性 -->
+    <section class="chapter" id="s3-attr">
+      <div class="chapter-header">
+        <!-- <span class="ch-num">§ 8.3.1</span> -->
+        <span class="ch-title">&lt;video&gt; 常见属性详解</span>
+      </div>
+
+      <div class="prop-cards">
+        <div class="prop-card">
+          <div class="pc-attr">src</div>
+          <div class="pc-val">属性值：文件路径 / URL</div>
+          <div class="pc-desc">设置视频文件的地址，可以是本地相对路径，也可以是网络 URL。</div>
+        </div>
+        <div class="prop-card">
+          <div class="pc-attr">controls</div>
+          <div class="pc-val">属性值：controls</div>
+          <div class="pc-desc">添加播放控件（播放/暂停按钮、进度条、音量等）。省略此属性则视频不会显示控制条。</div>
+        </div>
+        <div class="prop-card">
+          <div class="pc-attr">autoplay</div>
+          <div class="pc-val">属性值：autoplay</div>
+          <div class="pc-desc">页面加载完成后自动播放。⚠️ 2018年后 Chrome 禁止有声自动播放，需配合 <code>muted</code> 属性才能自动播放。</div>
+        </div>
+        <div class="prop-card">
+          <div class="pc-attr">muted</div>
+          <div class="pc-val">属性值：muted</div>
+          <div class="pc-desc">静音播放。配合 <code>autoplay</code> 使用，可以实现静音自动播放（如背景视频）。</div>
+        </div>
+        <div class="prop-card">
+          <div class="pc-attr">loop</div>
+          <div class="pc-val">属性值：loop</div>
+          <div class="pc-desc">视频播放结束后重新循环播放，适合背景视频或教程循环场景。</div>
+        </div>
+        <div class="prop-card">
+          <div class="pc-attr">poster</div>
+          <div class="pc-val">属性值：图像 URL</div>
+          <div class="pc-desc">视频缓冲不足或加载前，显示指定的封面图片。提升视觉体验，避免黑屏。</div>
+        </div>
+        <div class="prop-card" style="grid-column:1/-1">
+          <div class="pc-attr">preload</div>
+          <div class="pc-val">属性值：auto / metadata / none</div>
+          <div class="pc-desc">
+            控制视频在页面加载时的预加载行为：<br>
+            <code>auto</code>：页面加载时全部预加载（消耗流量）<br>
+            <code>metadata</code>：只预加载视频元数据（时长、尺寸等）<br>
+            <code>none</code>：不预加载<br>
+            <strong>注意：</strong>使用 <code>autoplay</code> 时，此属性会被忽略。
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 完整属性示例</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">&lt;!-- 背景视频：自动静音循环播放 --&gt;</span>
+<span class="htag">&lt;video</span>
+  <span class="attr">src</span>=<span class="str">"video/bg.mp4"</span>
+  <span class="attr">autoplay</span>
+  <span class="attr">muted</span>
+  <span class="attr">loop</span>
+  <span class="attr">poster</span>=<span class="str">"images/cover.jpg"</span>
+<span class="htag">&gt;&lt;/video&gt;</span>
+
+<span class="cmt">&lt;!-- 普通视频：带控件，只预加载元数据 --&gt;</span>
+<span class="htag">&lt;video</span>
+  <span class="attr">src</span>=<span class="str">"video/lesson1.mp4"</span>
+  <span class="attr">controls</span>
+  <span class="attr">preload</span>=<span class="str">"metadata"</span>
+  <span class="attr">poster</span>=<span class="str">"images/lesson1-cover.jpg"</span>
+<span class="htag">&gt;</span>
+  您的浏览器不支持 HTML5 video 标签
+<span class="htag">&lt;/video&gt;</span></div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div><strong>Chrome 自动播放限制：</strong>2018 年 1 月起，Chrome 浏览器取消了对有声自动播放的支持。若需要自动播放，必须同时添加 <code>muted</code> 属性（静音播放），否则 <code>autoplay</code> 将不生效。</div>
+      </div>
+    </section>
+
+    <!-- ══ 4 audio ══ -->
+    <section class="chapter" id="s3b">
+      <div class="chapter-header">
+        <span class="ch-num">05</span>
+        <span class="ch-title">在 HTML5 中嵌入音频</span>
+      </div>
+
+      <div class="def-block">
+        <div class="def-label">定义</div>
+        <div class="def-text">在 HTML5 中，<code>&lt;audio&gt;</code> 标签用于在网页中定义和嵌入音频文件，支持 MP3、Ogg、WAV 格式。用法与 <code>&lt;video&gt;</code> 几乎完全相同。</div>
+      </div>
+
+      <!-- mock audio player -->
+      <div class="demo-wrap">
+        <div class="demo-label">效果模拟 · audio 播放器外观</div>
+        <div class="audio-mock">
+          <div class="am-icon">🎵</div>
+          <div class="am-info">
+            <div class="am-track">示例音乐.mp3</div>
+            <div class="am-artist">来自本地文件</div>
+            <div class="am-controls">
+              <button class="am-btn">⏮</button>
+              <button class="am-btn play" id="audio-play-btn" onclick="window.toggleAudioPlay()">▶</button>
+              <button class="am-btn">⏭</button>
+              <div class="am-progress"><div class="am-fill" id="am-fill"></div></div>
+              <div class="am-time">1:24 / 3:45</div>
+              <div style="font-size:13px;color:var(--ink-4);cursor:pointer">🔊</div>
+            </div>
+          </div>
+        </div>
+        <div class="stage-desc">注：以上为界面模拟示意，实际浏览器会渲染原生音频播放器</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 基础嵌入音频</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;audio</span> <span class="attr">src</span>=<span class="str">"music/song.mp3"</span> <span class="attr">controls</span><span class="htag">&gt;</span>
+  浏览器不支持 audio 标签
+<span class="htag">&lt;/audio&gt;</span></div>
+      </div>
+    </section>
+
+    <!-- audio 属性 -->
+    <section class="chapter" id="s3b-attr">
+      <div class="chapter-header">
+        <!-- <span class="ch-num">§ 8.3.2</span> -->
+        <span class="ch-title">&lt;audio&gt; 常见属性详解</span>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>属性</th><th>属性值</th><th>描述</th></tr></thead>
+        <tbody>
+          <tr><td><code>src</code></td><td>文件路径 / URL</td><td>设置音频文件的地址</td></tr>
+          <tr><td><code>controls</code></td><td>controls</td><td>显示播放控件（播放/暂停、进度条、音量）</td></tr>
+          <tr><td><code>autoplay</code></td><td>autoplay</td><td>页面加载完成后自动播放（浏览器可能拦截）</td></tr>
+          <tr><td><code>loop</code></td><td>loop</td><td>音频结束后重新循环播放</td></tr>
+          <tr><td><code>preload</code></td><td>auto / metadata / none</td><td>页面加载时的预加载方式；使用 <code>autoplay</code> 时此属性被忽略</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box info">
+        <span class="note-icon">💡</span>
+        <span><code>&lt;audio&gt;</code> 与 <code>&lt;video&gt;</code> 的属性高度相似，最大差别是 <code>&lt;audio&gt;</code> 没有 <code>poster</code>（封面图）和 <code>muted</code>（静音）属性，因为音频不需要封面显示。</span>
+      </div>
+    </section>
+
+    <!-- ══ 5 兼容性 ══ -->
+    <section class="chapter" id="s3c">
+      <div class="chapter-header">
+        <span class="ch-num">06</span>
+        <span class="ch-title">视频、音频文件的兼容性问题与 &lt;source&gt;</span>
+        <span class="ch-hint">一次提供多种格式</span>
+      </div>
+
+      <p class="body-text">虽然 HTML5 支持多种音视频格式，但并非所有浏览器都支持所有格式。例如，Safari 不支持 <code>.ogg</code>，旧版 IE 不支持 <code>.webm</code>。因此，为了让视频/音频在所有浏览器中都能正常播放，需要提供多个格式的备用文件。</p>
+
+      <div class="def-block">
+        <div class="def-label">解决方案</div>
+        <div class="def-text">使用 <code>&lt;source&gt;</code> 标签为 <code>&lt;video&gt;</code> 或 <code>&lt;audio&gt;</code> 提供<strong>多个备用文件</strong>。浏览器会按顺序尝试，播放第一个它能支持的格式。</div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">浏览器播放决策流程</div><div class="sec-divider-line"></div></div>
+
+      <div class="source-flow">
+        <div class="sf-row">
+          <div class="sf-browser">Chrome 浏览器</div>
+          <div class="sf-arrow">→</div>
+          <div class="sf-try">
+            <span class="sf-file">尝试 .mp4</span>
+            <span style="font-size:11px;color:var(--green)">✓ 支持，直接播放</span>
+          </div>
+        </div>
+        <div class="sf-row">
+          <div class="sf-browser">旧版 Safari</div>
+          <div class="sf-arrow">→</div>
+          <div class="sf-try">
+            <span class="sf-file fail">尝试 .ogg → 不支持</span>
+            <span class="sf-arrow" style="font-size:.8rem">→</span>
+            <span class="sf-file ok">尝试 .mp4 ✓ 播放</span>
+          </div>
+        </div>
+        <div class="sf-row">
+          <div class="sf-browser">旧版 IE 9</div>
+          <div class="sf-arrow">→</div>
+          <div class="sf-try">
+            <span class="sf-file fail">尝试 .ogg → 不支持</span>
+            <span class="sf-arrow" style="font-size:.8rem">→</span>
+            <span class="sf-file fail">.webm → 不支持</span>
+            <span class="sf-arrow" style="font-size:.8rem">→</span>
+            <span class="sf-file ok">.mp4 ✓ 播放</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · source 多格式兼容 — 音频</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;audio</span> <span class="attr">controls</span>=<span class="str">"controls"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;source</span> <span class="attr">src</span>=<span class="str">"music/song.ogg"</span> <span class="attr">type</span>=<span class="str">"audio/ogg"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;source</span> <span class="attr">src</span>=<span class="str">"music/song.mp3"</span> <span class="attr">type</span>=<span class="str">"audio/mpeg"</span><span class="htag">&gt;</span>
+  <span class="cmt">&lt;!-- 以上都不支持时显示此文字 --&gt;</span>
+  您的浏览器不支持 audio 标签
+<span class="htag">&lt;/audio&gt;</span></div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · source 多格式兼容 — 视频</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;video</span> <span class="attr">controls</span>=<span class="str">"controls"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;source</span> <span class="attr">src</span>=<span class="str">"video/movie.ogg"</span>  <span class="attr">type</span>=<span class="str">"video/ogg"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;source</span> <span class="attr">src</span>=<span class="str">"video/movie.mp4"</span>  <span class="attr">type</span>=<span class="str">"video/mp4"</span><span class="htag">&gt;</span>
+  <span class="htag">&lt;source</span> <span class="attr">src</span>=<span class="str">"video/movie.webm"</span> <span class="attr">type</span>=<span class="str">"video/webm"</span><span class="htag">&gt;</span>
+  您的浏览器不支持 HTML5 video 标签
+<span class="htag">&lt;/video&gt;</span></div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>&lt;source&gt; 属性</th><th>说明</th><th>示例</th></tr></thead>
+        <tbody>
+          <tr><td><code>src</code></td><td>媒体文件的路径或 URL</td><td><code>src="music/song.mp3"</code></td></tr>
+          <tr><td><code>type</code></td><td>媒体文件的 MIME 类型。视频以 <code>video/</code> 开头，音频以 <code>audio/</code> 开头</td><td><code>type="audio/mpeg"</code><br><code>type="video/mp4"</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <span>浏览器对音视频还有<strong>编码格式</strong>要求：视频编码最好为 <code>H.264</code>，音频编码最好为 <code>AAC</code>。若文件格式正确但仍无法播放，可用"格式工厂"等工具转换编码格式。</span>
+      </div>
+    </section>
+
+    <!-- ══ 6 网络音视频 ══ -->
+    <section class="chapter" id="s3d">
+      <div class="chapter-header">
+        <span class="ch-num">07</span>
+        <span class="ch-title">调用网络音频、视频文件</span>
+      </div>
+
+      <p class="body-text">除了使用本地文件，还可以直接在 <code>src</code> 属性中填入网络 URL 来调用远程服务器上的音视频文件，无需下载到本地。</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 本地文件 vs 网络 URL</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">&lt;!-- 调用本地文件（相对路径）--&gt;</span>
+<span class="htag">&lt;audio</span> <span class="attr">src</span>=<span class="str">"music/1.mp3"</span> <span class="attr">controls</span>=<span class="str">"controls"</span><span class="htag">&gt;</span>浏览器不支持 audio 标签<span class="htag">&lt;/audio&gt;</span>
+
+<span class="cmt">&lt;!-- 调用网络 URL（将 src 替换为完整的网络地址）--&gt;</span>
+<span class="htag">&lt;audio</span>
+  <span class="attr">src</span>=<span class="str">"http://www.example.com/music/song.mp3"</span>
+  <span class="attr">controls</span>=<span class="str">"controls"</span>
+<span class="htag">&gt;</span>浏览器不支持 audio 标签<span class="htag">&lt;/audio&gt;</span></div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">获取网络文件 URL 的步骤</div><div class="sec-divider-line"></div></div>
+
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:0;background:var(--paper);border:1.5px solid var(--rule-dark);border-radius:4px;overflow:hidden">
+        <div style="background:var(--vermilion);color:#fff;padding:14px 18px;display:flex;align-items:flex-start;gap:0;font-family:var(--mono);font-size:14px;font-weight:700;border-right:1px solid var(--verm-dark)">①</div>
+        <div style="padding:13px 16px;font-size:14px;color:var(--ink-2);border-bottom:1px solid var(--rule)"><strong>获取文件的 URL：</strong>在目标网页上找到音频或视频，右键 → 复制媒体地址 / 获取外部链接地址。</div>
+        <div style="background:var(--verm-dark);color:#fff;padding:14px 18px;display:flex;align-items:flex-start;font-family:var(--mono);font-size:14px;font-weight:700;border-right:1px solid #6b1e18">②</div>
+        <div style="padding:13px 16px;font-size:14px;color:var(--ink-2)"><strong>插入文件 URL：</strong>将复制的完整 URL 粘贴到代码中 <code>src</code> 属性的值中，即可引用该资源。</div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div>
+          <strong>两个重要注意事项：</strong><br>
+          ① <strong>稳定性：</strong>调用网络 URL 时，若对方服务器出现问题（如文件被删除、服务器下线），则所引用的 URL 也会失效，导致页面无法播放。<br>
+          ② <strong>版权：</strong>在网页中嵌入音频或视频文件时，<strong>一定要注意版权问题</strong>，尽量选择经过授权许可的音视频资源。
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 7 宽高 ══ -->
+    <section class="chapter" id="s4">
+      <div class="chapter-header">
+        <span class="ch-num">08</span>
+        <span class="ch-title">使用 CSS 控制视频的宽度和高度</span>
+      </div>
+
+      <p class="body-text">视频嵌入后，默认会以视频文件的原始分辨率显示，可能导致视频过大超出页面范围，或与页面布局不协调。通过 CSS 的 <code>width</code> 和 <code>height</code> 属性可以控制视频在页面上的展示尺寸。</p>
+
+      <div class="def-block">
+        <div class="def-label">为什么要控制宽高？</div>
+        <div class="def-text">设置宽高后，浏览器在加载页面时会<strong>提前确定视频的尺寸</strong>，为视频预留合适的空间，<strong>避免页面布局因视频加载完成后发生抖动</strong>，保证整体布局稳定。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html + css · 控制视频尺寸</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">&lt;!-- HTML：添加 class 供 CSS 选中 --&gt;</span>
+<span class="htag">&lt;video</span> <span class="attr">class</span>=<span class="str">"my-video"</span> <span class="attr">src</span>=<span class="str">"video/movie.mp4"</span> <span class="attr">controls</span><span class="htag">&gt;&lt;/video&gt;</span>
+
+<span class="cmt">/* CSS：设置宽高 */</span>
+<span class="sel">.my-video</span> {
+  <span class="prop">width</span>: <span class="val">640px</span>;
+  <span class="prop">height</span>: <span class="val">360px</span>;
+}
+
+<span class="cmt">/* 响应式写法：宽度自适应，保持比例 */</span>
+<span class="sel">.my-video</span> {
+  <span class="prop">width</span>: <span class="val">100%</span>;
+  <span class="prop">max-width</span>: <span class="val">800px</span>;
+  <span class="prop">height</span>: <span class="val">auto</span>;
+}</span></div>
+      </div>
+
+      <!-- interactive size demo -->
+      <div class="demo-wrap">
+        <div class="demo-label">交互演示 · 不同尺寸的视频效果对比</div>
+        <div class="pill-group">
+          <button class="pill" onclick="window.setVideoSize('small',this)">小尺寸 240px</button>
+          <button class="pill on" onclick="window.setVideoSize('medium',this)">中尺寸 480px</button>
+          <button class="pill" onclick="window.setVideoSize('full',this)">100% 宽度</button>
+        </div>
+        <div style="background:var(--paper);border:1.5px solid var(--rule-dark);border-radius:4px;padding:1rem;transition:all .3s">
+          <div id="video-size-demo" style="width:480px;max-width:100%;margin:0 auto;background:#000;border-radius:4px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;transition:all .5s">
+            <div style="text-align:center;color:rgba(255,255,255,.6)">
+              <div style="font-size:2rem;margin-bottom:6px">▶</div>
+              <div style="font-family:var(--mono);font-size:11px" id="size-label">width: 480px</div>
+            </div>
+          </div>
+        </div>
+        <div class="stage-desc" id="size-desc">当前：480px — 中等尺寸，适合内容页面的主视频区域</div>
+      </div>
+
+      <div class="note-box warning">
+        <span class="note-icon">⚠</span>
+        <div><strong>重要：</strong>通过 CSS 缩放视频，只是改变了视频在页面上的<strong>显示尺寸</strong>，视频的原始文件大小并没有改变。如果视频文件体积过大，应使用"格式工厂"等视频处理软件对视频进行压缩，再嵌入网页，以提升页面加载速度。</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">css · 常用视频样式技巧</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="cmt">/* 全宽自适应视频（响应式必备）*/</span>
+<span class="sel">video</span> {
+  <span class="prop">width</span>: <span class="val">100%</span>;
+  <span class="prop">height</span>: <span class="val">auto</span>;
+  <span class="prop">display</span>: <span class="val">block</span>;
+}
+
+<span class="cmt">/* 视频容器保持 16:9 比例 */</span>
+<span class="sel">.video-wrap</span> {
+  <span class="prop">position</span>: <span class="val">relative</span>;
+  <span class="prop">width</span>: <span class="val">100%</span>;
+  <span class="prop">padding-top</span>: <span class="val">56.25%</span>;  <span class="cmt">/* 16:9 = 9/16 = 56.25% */</span>
+}
+<span class="sel">.video-wrap video</span> {
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">inset</span>: <span class="val">0</span>;
+  <span class="prop">width</span>: <span class="val">100%</span>;
+  <span class="prop">height</span>: <span class="val">100%</span>;
+}</div>
+      </div>
+    </section>
+
+    <!-- ══ 8 案例 ══ -->
+    <section class="chapter" id="s5">
+      <div class="chapter-header">
+        <span class="ch-num">09</span>
+        <span class="ch-title">阶段案例 — 音乐播放界面</span>
+      </div>
+
+      <p class="body-text">本案例综合运用本章所学知识，制作一个带有播放界面的音乐播放器。分三步完成：分析效果图 → 制作页面结构 → 定义 CSS 样式。</p>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">效果图预览</div><div class="sec-divider-line"></div></div>
+
+      <div class="case-mockup">
+        <div class="cm-titlebar">
+          <div class="cm-dot" style="background:#ff5f57"></div>
+          <div class="cm-dot" style="background:#febc2e"></div>
+          <div class="cm-dot" style="background:#28c840"></div>
+          <span class="cm-title">music-player.html</span>
+        </div>
+        <div class="cm-body">
+          <div class="cm-player">
+            <div class="cm-album">🎵</div>
+            <div class="cm-info">
+              <div class="cm-song">晴天</div>
+              <div class="cm-artist-name">周杰伦 · 叶惠美</div>
+              <div class="cm-ctrl">
+                <button class="cm-btn" style="font-size:11px">⏮</button>
+                <button class="cm-btn main" id="case-play" onclick="window.toggleCasePlay()">▶</button>
+                <button class="cm-btn" style="font-size:11px">⏭</button>
+                <button class="cm-btn" style="font-size:11px">🔀</button>
+                <button class="cm-btn" style="font-size:11px">🔁</button>
+              </div>
+              <div class="cm-prog"><div class="cm-prog-fill"></div></div>
+              <div class="cm-time-row"><span>1:32</span><span>4:59</span></div>
+            </div>
+          </div>
+          <div style="background:#1a0f0a;padding:0 2rem 1.5rem">
+            <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.25);margin-bottom:8px;letter-spacing:.1em">PLAYLIST</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(192,57,43,.2);border-radius:3px">
+                <span style="font-size:11px;color:var(--verm-mid);font-family:var(--mono)">▶</span>
+                <span style="font-size:13px;font-family:var(--serif);color:#f5f0e8">晴天</span>
+                <span style="font-size:11px;color:rgba(255,255,255,.4);margin-left:auto;font-family:var(--mono)">4:59</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:3px">
+                <span style="font-size:11px;color:rgba(255,255,255,.3);font-family:var(--mono)">2</span>
+                <span style="font-size:13px;font-family:var(--serif);color:rgba(255,255,255,.6)">七里香</span>
+                <span style="font-size:11px;color:rgba(255,255,255,.3);margin-left:auto;font-family:var(--mono)">4:59</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:3px">
+                <span style="font-size:11px;color:rgba(255,255,255,.3);font-family:var(--mono)">3</span>
+                <span style="font-size:13px;font-family:var(--serif);color:rgba(255,255,255,.6)">稻香</span>
+                <span style="font-size:11px;color:rgba(255,255,255,.3);margin-left:auto;font-family:var(--mono)">3:42</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">制作步骤</div><div class="sec-divider-line"></div></div>
+
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:0;background:var(--paper);border:1.5px solid var(--rule-dark);border-radius:4px;overflow:hidden;margin:1.1rem 0">
+        <div style="background:var(--vermilion);color:#fff;padding:16px 18px;font-family:var(--mono);font-size:13px;font-weight:700;border-right:1px solid var(--verm-dark);display:flex;align-items:flex-start">Step 1</div>
+        <div style="padding:14px 16px;border-bottom:1px solid var(--rule)">
+          <strong style="color:var(--ink)">分析效果图</strong><br>
+          <span style="font-size:13.5px;color:var(--ink-3)">观察整体布局结构：播放器由专辑封面、歌曲信息、播放控件、进度条、播放列表组成。主体用 <code>&lt;div&gt;</code> 构建，音频用 <code>&lt;audio&gt;</code> 嵌入。</span>
+        </div>
+        <div style="background:var(--verm-dark);color:#fff;padding:16px 18px;font-family:var(--mono);font-size:13px;font-weight:700;border-right:1px solid #6b1e18;display:flex;align-items:flex-start">Step 2</div>
+        <div style="padding:14px 16px;border-bottom:1px solid var(--rule)">
+          <strong style="color:var(--ink)">制作页面结构（HTML）</strong><br>
+          <span style="font-size:13.5px;color:var(--ink-3)">用 <code>&lt;div&gt;</code> 搭建播放器容器和各子模块，嵌入 <code>&lt;audio&gt;</code> 标签加载音频文件，用 <code>&lt;source&gt;</code> 提供多格式兼容。</span>
+        </div>
+        <div style="background:var(--amber);color:#fff;padding:16px 18px;font-family:var(--mono);font-size:13px;font-weight:700;border-right:1px solid #7a3510;display:flex;align-items:flex-start">Step 3</div>
+        <div style="padding:14px 16px">
+          <strong style="color:var(--ink)">定义 CSS 样式</strong><br>
+          <span style="font-size:13.5px;color:var(--ink-3)">为播放器设置深色背景、圆角、阴影，用 <code>display:flex</code> 布局各控件，用 CSS 自定义播放进度条样式，覆盖浏览器原生控件外观。</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="code-lang">html · 音乐播放器核心结构</span><button class="code-copy" onclick="window.copyCode(this)">复制</button></div>
+        <div class="code-body"><span class="htag">&lt;div</span> <span class="attr">class</span>=<span class="str">"music-player"</span><span class="htag">&gt;</span>
+  <span class="cmt">&lt;!-- 专辑封面 --&gt;</span>
+  <span class="htag">&lt;img</span> <span class="attr">class</span>=<span class="str">"album-cover"</span> <span class="attr">src</span>=<span class="str">"images/cover.jpg"</span> <span class="attr">alt</span>=<span class="str">"专辑封面"</span><span class="htag">&gt;</span>
+
+  <span class="cmt">&lt;!-- 歌曲信息 --&gt;</span>
+  <span class="htag">&lt;div</span> <span class="attr">class</span>=<span class="str">"song-info"</span><span class="htag">&gt;</span>
+    <span class="htag">&lt;h3&gt;</span>晴天<span class="htag">&lt;/h3&gt;</span>
+    <span class="htag">&lt;p&gt;</span>周杰伦 · 叶惠美<span class="htag">&lt;/p&gt;</span>
+  <span class="htag">&lt;/div&gt;</span>
+
+  <span class="cmt">&lt;!-- 音频文件（提供多格式）--&gt;</span>
+  <span class="htag">&lt;audio</span> <span class="attr">id</span>=<span class="str">"player"</span> <span class="attr">controls</span><span class="htag">&gt;</span>
+    <span class="htag">&lt;source</span> <span class="attr">src</span>=<span class="str">"music/qingtian.ogg"</span> <span class="attr">type</span>=<span class="str">"audio/ogg"</span><span class="htag">&gt;</span>
+    <span class="htag">&lt;source</span> <span class="attr">src</span>=<span class="str">"music/qingtian.mp3"</span> <span class="attr">type</span>=<span class="str">"audio/mpeg"</span><span class="htag">&gt;</span>
+    您的浏览器不支持 audio 标签
+  <span class="htag">&lt;/audio&gt;</span>
+<span class="htag">&lt;/div&gt;</span></div>      </div>
+
+    </section>
+
+    <!-- ══ 总结 ══ -->
+    <section class="chapter" id="summary">
+      <div class="chapter-header">
+        <span class="ch-num">总结</span>
+        <span class="ch-title">标签速查表</span>
+      </div>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">核心标签一览</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>标签</th><th>功能</th><th>必须 / 常用属性</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;video&gt;</code></td><td>嵌入视频文件</td><td><code>src</code> <code>controls</code> <code>autoplay</code> <code>muted</code> <code>loop</code> <code>poster</code> <code>preload</code></td></tr>
+          <tr><td><code>&lt;audio&gt;</code></td><td>嵌入音频文件</td><td><code>src</code> <code>controls</code> <code>autoplay</code> <code>loop</code> <code>preload</code></td></tr>
+          <tr><td><code>&lt;source&gt;</code></td><td>为 video/audio 提供多格式备用</td><td><code>src</code>（路径） <code>type</code>（MIME 类型）</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-divider-text">格式推荐速查</div><div class="sec-divider-line"></div></div>
+      <table class="quick-table">
+        <thead><tr><th>类型</th><th>推荐格式</th><th>兼容情况</th><th>编码要求</th></tr></thead>
+        <tbody>
+          <tr><td>视频</td><td><strong>.mp4 ⭐</strong></td><td>全浏览器支持</td><td>视频编码：H.264</td></tr>
+          <tr><td>视频备用</td><td>.webm</td><td>除旧版 IE 外均支持</td><td>视频编码：VP8/VP9</td></tr>
+          <tr><td>音频</td><td><strong>.mp3 ⭐</strong></td><td>全浏览器支持</td><td>音频编码：AAC</td></tr>
+          <tr><td>音频备用</td><td>.wav / .ogg</td><td>部分浏览器支持</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box accent" style="margin-top:1.5rem">
+        <span class="note-icon">📌</span>
+        <div><strong>本章核心要点总结：</strong><br>
+        ① HTML5 用 <code>&lt;video&gt;</code> 和 <code>&lt;audio&gt;</code> 替代了 Flash，代码简洁，移动端友好<br>
+        ② <code>controls</code> 属性显示播放控件；<code>autoplay + muted</code> 实现静音自动播放<br>
+        ③ 用 <code>&lt;source&gt;</code> 提供多格式备用，提升跨浏览器兼容性<br>
+        ④ 推荐格式：视频 <code>.mp4</code>（H.264），音频 <code>.mp3</code>——兼容性最好<br>
+        ⑤ CSS <code>width</code> 属性控制视频显示尺寸，但不改变文件大小，大文件需用专业软件压缩<br>
+        ⑥ 使用网络 URL 调用音视频时，注意版权问题和链接稳定性</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+const navItems = document.querySelectorAll('.nav-item');
+const sectionIds = ['s1','s2','s2a','s3','s3-attr','s3b','s3b-attr','s3c','s3d','s4','s5','summary'];
+
+window.goTo = function(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+};
+
+window.addEventListener('scroll', () => {
+  let cur = 0;
+  sectionIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 80) cur = i;
+  });
+  navItems.forEach(n => n.classList.remove('active'));
+  if (navItems[cur]) navItems[cur].classList.add('active');
+}, { passive: true });
+
+window.copyCode = function(btn) {
+  const body = btn.closest('.code-block').querySelector('.code-body');
+  navigator.clipboard.writeText(body.innerText.trim()).then(() => {
+    btn.textContent = '已复制';
+    setTimeout(() => btn.textContent = '复制', 1600);
+  });
+};
+
+const fmtData = {
+  ogg:  { title:'.ogg / Ogg Theora', text:'开源免费的视频格式。Firefox、Chrome、Opera 支持良好，但 IE 和旧版 Safari 不支持。适合作为 MP4 的补充备用格式，通过 &lt;source&gt; 提供。' },
+  mp4:  { title:'.mp4 / MPEG-4 H.264 ⭐ 推荐', text:'<strong>全浏览器支持</strong>，是目前最广泛使用的视频格式。H.264 编码质量高、压缩率好、文件体积小。<strong>实际项目中首选此格式。</strong>' },
+  webm: { title:'.webm / WebM VP8', text:'由 Google 推出的开放视频格式，压缩率优于 MP4，现代浏览器广泛支持（Chrome、Firefox、Opera、Edge）。旧版 IE 不支持，可作为 MP4 的高质量补充。' },
+};
+
+window.showFmt = function(key, card) {
+  document.querySelectorAll('.format-grid .fmt-card').forEach(c => c.style.borderColor='');
+  card.style.borderColor = 'var(--vermilion)';
+  const popup = document.getElementById('fmt-popup');
+  const d = fmtData[key];
+  popup.innerHTML = '<strong style="color:var(--vermilion);font-family:var(--serif);display:block;margin-bottom:5px">' + d.title + '</strong>' + d.text;
+  popup.classList.add('show');
+};
+
+const vattrData = {
+  src:      { label:'src — 文件路径', text:'指定视频文件的路径，可以是相对路径（本地文件）或绝对 URL（网络文件）。这是最基本的必须属性，没有 src 就没有视频来源。' },
+  controls: { label:'controls — 显示播放控件', text:'添加此属性后，浏览器会为视频渲染原生播放控件，包括：播放/暂停按钮、进度条、音量控制、全屏切换等。省略此属性则视频会静默嵌入，无法手动控制。' },
+};
+
+window.showVAttr = function(key) {
+  const popup = document.getElementById('vattr-popup');
+  const hint  = document.getElementById('vattr-hint');
+  const d = vattrData[key];
+  popup.innerHTML = '<strong style="color:var(--vermilion);font-family:var(--serif)">' + d.label + '</strong> — ' + d.text;
+  popup.classList.add('show');
+  hint.textContent = key + ' — 已展开说明';
+};
+
+let videoPlaying = false;
+window.togglePlay = function(el) {
+  videoPlaying = !videoPlaying;
+  const btn = el.querySelector('#play-btn');
+  const inner = el.querySelector('#video-inner');
+  const ctrlBtns = el.querySelectorAll('.vc-btn');
+  if (videoPlaying) {
+    if (btn) btn.textContent = '⏸';
+    if (ctrlBtns[0]) ctrlBtns[0].textContent = '⏸';
+    if (inner) inner.style.opacity = '0.3';
+    animProgress();
+  } else {
+    if (btn) btn.textContent = '▶';
+    if (ctrlBtns[0]) ctrlBtns[0].textContent = '▶';
+    if (inner) inner.style.opacity = '1';
+  }
+};
+
+function animProgress() {
+  const fill = document.getElementById('vc-fill');
+  if (!fill || !videoPlaying) return;
+  let w = parseFloat(fill.style.width) || 30;
+  w = w >= 90 ? 30 : w + 0.3;
+  fill.style.width = w + '%';
+  if (videoPlaying) requestAnimationFrame(animProgress);
+}
+
+let audioPlaying = false;
+window.toggleAudioPlay = function() {
+  audioPlaying = !audioPlaying;
+  const btn = document.getElementById('audio-play-btn');
+  if (btn) btn.textContent = audioPlaying ? '⏸' : '▶';
+  if (audioPlaying) animAudioProgress();
+};
+
+function animAudioProgress() {
+  const fill = document.getElementById('am-fill');
+  if (!fill || !audioPlaying) return;
+  let w = parseFloat(fill.style.width) || 35;
+  w = w >= 95 ? 35 : w + 0.2;
+  fill.style.width = w + '%';
+  if (audioPlaying) requestAnimationFrame(animAudioProgress);
+}
+
+let casePlaying = false;
+window.toggleCasePlay = function() {
+  casePlaying = !casePlaying;
+  const btn = document.getElementById('case-play');
+  if (btn) btn.textContent = casePlaying ? '⏸' : '▶';
+};
+
+const sizeMap = {
+  small:  { w:'240px', label:'width: 240px', desc:'小尺寸 240px — 适合侧边栏或缩略预览' },
+  medium: { w:'480px', label:'width: 480px', desc:'中尺寸 480px — 适合内容区主视频（常用）' },
+  full:   { w:'100%',  label:'width: 100%',  desc:'全宽 100% — 响应式布局首选，自动适配屏幕宽度' },
+};
+
+window.setVideoSize = function(key, btn) {
+  document.querySelectorAll('.pill-group .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const d = sizeMap[key];
+  const demo = document.getElementById('video-size-demo');
+  const lbl  = document.getElementById('size-label');
+  const desc = document.getElementById('size-desc');
+  if (demo) demo.style.width = d.w;
+  if (lbl)  lbl.textContent  = d.label;
+  if (desc) desc.textContent = '当前：' + d.desc;
+};
+</script>
+</body>
+</html>
